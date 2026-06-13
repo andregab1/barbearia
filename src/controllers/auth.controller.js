@@ -48,8 +48,13 @@ async function cadastrar(req, res) {
 // RF02: Login
 // ==========================================
 async function login(req, res) {
-  const { email, telefone, senha } = req.body;
-  if (!senha || (!email && !telefone)) {
+  const { login, email, telefone, senha } = req.body;
+
+  // Flutter envia 'login' — detecta se é email ou telefone
+  const emailFinal    = email    || (login && login.includes('@') ? login : null);
+  const telefoneFinal = telefone || (login && !login.includes('@') ? login : null);
+
+  if (!senha || (!emailFinal && !telefoneFinal)) {
     return res.status(400).json({ erro: 'Informe email ou telefone e senha.' });
   }
   try {
@@ -57,7 +62,7 @@ async function login(req, res) {
     const [rows] = await pool.query(
       `SELECT id, nome, email, telefone, senha_hash, role, ativo
        FROM usuarios WHERE (email = ? OR telefone = ?) LIMIT 1`,
-      [email || null, telefone || null]
+      [emailFinal || null, telefoneFinal || null]
     );
     if (rows.length === 0) {
       return res.status(401).json({ erro: 'Usuário não encontrado.' });
