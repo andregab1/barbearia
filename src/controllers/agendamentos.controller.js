@@ -138,7 +138,7 @@ async function listarBarbeiro(req, res) {
   try {
     let query = `
       SELECT a.id, a.data_hora, a.status, a.valor_cobrado, a.duracao_min,
-             s.nome AS servico,
+             s.nome AS servico, a.observacao,
              u.nome AS cliente, u.telefone AS cliente_telefone
       FROM agendamentos a
       JOIN servicos s ON s.id = a.servico_id
