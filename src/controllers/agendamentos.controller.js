@@ -321,11 +321,15 @@ async function removerBloqueio(req, res) {
 // ==========================================
 async function clientesAtivos(req, res) {
   try {
+    // Só retorna telefones de clientes com agendamentos confirmados no futuro
     const [rows] = await pool.query(
       `SELECT DISTINCT u.telefone
        FROM agendamentos a
        JOIN usuarios u ON u.id = a.cliente_id
-       WHERE a.status = 'confirmado' AND a.data_hora >= NOW()`
+       WHERE a.status = 'confirmado'
+         AND a.data_hora >= NOW()
+         AND u.telefone IS NOT NULL
+         AND u.telefone != ''`
     );
     return res.json(rows);
   } catch (err) {

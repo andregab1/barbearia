@@ -16,7 +16,7 @@ async function listar(req, res) {
       `SELECT c.id, u.nome, u.email, u.telefone, c.ativo
        FROM colaboradores c
        JOIN usuarios u ON u.id = c.usuario_id
-       WHERE c.barbearia_id = ?
+       WHERE c.barbearia_id = ? AND c.ativo = 1 AND u.ativo = 1
        ORDER BY u.nome ASC`,
       [barbearia_id]
     );
