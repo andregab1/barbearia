@@ -11,6 +11,7 @@ async function iniciar() {
   try {
     const [rows] = await pool.query('SELECT 1');
     console.log('✅ Banco de dados conectado com sucesso!');
+    console.log('🔑 JWT_SECRET configurado:', process.env.JWT_SECRET ? `Sim (${process.env.JWT_SECRET.length} chars)` : 'NÃO CONFIGURADO!');
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
     });
