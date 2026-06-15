@@ -38,7 +38,7 @@ async function buscar(req, res) {
 
 async function personalizar(req, res) {
   const { id } = req.params;
-  const { cor_primaria, cor_secundaria } = req.body;
+  const { cor_primaria, cor_secundaria, logo_base64 } = req.body;
 
   try {
     const [barbearia] = await pool.query(
@@ -51,18 +51,19 @@ async function personalizar(req, res) {
     const campos  = [];
     const valores = [];
 
-    // Salva logo como base64 no banco (sem filesystem)
+    // Logo recebida como base64 via JSON
     let logoUrl = null;
-    if (req.file) {
+    if (logo_base64 && logo_base64.startsWith('data:image')) {
+      logoUrl = logo_base64;
+      campos.push('logo_url = ?');
+      valores.push(logoUrl);
+    }
+
+    // Arquivo via multipart (fallback)
+    if (!logoUrl && req.file) {
       const base64 = req.file.buffer.toString('base64');
       const mime   = req.file.mimetype;
       logoUrl      = `data:${mime};base64,${base64}`;
-
-      // Verifica tamanho antes de salvar (max 1MB como base64)
-      if (logoUrl.length > 1024 * 1024) {
-        return res.status(413).json({ erro: 'Imagem muito grande. Use uma imagem menor que 700KB.' });
-      }
-
       campos.push('logo_url = ?');
       valores.push(logoUrl);
     }
@@ -81,16 +82,19 @@ async function personalizar(req, res) {
     }
 
     valores.push(id);
-    await pool.query(`UPDATE barbearias SET ${campos.join(', ')} WHERE id = ?`, valores);
+    await pool.query(
+      `UPDATE barbearias SET ${campos.join(', ')} WHERE id = ?`,
+      valores
+    );
 
     return res.json({
-      mensagem: 'Identidade visual atualizada!',
-      logo_url: logoUrl,
+      mensagem:    'Identidade visual atualizada!',
+      logo_url:    logoUrl,
       cor_primaria,
     });
   } catch (err) {
     console.error('ERRO personalizar:', err.message);
-    return res.status(500).json({ erro: 'Erro interno ao personalizar barbearia.' });
+    return res.status(500).json({ erro: 'Erro interno ao personalizar: ' + err.message });
   }
 }
 
