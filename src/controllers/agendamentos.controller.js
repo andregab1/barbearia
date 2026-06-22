@@ -321,18 +321,35 @@ async function removerBloqueio(req, res) {
 // ==========================================
 async function clientesAtivos(req, res) {
   try {
-    // Só retorna telefones de clientes com agendamentos confirmados no futuro
+    const usuarioId = req.usuario.id;
+
+    // Busca o colaborador_id do barbeiro logado
+    const [colab] = await pool.query(
+      'SELECT id FROM colaboradores WHERE usuario_id = ? AND ativo = 1 LIMIT 1',
+      [usuarioId]
+    );
+
+    if (colab.length === 0) {
+      return res.json([]); // barbeiro sem colaborador vinculado
+    }
+
+    const colaboradorId = colab[0].id;
+
+    // Retorna apenas os clientes com agendamento confirmado DESTE barbeiro
     const [rows] = await pool.query(
       `SELECT DISTINCT u.telefone
        FROM agendamentos a
        JOIN usuarios u ON u.id = a.cliente_id
        WHERE a.status = 'confirmado'
          AND a.data_hora >= NOW()
+         AND a.colaborador_id = ?
          AND u.telefone IS NOT NULL
-         AND u.telefone != ''`
+         AND u.telefone != ''`,
+      [colaboradorId]
     );
     return res.json(rows);
   } catch (err) {
+    console.error('ERRO clientesAtivos:', err.message);
     return res.status(500).json({ erro: 'Erro interno.' });
   }
 }
