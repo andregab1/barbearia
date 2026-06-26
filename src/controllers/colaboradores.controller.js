@@ -30,28 +30,52 @@ async function listar(req, res) {
 // RF14: Cadastrar novo colaborador
 // ==========================================
 async function cadastrar(req, res) {
-  const { barbearia_id }                = req.params;
-  const { nome, email, telefone, senha } = req.body;
+  const { barbearia_id }     = req.params;
+  const { nome, telefone, senha } = req.body;
 
   if (!nome || !telefone || !senha) {
     return res.status(400).json({ erro: 'Nome, telefone e senha são obrigatórios.' });
   }
 
   try {
+    // Verificar se já existe usuário com esse telefone nesta barbearia
     const [existente] = await pool.query(
-      'SELECT id FROM usuarios WHERE email = ? OR telefone = ?',
-      [email || null, telefone]
+      `SELECT u.id, c.id AS colab_id, c.ativo AS colab_ativo
+       FROM usuarios u
+       LEFT JOIN colaboradores c ON c.usuario_id = u.id AND c.barbearia_id = ?
+       WHERE u.telefone = ?`,
+      [barbearia_id, telefone]
     );
+
     if (existente.length > 0) {
-      return res.status(409).json({ erro: 'E-mail ou telefone já cadastrado.' });
+      const u = existente[0];
+
+      // Colaborador ativo → bloquear
+      if (u.colab_ativo === 1) {
+        return res.status(409).json({ erro: 'Telefone já cadastrado como colaborador ativo.' });
+      }
+
+      // Colaborador existente mas inativo → reativar e atualizar dados
+      if (u.colab_id) {
+        const hash = await bcrypt.hash(senha, 10);
+        await pool.query(
+          'UPDATE usuarios SET nome = ?, senha_hash = ?, ativo = 1 WHERE id = ?',
+          [nome, hash, u.id]
+        );
+        await pool.query(
+          'UPDATE colaboradores SET ativo = 1 WHERE id = ?',
+          [u.colab_id]
+        );
+        return res.status(201).json({ mensagem: 'Colaborador reativado!', id: u.id });
+      }
     }
 
+    // Novo colaborador — criar usuário e vínculo
     const hash = await bcrypt.hash(senha, 10);
     const [usuario] = await pool.query(
-      'INSERT INTO usuarios (nome, email, telefone, senha_hash, role) VALUES (?, ?, ?, ?, ?)',
-      [nome, email || null, telefone, hash, 'barbeiro']
+      'INSERT INTO usuarios (nome, telefone, senha_hash, role) VALUES (?, ?, ?, ?)',
+      [nome, telefone, hash, 'barbeiro']
     );
-
     await pool.query(
       'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
       [barbearia_id, usuario.insertId]
@@ -59,6 +83,7 @@ async function cadastrar(req, res) {
 
     return res.status(201).json({ mensagem: 'Colaborador cadastrado!', id: usuario.insertId });
   } catch (err) {
+    console.error('ERRO cadastrar colaborador:', err.message);
     return res.status(500).json({ erro: 'Erro interno ao cadastrar colaborador.' });
   }
 }
