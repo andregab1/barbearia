@@ -1,0 +1,60 @@
+# ==========================================
+# CONFIGURAÇÃO: Dependências do projeto Flutter
+# ==========================================
+name: getcutt
+description: GetCutt — App de gestão para barbearias.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP e API
+  http: ^1.2.0
+
+  # Gerenciamento de estado
+  provider: ^6.1.2
+
+  # Armazenamento local (token JWT)
+  shared_preferences: ^2.2.3
+
+  # Navegação
+  go_router: ^13.2.0
+
+  # Formatação de datas
+  intl: ^0.19.0
+
+  # Integração com contatos do celular (RF09)
+  flutter_contacts: ^1.1.9+2
+  url_launcher: ^6.2.5
+
+  # Notificações push locais (RF08)
+  flutter_local_notifications: ^17.2.2
+
+  # Seletor de imagem para logo (RF04)
+  image_picker: ^1.1.2
+
+  # Ícones extras
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  # RF04: Assets de imagens e logo da barbearia
+  assets:
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: false
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
