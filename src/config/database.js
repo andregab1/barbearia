@@ -7,9 +7,10 @@ const mysql = require('mysql2/promise');
 let poolConfig;
 
 if (process.env.DATABASE_URL) {
-  // Railway: usa URL de conexão direta
-  // mysql://user:password@host:port/database
+  // Railway/Aiven: usa URL de conexão direta
+  // mysql://user:password@host:port/database?ssl-mode=REQUIRED
   const url = new URL(process.env.DATABASE_URL);
+  const sslMode = url.searchParams.get('ssl-mode');
   poolConfig = {
     host:     url.hostname,
     port:     parseInt(url.port) || 3306,
@@ -17,9 +18,13 @@ if (process.env.DATABASE_URL) {
     password: url.password,
     database: url.pathname.replace('/', ''),
   };
+  if (sslMode && sslMode.toUpperCase() === 'REQUIRED') {
+    poolConfig.ssl = { rejectUnauthorized: false };
+  }
   console.log('🔌 Conectando via DATABASE_URL');
   console.log('   host:', url.hostname);
   console.log('   database:', url.pathname.replace('/', ''));
+  console.log('   ssl:', !!poolConfig.ssl);
 } else {
   // Local: usa variáveis separadas do .env
   require('dotenv').config();
