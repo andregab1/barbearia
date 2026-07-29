@@ -11,6 +11,7 @@ import 'agendar_screen.dart';
 import 'meus_agendamentos_screen.dart';
 import 'historico_screen.dart';
 import '../../../shared/widgets/perfil_screen.dart';
+import '../../../shared/widgets/responsive_nav_shell.dart';
 
 class ClienteHomeScreen extends StatefulWidget {
   const ClienteHomeScreen({super.key});
@@ -29,21 +30,21 @@ class _ClienteHomeScreenState extends State<ClienteHomeScreen> {
     PerfilScreen(),
   ];
 
+  static const _itens = [
+    NavShellItem(icon: Icons.home_outlined,           activeIcon: Icons.home,           label: 'Início'),
+    NavShellItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Agenda'),
+    NavShellItem(icon: Icons.history_outlined,        activeIcon: Icons.history,        label: 'Histórico'),
+    NavShellItem(icon: Icons.person_outline,          activeIcon: Icons.person,         label: 'Perfil'),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    return ResponsiveNavShell(
+      currentIndex: _paginaAtual,
+      onTap: (i) => setState(() => _paginaAtual = i),
+      items: _itens,
+      tituloMarca: 'GetCutt',
       body: _paginas[_paginaAtual],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _paginaAtual,
-        onTap: (i) => setState(() => _paginaAtual = i),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined),           activeIcon: Icon(Icons.home),           label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), activeIcon: Icon(Icons.calendar_month), label: 'Agenda'),
-          BottomNavigationBarItem(icon: Icon(Icons.history_outlined),        activeIcon: Icon(Icons.history),        label: 'Histórico'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline),          activeIcon: Icon(Icons.person),         label: 'Perfil'),
-        ],
-      ),
     );
   }
 }

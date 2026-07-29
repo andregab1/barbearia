@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 
 class BarbeariaThemeService extends ChangeNotifier {
   String? _logoUrl;
-  Color   _corPrimaria   = const Color(0xFFC9A84C);
+  Color   _corPrimaria   = const Color(0xFF111111);
   bool    _modoClaro     = false;
 
   String? get logoUrl     => _logoUrl;
@@ -98,7 +98,7 @@ class BarbeariaThemeService extends ChangeNotifier {
     await prefs.remove('logo_url');
     await prefs.remove('cor_primaria');
     _logoUrl     = null;
-    _corPrimaria = const Color(0xFFC9A84C);
+    _corPrimaria = const Color(0xFF111111);
     notifyListeners();
   }
 

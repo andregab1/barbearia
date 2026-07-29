@@ -3,9 +3,9 @@
 // ==========================================
 class AppConstants {
   // ==========================================
-  // URL do backend (Railway - produção)
+  // URL do backend (Render - produção)
   // ==========================================
-  static const String baseUrl = 'https://barbearia-production-3a1c.up.railway.app/api';
+  static const String baseUrl = 'https://barbearia-n6jj.onrender.com/api';
 
   // ==========================================
   // Rotas do app
@@ -16,7 +16,7 @@ class AppConstants {
   static const String routeCliente      = '/cliente';
   static const String routeBarbeiro     = '/barbeiro';
   static const String routeAdmin        = '/admin';
-  
+
   // Rotas Home adicionadas para corrigir o erro de compilação
   static const String routeHomeCliente  = '/home-cliente';
   static const String routeHomeBarbeiro = '/home-barbeiro';

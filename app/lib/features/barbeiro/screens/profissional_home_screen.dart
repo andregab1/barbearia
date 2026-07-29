@@ -18,6 +18,7 @@ import '../../../features/barbeiro/screens/horarios_screen.dart';
 import '../../../features/barbeiro/screens/contatos_screen.dart';
 import '../../../features/admin/screens/personalizacao_screen.dart';
 import '../../../shared/widgets/perfil_screen.dart';
+import '../../../shared/widgets/responsive_nav_shell.dart';
 
 class ProfissionalHomeScreen extends StatefulWidget {
   const ProfissionalHomeScreen({super.key});
@@ -69,6 +70,22 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
     const PerfilScreen(),
   ];
 
+  static const _itensAdmin = [
+    NavShellItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Agenda'),
+    NavShellItem(icon: Icons.schedule_outlined,       activeIcon: Icons.schedule,       label: 'Horários'),
+    NavShellItem(icon: Icons.bar_chart_outlined,      activeIcon: Icons.bar_chart,      label: 'Gestão'),
+    NavShellItem(icon: Icons.palette_outlined,        activeIcon: Icons.palette,        label: 'Visual'),
+    NavShellItem(icon: Icons.person_outline,          activeIcon: Icons.person,         label: 'Perfil'),
+  ];
+
+  static const _itensBarbeiro = [
+    NavShellItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month, label: 'Agenda'),
+    NavShellItem(icon: Icons.block_outlined,          activeIcon: Icons.block,          label: 'Bloquear'),
+    NavShellItem(icon: Icons.schedule_outlined,       activeIcon: Icons.schedule,       label: 'Horários'),
+    NavShellItem(icon: Icons.contacts_outlined,       activeIcon: Icons.contacts,       label: 'Contatos'),
+    NavShellItem(icon: Icons.person_outline,          activeIcon: Icons.person,         label: 'Perfil'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final role       = context.read<AuthController>().role;
@@ -76,26 +93,12 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
     final paginas    = isAdmin ? _paginasAdmin    : _paginasBarbeiro;
     final paginaSegura = _paginaAtual.clamp(0, paginas.length - 1);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    return ResponsiveNavShell(
+      currentIndex: paginaSegura,
+      onTap: (i) => setState(() => _paginaAtual = i),
+      items: isAdmin ? _itensAdmin : _itensBarbeiro,
+      tituloMarca: 'GetCutt',
       body: paginas[paginaSegura],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: paginaSegura,
-        onTap: (i) => setState(() => _paginaAtual = i),
-        items: isAdmin ? const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), activeIcon: Icon(Icons.calendar_month), label: 'Agenda'),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined),       activeIcon: Icon(Icons.schedule),       label: 'Horários'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined),      activeIcon: Icon(Icons.bar_chart),      label: 'Gestão'),
-          BottomNavigationBarItem(icon: Icon(Icons.palette_outlined),        activeIcon: Icon(Icons.palette),        label: 'Visual'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline),          activeIcon: Icon(Icons.person),         label: 'Perfil'),
-        ] : const [
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), activeIcon: Icon(Icons.calendar_month), label: 'Agenda'),
-          BottomNavigationBarItem(icon: Icon(Icons.block_outlined),          activeIcon: Icon(Icons.block),          label: 'Bloquear'),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined),       activeIcon: Icon(Icons.schedule),       label: 'Horários'),
-          BottomNavigationBarItem(icon: Icon(Icons.contacts_outlined),       activeIcon: Icon(Icons.contacts),       label: 'Contatos'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline),          activeIcon: Icon(Icons.person),         label: 'Perfil'),
-        ],
-      ),
     );
   }
 }

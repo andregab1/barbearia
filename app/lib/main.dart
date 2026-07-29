@@ -63,6 +63,44 @@ class _BarbeariaAppState extends State<BarbeariaApp> {
             darkTheme: AppTheme.temaEscuro(tema.corPrimaria),
             themeMode: tema.modoClaro ? ThemeMode.light : ThemeMode.dark,
             routerConfig: router,
+            // ==========================================
+            // RESPONSIVIDADE WEB
+            // Em telas largas (desktop/navegador), o conteúdo
+            // ocupa uma largura de "site" (não fica esticado
+            // a tela toda, mas também não vira uma moldura de
+            // celular) — no estilo Cal.com (~1100px de largura
+            // máxima, fundo branco/canvas ao redor).
+            // Em telas estreitas (celular), não muda nada.
+            // ==========================================
+            builder: (context, child) {
+              if (child == null) return const SizedBox.shrink();
+
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  const double breakpoint = 700;
+                  const double larguraMaxima = 1500;
+
+                  if (constraints.maxWidth <= breakpoint) {
+                    return child;
+                  }
+
+                  final corFundoLateral =
+                      tema.modoClaro ? const Color(0xFFFFFFFF) : const Color(0xFF101010);
+
+                  return Container(
+                    color: corFundoLateral,
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: larguraMaxima),
+                        child: ClipRect(child: child),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           );
         },
       ),
