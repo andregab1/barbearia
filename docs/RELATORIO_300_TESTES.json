@@ -1,0 +1,2111 @@
+{
+  "summary": {
+    "total": 300,
+    "passed": 300,
+    "failed": 0,
+    "durationMs": 14096,
+    "generatedAt": "2026-08-19T23:26:44.630Z"
+  },
+  "results": [
+    {
+      "index": 1,
+      "name": "health responde",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 2,
+      "name": "raiz responde",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 3,
+      "name": "rota inexistente retorna 404",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 4,
+      "name": "barbearias públicas",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 5,
+      "name": "busca de barbearia",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 6,
+      "name": "busca pública sem resultado",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 7,
+      "name": "detalhe de barbearia",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 8,
+      "name": "barbearia inexistente",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 9,
+      "name": "serviços públicos",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 10,
+      "name": "serviços de tenant inexistente",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 11,
+      "name": "profissionais públicos",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 12,
+      "name": "profissionais tenant inexistente",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 13,
+      "name": "cabeçalhos de segurança 1",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 14,
+      "name": "cabeçalhos de segurança 2",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 15,
+      "name": "cabeçalhos de segurança 3",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 16,
+      "name": "cabeçalhos de segurança 4",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 17,
+      "name": "cabeçalhos de segurança 5",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 18,
+      "name": "cabeçalhos de segurança 6",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 19,
+      "name": "cabeçalhos de segurança 7",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 20,
+      "name": "cabeçalhos de segurança 8",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 21,
+      "name": "login caso 1",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 22,
+      "name": "login caso 2",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 23,
+      "name": "login caso 3",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 24,
+      "name": "login caso 4",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 25,
+      "name": "login caso 5",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 26,
+      "name": "login caso 6",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 27,
+      "name": "login caso 7",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 28,
+      "name": "login caso 8",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 29,
+      "name": "cadastro cliente caso 1",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 30,
+      "name": "cadastro cliente caso 2",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 31,
+      "name": "cadastro cliente caso 3",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 32,
+      "name": "cadastro cliente caso 4",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 33,
+      "name": "cadastro cliente caso 5",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 34,
+      "name": "cadastro cliente caso 6",
+      "passed": true,
+      "status": 409,
+      "error": ""
+    },
+    {
+      "index": 35,
+      "name": "cadastro proprietário caso 1",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 36,
+      "name": "cadastro proprietário caso 2",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 37,
+      "name": "cadastro proprietário caso 3",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 38,
+      "name": "cadastro proprietário caso 4",
+      "passed": true,
+      "status": 409,
+      "error": ""
+    },
+    {
+      "index": 39,
+      "name": "refresh ausente",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 40,
+      "name": "refresh inválido",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 41,
+      "name": "logout vazio",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 42,
+      "name": "logout token inexistente",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 43,
+      "name": "login ignora role do body",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 44,
+      "name": "token inválido rejeitado",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 45,
+      "name": "bearer vazio rejeitado",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 46,
+      "name": "sem autenticação 1",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 47,
+      "name": "token inválido 1",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 48,
+      "name": "sem autenticação 2",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 49,
+      "name": "token inválido 2",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 50,
+      "name": "sem autenticação 3",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 51,
+      "name": "token inválido 3",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 52,
+      "name": "sem autenticação 4",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 53,
+      "name": "token inválido 4",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 54,
+      "name": "sem autenticação 5",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 55,
+      "name": "token inválido 5",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 56,
+      "name": "sem autenticação 6",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 57,
+      "name": "token inválido 6",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 58,
+      "name": "sem autenticação 7",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 59,
+      "name": "token inválido 7",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 60,
+      "name": "sem autenticação 8",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 61,
+      "name": "token inválido 8",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 62,
+      "name": "sem autenticação 9",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 63,
+      "name": "token inválido 9",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 64,
+      "name": "sem autenticação 10",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 65,
+      "name": "token inválido 10",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 66,
+      "name": "sem autenticação 11",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 67,
+      "name": "token inválido 11",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 68,
+      "name": "sem autenticação 12",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 69,
+      "name": "token inválido 12",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 70,
+      "name": "sem autenticação 13",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 71,
+      "name": "token inválido 13",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 72,
+      "name": "sem autenticação 14",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 73,
+      "name": "token inválido 14",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 74,
+      "name": "sem autenticação 15",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 75,
+      "name": "token inválido 15",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 76,
+      "name": "sem autenticação 16",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 77,
+      "name": "token inválido 16",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 78,
+      "name": "sem autenticação 17",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 79,
+      "name": "token inválido 17",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 80,
+      "name": "sem autenticação 18",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 81,
+      "name": "token inválido 18",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 82,
+      "name": "sem autenticação 19",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 83,
+      "name": "token inválido 19",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 84,
+      "name": "sem autenticação 20",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 85,
+      "name": "token inválido 20",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 86,
+      "name": "sem autenticação 21",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 87,
+      "name": "token inválido 21",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 88,
+      "name": "sem autenticação 22",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 89,
+      "name": "token inválido 22",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 90,
+      "name": "sem autenticação 23",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 91,
+      "name": "token inválido 23",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 92,
+      "name": "sem autenticação 24",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 93,
+      "name": "token inválido 24",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 94,
+      "name": "sem autenticação 25",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 95,
+      "name": "token inválido 25",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 96,
+      "name": "sem autenticação 26",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 97,
+      "name": "token inválido 26",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 98,
+      "name": "sem autenticação 27",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 99,
+      "name": "token inválido 27",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 100,
+      "name": "sem autenticação 28",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 101,
+      "name": "token inválido 28",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 102,
+      "name": "sem autenticação 29",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 103,
+      "name": "token inválido 29",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 104,
+      "name": "sem autenticação 30",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 105,
+      "name": "token inválido 30",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 106,
+      "name": "cliente proibido em admin 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 107,
+      "name": "barbeiro proibido em admin 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 108,
+      "name": "cliente proibido em admin 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 109,
+      "name": "barbeiro proibido em admin 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 110,
+      "name": "cliente proibido em admin 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 111,
+      "name": "barbeiro proibido em admin 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 112,
+      "name": "cliente proibido em admin 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 113,
+      "name": "barbeiro proibido em admin 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 114,
+      "name": "cliente proibido em admin 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 115,
+      "name": "barbeiro proibido em admin 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 116,
+      "name": "cliente proibido em admin 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 117,
+      "name": "barbeiro proibido em admin 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 118,
+      "name": "cliente proibido em admin 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 119,
+      "name": "barbeiro proibido em admin 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 120,
+      "name": "cliente proibido em admin 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 121,
+      "name": "barbeiro proibido em admin 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 122,
+      "name": "cliente proibido em admin 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 123,
+      "name": "barbeiro proibido em admin 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 124,
+      "name": "cliente proibido em admin 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 125,
+      "name": "barbeiro proibido em admin 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 126,
+      "name": "cliente proibido em admin 11",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 127,
+      "name": "barbeiro proibido em admin 11",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 128,
+      "name": "cliente proibido em admin 12",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 129,
+      "name": "barbeiro proibido em admin 12",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 130,
+      "name": "cliente proibido em admin 13",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 131,
+      "name": "barbeiro proibido em admin 13",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 132,
+      "name": "cliente proibido em admin 14",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 133,
+      "name": "barbeiro proibido em admin 14",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 134,
+      "name": "cliente proibido em admin 15",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 135,
+      "name": "barbeiro proibido em admin 15",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 136,
+      "name": "admin proibido em cliente 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 137,
+      "name": "barbeiro proibido em cliente 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 138,
+      "name": "admin proibido em cliente 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 139,
+      "name": "barbeiro proibido em cliente 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 140,
+      "name": "admin proibido em cliente 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 141,
+      "name": "barbeiro proibido em cliente 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 142,
+      "name": "admin proibido em cliente 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 143,
+      "name": "barbeiro proibido em cliente 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 144,
+      "name": "admin proibido em cliente 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 145,
+      "name": "barbeiro proibido em cliente 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 146,
+      "name": "admin proibido em cliente 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 147,
+      "name": "barbeiro proibido em cliente 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 148,
+      "name": "admin proibido em cliente 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 149,
+      "name": "barbeiro proibido em cliente 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 150,
+      "name": "admin proibido em cliente 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 151,
+      "name": "barbeiro proibido em cliente 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 152,
+      "name": "admin proibido em cliente 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 153,
+      "name": "barbeiro proibido em cliente 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 154,
+      "name": "admin proibido em cliente 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 155,
+      "name": "barbeiro proibido em cliente 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 156,
+      "name": "admin proibido em cliente 11",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 157,
+      "name": "barbeiro proibido em cliente 11",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 158,
+      "name": "admin proibido em cliente 12",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 159,
+      "name": "barbeiro proibido em cliente 12",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 160,
+      "name": "admin proibido em cliente 13",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 161,
+      "name": "barbeiro proibido em cliente 13",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 162,
+      "name": "admin proibido em cliente 14",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 163,
+      "name": "barbeiro proibido em cliente 14",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 164,
+      "name": "admin proibido em cliente 15",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 165,
+      "name": "barbeiro proibido em cliente 15",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 166,
+      "name": "admin externo isolado relatório 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 167,
+      "name": "admin externo isolado financeiro 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 168,
+      "name": "admin externo isolado relatório 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 169,
+      "name": "admin externo isolado financeiro 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 170,
+      "name": "admin externo isolado relatório 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 171,
+      "name": "admin externo isolado financeiro 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 172,
+      "name": "admin externo isolado relatório 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 173,
+      "name": "admin externo isolado financeiro 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 174,
+      "name": "admin externo isolado relatório 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 175,
+      "name": "admin externo isolado financeiro 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 176,
+      "name": "admin externo isolado relatório 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 177,
+      "name": "admin externo isolado financeiro 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 178,
+      "name": "admin externo isolado relatório 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 179,
+      "name": "admin externo isolado financeiro 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 180,
+      "name": "admin externo isolado relatório 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 181,
+      "name": "admin externo isolado financeiro 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 182,
+      "name": "admin externo isolado relatório 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 183,
+      "name": "admin externo isolado financeiro 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 184,
+      "name": "admin externo isolado relatório 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 185,
+      "name": "admin externo isolado financeiro 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 186,
+      "name": "leitura válida 1",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 187,
+      "name": "leitura válida 2",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 188,
+      "name": "leitura válida 3",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 189,
+      "name": "leitura válida 4",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 190,
+      "name": "leitura válida 5",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 191,
+      "name": "leitura válida 6",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 192,
+      "name": "leitura válida 7",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 193,
+      "name": "leitura válida 8",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 194,
+      "name": "leitura válida 9",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 195,
+      "name": "leitura válida 10",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 196,
+      "name": "leitura válida 11",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 197,
+      "name": "leitura válida 12",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 198,
+      "name": "leitura válida 13",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 199,
+      "name": "leitura válida 14",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 200,
+      "name": "leitura válida 15",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 201,
+      "name": "leitura válida 16",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 202,
+      "name": "leitura válida 17",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 203,
+      "name": "leitura válida 18",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 204,
+      "name": "leitura válida 19",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 205,
+      "name": "leitura válida 20",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 206,
+      "name": "despesa hostil 1",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 207,
+      "name": "serviço hostil 1",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 208,
+      "name": "despesa hostil 2",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 209,
+      "name": "serviço hostil 2",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 210,
+      "name": "despesa hostil 3",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 211,
+      "name": "serviço hostil 3",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 212,
+      "name": "despesa hostil 4",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 213,
+      "name": "serviço hostil 4",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 214,
+      "name": "despesa hostil 5",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 215,
+      "name": "serviço hostil 5",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 216,
+      "name": "despesa hostil 6",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 217,
+      "name": "serviço hostil 6",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 218,
+      "name": "despesa hostil 7",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 219,
+      "name": "serviço hostil 7",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 220,
+      "name": "despesa hostil 8",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 221,
+      "name": "serviço hostil 8",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 222,
+      "name": "despesa hostil 9",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 223,
+      "name": "serviço hostil 9",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 224,
+      "name": "despesa hostil 10",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 225,
+      "name": "serviço hostil 10",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 226,
+      "name": "despesa hostil 11",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 227,
+      "name": "serviço hostil 11",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 228,
+      "name": "despesa hostil 12",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 229,
+      "name": "serviço hostil 12",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 230,
+      "name": "despesa hostil 13",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 231,
+      "name": "serviço hostil 13",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 232,
+      "name": "despesa hostil 14",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 233,
+      "name": "serviço hostil 14",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 234,
+      "name": "despesa hostil 15",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 235,
+      "name": "serviço hostil 15",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 236,
+      "name": "id inexistente seguro 1",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 237,
+      "name": "id inexistente seguro 2",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 238,
+      "name": "id inexistente seguro 3",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 239,
+      "name": "id inexistente seguro 4",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 240,
+      "name": "id inexistente seguro 5",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 241,
+      "name": "id inexistente seguro 6",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 242,
+      "name": "id inexistente seguro 7",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 243,
+      "name": "id inexistente seguro 8",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 244,
+      "name": "id inexistente seguro 9",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 245,
+      "name": "id inexistente seguro 10",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 246,
+      "name": "preview bloqueio válido",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 247,
+      "name": "preview bloqueio invertido",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 248,
+      "name": "bloqueio sem dados",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 249,
+      "name": "bloqueio válido",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 250,
+      "name": "bloqueio duplicado",
+      "passed": true,
+      "status": 409,
+      "error": ""
+    },
+    {
+      "index": 251,
+      "name": "recorrência inválida zero",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 252,
+      "name": "recorrência inválida 91",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 253,
+      "name": "recorrência válida",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 254,
+      "name": "listar bloqueios",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 255,
+      "name": "horários salvar vazio",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 256,
+      "name": "relatório período sem datas",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 257,
+      "name": "relatório período válido",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 258,
+      "name": "finance pagina negativa normalizada",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 259,
+      "name": "despesa válida",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 260,
+      "name": "convite sem dados",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 261,
+      "name": "billing sem credencial/dados",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 262,
+      "name": "webhook sem assinatura",
+      "passed": true,
+      "status": 401,
+      "error": ""
+    },
+    {
+      "index": 263,
+      "name": "alterar status sem ativo",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 264,
+      "name": "editar colaborador inválido",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 265,
+      "name": "criar serviço inválido",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 266,
+      "name": "editar barbearia externa",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 267,
+      "name": "personalizar cor inválida",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 268,
+      "name": "cancelar agendamento de outro cliente",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 269,
+      "name": "concluir como cliente proibido",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 270,
+      "name": "concluir atendimento válido",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 271,
+      "name": "concluir atendimento duas vezes",
+      "passed": true,
+      "status": 400,
+      "error": ""
+    },
+    {
+      "index": 272,
+      "name": "caixa contém receita concluída",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 273,
+      "name": "perfil cliente não acessa outro usuário",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 274,
+      "name": "barbeiro não acessa outro usuário",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 275,
+      "name": "admin não lê perfil privado do funcionário",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 276,
+      "name": "admin externo não acessa usuário",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 277,
+      "name": "agenda profissional externa negada",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 278,
+      "name": "horário profissional externo negado",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 279,
+      "name": "dashboard profissional externo negado",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 280,
+      "name": "finance tenant externo negado",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 281,
+      "name": "rota desconhecida segura 281",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 282,
+      "name": "rota desconhecida segura 282",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 283,
+      "name": "rota desconhecida segura 283",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 284,
+      "name": "rota desconhecida segura 284",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 285,
+      "name": "rota desconhecida segura 285",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 286,
+      "name": "rota desconhecida segura 286",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 287,
+      "name": "rota desconhecida segura 287",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 288,
+      "name": "rota desconhecida segura 288",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 289,
+      "name": "rota desconhecida segura 289",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 290,
+      "name": "rota desconhecida segura 290",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 291,
+      "name": "rota desconhecida segura 291",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 292,
+      "name": "rota desconhecida segura 292",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 293,
+      "name": "rota desconhecida segura 293",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 294,
+      "name": "rota desconhecida segura 294",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 295,
+      "name": "rota desconhecida segura 295",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 296,
+      "name": "rota desconhecida segura 296",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 297,
+      "name": "rota desconhecida segura 297",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 298,
+      "name": "rota desconhecida segura 298",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 299,
+      "name": "rota desconhecida segura 299",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    },
+    {
+      "index": 300,
+      "name": "rota desconhecida segura 300",
+      "passed": true,
+      "status": 404,
+      "error": ""
+    }
+  ]
+}

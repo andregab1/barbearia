@@ -19,11 +19,18 @@ class AuthService {
 
     if (result.containsKey('access_token')) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.keyAccessToken,  result['access_token']);
-      await prefs.setString(AppConstants.keyRefreshToken, result['refresh_token']);
-      await prefs.setInt(   AppConstants.keyUsuarioId,    result['usuario']['id']);
-      await prefs.setString(AppConstants.keyUsuarioNome,  result['usuario']['nome']);
-      await prefs.setString(AppConstants.keyUsuarioRole,  result['usuario']['role']);
+      await prefs.setString(
+          AppConstants.keyAccessToken, result['access_token']);
+      await prefs.setString(
+          AppConstants.keyRefreshToken, result['refresh_token']);
+      await prefs.setInt(AppConstants.keyUsuarioId, result['usuario']['id']);
+      await prefs.setString(
+          AppConstants.keyUsuarioNome, result['usuario']['nome']);
+      await prefs.setString(
+          AppConstants.keyUsuarioRole, result['usuario']['role']);
+      if (result['barbearia_id'] != null) {
+        await prefs.setInt(AppConstants.keyBarbeariaId, result['barbearia_id']);
+      }
     }
 
     return result;
@@ -33,11 +40,37 @@ class AuthService {
   // RF01: Cadastro de novo cliente
   // ==========================================
   static Future<Map<String, dynamic>> cadastrar(
-    String nome, String telefone, String senha, {String? email}
-  ) async {
+      String nome, String telefone, String senha,
+      {String? email, String? username}) async {
     return ApiService.post(
       '/auth/cadastrar',
-      {'nome': nome, 'telefone': telefone, 'senha': senha, 'email': email},
+      {
+        'nome': nome,
+        'telefone': telefone,
+        'senha': senha,
+        'email': email,
+        'username': username,
+      },
+      auth: false,
+    );
+  }
+
+  static Future<Map<String, dynamic>> cadastrarProprietario({
+    required String nomeProprietario,
+    required String nomeBarbearia,
+    required String telefone,
+    required String email,
+    required String senha,
+  }) {
+    return ApiService.post(
+      '/auth/register-owner',
+      {
+        'owner_name': nomeProprietario,
+        'shop_name': nomeBarbearia,
+        'phone': telefone,
+        'email': email,
+        'password': senha,
+      },
       auth: false,
     );
   }
@@ -52,12 +85,12 @@ class AuthService {
     await ApiService.post('/auth/logout', {'refresh_token': refreshToken});
 
     // Preserva logo e cores para manter tema mesmo após logout
-    final logoUrl    = prefs.getString('logo_url');
+    final logoUrl = prefs.getString('logo_url');
     final corPrimaria = prefs.getString('cor_primaria');
 
     await prefs.clear();
 
-    if (logoUrl    != null) await prefs.setString('logo_url',     logoUrl);
+    if (logoUrl != null) await prefs.setString('logo_url', logoUrl);
     if (corPrimaria != null) await prefs.setString('cor_primaria', corPrimaria);
   }
 
@@ -82,5 +115,10 @@ class AuthService {
   static Future<String?> getUsuarioNome() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(AppConstants.keyUsuarioNome);
+  }
+
+  static Future<int?> getBarbeariaId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(AppConstants.keyBarbeariaId);
   }
 }

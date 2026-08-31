@@ -1,0 +1,4154 @@
+{
+  "generatedAt": "2026-08-30T23:16:58.583Z",
+  "database": "barbearia_db",
+  "totals": {
+    "tables": 26,
+    "columns": 231,
+    "foreignKeys": 38,
+    "indexes": 120
+  },
+  "tables": [
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 23,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 16,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 1,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 90,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 15,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 41,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 2,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 52,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 8,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 7,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 15,
+      "TABLE_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "TABLE_TYPE": "BASE TABLE",
+      "ENGINE": "InnoDB",
+      "TABLE_ROWS": 0,
+      "TABLE_COMMENT": ""
+    }
+  ],
+  "columns": [
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "agendamento_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "servico_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "preco_cobrado",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(8,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "duracao_min",
+      "DATA_TYPE": "smallint",
+      "COLUMN_TYPE": "smallint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "cliente_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "colaborador_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "servico_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "data_hora",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "duracao_min",
+      "DATA_TYPE": "smallint",
+      "COLUMN_TYPE": "smallint",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pendente','confirmado','concluido','cancelado')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "confirmado",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "valor_cobrado",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(8,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "observacao",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "acao",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "recurso",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "recurso_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "request_id",
+      "DATA_TYPE": "char",
+      "COLUMN_TYPE": "char(36)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "detalhes",
+      "DATA_TYPE": "json",
+      "COLUMN_TYPE": "json",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "admin_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "nome",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(150)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "slug",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "descricao",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "logo_url",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(500)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "cor_primaria",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(7)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "#1A1A1A",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "cor_secundaria",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(7)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "#C9A84C",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "telefone",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(20)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "email",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(150)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "endereco",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(300)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 12,
+      "COLUMN_NAME": "timezone",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(64)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "America/Sao_Paulo",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 13,
+      "COLUMN_NAME": "ativa",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 14,
+      "COLUMN_NAME": "onboarding_concluido",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 15,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "ORDINAL_POSITION": 16,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "payment_id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "appointment_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "criado_por",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "tipo",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('income','expense','refund','commission')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "categoria",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(60)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "descricao",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(240)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "valor",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "ocorrido_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "colaborador_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "agendamento_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "payment_id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "percentual",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(5,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "base_calculo",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "valor",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pending','available','paid','canceled')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "pending",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "disponivel_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "pago_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "ORDINAL_POSITION": 12,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "plataforma",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('web','android','ios')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "token",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(500)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "ultimo_uso_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "colaborador_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "data_hora_ini",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "data_hora_fim",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "motivo",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(200)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "colaborador_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "dia_semana",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": "0=Dom, 1=Seg, ..., 6=Sab"
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "hora_inicio",
+      "DATA_TYPE": "time",
+      "COLUMN_TYPE": "time",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "hora_fim",
+      "DATA_TYPE": "time",
+      "COLUMN_TYPE": "time",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "email",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(150)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "telefone",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(20)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "papel",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('manager','receptionist','professional')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "token_hash",
+      "DATA_TYPE": "char",
+      "COLUMN_TYPE": "char(64)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "expira_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "aceito_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "convidado_por",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "papel",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('owner','manager','receptionist','professional')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "agendamento_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "tipo",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('lembrete','cancelamento','confirmacao','bloqueio')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "titulo",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(150)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "mensagem",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "enviada",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "enviada_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "agendada_para",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": "Quando deve ser disparada"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "notificacao_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "canal",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('push','whatsapp','email')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "provedor",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(40)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "idempotency_key",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(120)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('queued','sending','delivered','failed','canceled')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "queued",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "tentativas",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "proxima_tentativa_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "provedor_mensagem_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(160)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "ultimo_erro",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(500)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "entregue_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 12,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "ORDINAL_POSITION": 13,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "push_ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "whatsapp_ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "email_ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "marketing_ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "destino_hash",
+      "DATA_TYPE": "char",
+      "COLUMN_TYPE": "char(64)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "canal",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('email','whatsapp','sms')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "proposito",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('quick_access','verify_contact','password_reset')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "codigo_hash",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(255)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "tentativas",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "expira_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "consumido_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "provedor",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(30)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "mercado_pago",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "conta_externa_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(120)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pending','active','restricted','disabled')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "pending",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "credencial_criptografada",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "agendamento_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "provedor",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(30)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "mercado_pago",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "provedor_pagamento_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(120)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "idempotency_key",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(100)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "tipo",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('subscription','deposit','service')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "metodo",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pix','credit_card','debit_card','cash','other')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pending','authorized','paid','failed','canceled','refunded','partially_refunded')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "pending",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "valor",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 12,
+      "COLUMN_NAME": "moeda",
+      "DATA_TYPE": "char",
+      "COLUMN_TYPE": "char(3)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "BRL",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 13,
+      "COLUMN_NAME": "pago_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 14,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "payments",
+      "ORDINAL_POSITION": 15,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "codigo",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(40)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "nome",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "preco_mensal",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "limite_profissionais",
+      "DATA_TYPE": "smallint",
+      "COLUMN_TYPE": "smallint unsigned",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "recursos",
+      "DATA_TYPE": "json",
+      "COLUMN_TYPE": "json",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "plans",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "usuario_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "token",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(500)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "expira_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "payment_id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "provedor_reembolso_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(120)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "idempotency_key",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(100)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('pending','processed','failed')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "pending",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "valor",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(10,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "motivo",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(240)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "processado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "name",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(255)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "applied_at",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "nome",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(100)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "descricao",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "preco",
+      "DATA_TYPE": "decimal",
+      "COLUMN_TYPE": "decimal(8,2)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "duracao_min",
+      "DATA_TYPE": "smallint",
+      "COLUMN_TYPE": "smallint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": "Duração em minutos"
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "barbearia_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "plan_id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "provedor",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(30)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "mercado_pago",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "provedor_assinatura_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(120)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('trial','active','past_due','paused','canceled')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "trial",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "periodo_inicio",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "periodo_fim",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "cancelar_ao_final",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "0",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "COLUMN_TYPE": "int unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "nome",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(100)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "email",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(150)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "username",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(50)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "telefone",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(20)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "UNI",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "data_nascimento",
+      "DATA_TYPE": "date",
+      "COLUMN_TYPE": "date",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "senha_hash",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(255)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "role",
+      "DATA_TYPE": "enum",
+      "COLUMN_TYPE": "enum('cliente','barbeiro','admin')",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "cliente",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 9,
+      "COLUMN_NAME": "ativo",
+      "DATA_TYPE": "tinyint",
+      "COLUMN_TYPE": "tinyint(1)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": "1",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 10,
+      "COLUMN_NAME": "foto_url",
+      "DATA_TYPE": "text",
+      "COLUMN_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 11,
+      "COLUMN_NAME": "bio",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(280)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 12,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "ORDINAL_POSITION": 13,
+      "COLUMN_NAME": "atualizado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 1,
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "bigint",
+      "COLUMN_TYPE": "bigint unsigned",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "PRI",
+      "EXTRA": "auto_increment",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 2,
+      "COLUMN_NAME": "provedor",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(30)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 3,
+      "COLUMN_NAME": "evento_externo_id",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(160)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 4,
+      "COLUMN_NAME": "tipo",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(80)",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 5,
+      "COLUMN_NAME": "payload",
+      "DATA_TYPE": "json",
+      "COLUMN_TYPE": "json",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 6,
+      "COLUMN_NAME": "processado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "MUL",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 7,
+      "COLUMN_NAME": "erro",
+      "DATA_TYPE": "varchar",
+      "COLUMN_TYPE": "varchar(500)",
+      "IS_NULLABLE": "YES",
+      "COLUMN_KEY": "",
+      "EXTRA": "",
+      "COLUMN_DEFAULT": null,
+      "COLUMN_COMMENT": ""
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "ORDINAL_POSITION": 8,
+      "COLUMN_NAME": "criado_em",
+      "DATA_TYPE": "datetime",
+      "COLUMN_TYPE": "datetime",
+      "IS_NULLABLE": "NO",
+      "COLUMN_KEY": "",
+      "EXTRA": "DEFAULT_GENERATED",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP",
+      "COLUMN_COMMENT": ""
+    }
+  ],
+  "foreignKeys": [
+    {
+      "CONSTRAINT_NAME": "fk_agendamento_servicos_agendamento",
+      "TABLE_NAME": "agendamento_servicos",
+      "COLUMN_NAME": "agendamento_id",
+      "REFERENCED_TABLE_NAME": "agendamentos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_agendamento_servicos_servico",
+      "TABLE_NAME": "agendamento_servicos",
+      "COLUMN_NAME": "servico_id",
+      "REFERENCED_TABLE_NAME": "servicos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_agend_cliente",
+      "TABLE_NAME": "agendamentos",
+      "COLUMN_NAME": "cliente_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_agend_colaborador",
+      "TABLE_NAME": "agendamentos",
+      "COLUMN_NAME": "colaborador_id",
+      "REFERENCED_TABLE_NAME": "colaboradores",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_agend_servico",
+      "TABLE_NAME": "agendamentos",
+      "COLUMN_NAME": "servico_id",
+      "REFERENCED_TABLE_NAME": "servicos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_audit_barbearia",
+      "TABLE_NAME": "audit_logs",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_audit_usuario",
+      "TABLE_NAME": "audit_logs",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_barbearia_admin",
+      "TABLE_NAME": "barbearias",
+      "COLUMN_NAME": "admin_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_cash_appointment",
+      "TABLE_NAME": "cash_entries",
+      "COLUMN_NAME": "appointment_id",
+      "REFERENCED_TABLE_NAME": "agendamentos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_cash_barbearia",
+      "TABLE_NAME": "cash_entries",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_cash_creator",
+      "TABLE_NAME": "cash_entries",
+      "COLUMN_NAME": "criado_por",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_cash_payment",
+      "TABLE_NAME": "cash_entries",
+      "COLUMN_NAME": "payment_id",
+      "REFERENCED_TABLE_NAME": "payments",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_colab_barbearia",
+      "TABLE_NAME": "colaboradores",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_colab_usuario",
+      "TABLE_NAME": "colaboradores",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_commission_agendamento",
+      "TABLE_NAME": "commissions",
+      "COLUMN_NAME": "agendamento_id",
+      "REFERENCED_TABLE_NAME": "agendamentos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_commission_barbearia",
+      "TABLE_NAME": "commissions",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_commission_colaborador",
+      "TABLE_NAME": "commissions",
+      "COLUMN_NAME": "colaborador_id",
+      "REFERENCED_TABLE_NAME": "colaboradores",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_commission_payment",
+      "TABLE_NAME": "commissions",
+      "COLUMN_NAME": "payment_id",
+      "REFERENCED_TABLE_NAME": "payments",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_device_token_user",
+      "TABLE_NAME": "device_tokens",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_bloqueio_colaborador",
+      "TABLE_NAME": "horarios_bloqueados",
+      "COLUMN_NAME": "colaborador_id",
+      "REFERENCED_TABLE_NAME": "colaboradores",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_horario_colaborador",
+      "TABLE_NAME": "horarios_funcionamento",
+      "COLUMN_NAME": "colaborador_id",
+      "REFERENCED_TABLE_NAME": "colaboradores",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_invitation_barbearia",
+      "TABLE_NAME": "invitations",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_invitation_inviter",
+      "TABLE_NAME": "invitations",
+      "COLUMN_NAME": "convidado_por",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_membership_barbearia",
+      "TABLE_NAME": "memberships",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_membership_usuario",
+      "TABLE_NAME": "memberships",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_notif_agendamento",
+      "TABLE_NAME": "notificacoes",
+      "COLUMN_NAME": "agendamento_id",
+      "REFERENCED_TABLE_NAME": "agendamentos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_notif_usuario",
+      "TABLE_NAME": "notificacoes",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_notification_delivery_notification",
+      "TABLE_NAME": "notification_deliveries",
+      "COLUMN_NAME": "notificacao_id",
+      "REFERENCED_TABLE_NAME": "notificacoes",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_notification_preference_user",
+      "TABLE_NAME": "notification_preferences",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_payment_account_barbearia",
+      "TABLE_NAME": "payment_accounts",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_payment_agendamento",
+      "TABLE_NAME": "payments",
+      "COLUMN_NAME": "agendamento_id",
+      "REFERENCED_TABLE_NAME": "agendamentos",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_payment_barbearia",
+      "TABLE_NAME": "payments",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_payment_usuario",
+      "TABLE_NAME": "payments",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "SET NULL"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_token_usuario",
+      "TABLE_NAME": "refresh_tokens",
+      "COLUMN_NAME": "usuario_id",
+      "REFERENCED_TABLE_NAME": "usuarios",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_refund_payment",
+      "TABLE_NAME": "refunds",
+      "COLUMN_NAME": "payment_id",
+      "REFERENCED_TABLE_NAME": "payments",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_servico_barbearia",
+      "TABLE_NAME": "servicos",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "CASCADE",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_subscription_barbearia",
+      "TABLE_NAME": "subscriptions",
+      "COLUMN_NAME": "barbearia_id",
+      "REFERENCED_TABLE_NAME": "barbearias",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "CASCADE"
+    },
+    {
+      "CONSTRAINT_NAME": "fk_subscription_plan",
+      "TABLE_NAME": "subscriptions",
+      "COLUMN_NAME": "plan_id",
+      "REFERENCED_TABLE_NAME": "plans",
+      "REFERENCED_COLUMN_NAME": "id",
+      "UPDATE_RULE": "NO ACTION",
+      "DELETE_RULE": "RESTRICT"
+    }
+  ],
+  "indexes": [
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "INDEX_NAME": "fk_agendamento_servicos_servico",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "servico_id"
+    },
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "agendamento_id"
+    },
+    {
+      "TABLE_NAME": "agendamento_servicos",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "servico_id"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "fk_agend_servico",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "servico_id"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_cliente_data",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "cliente_id"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_cliente_data",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "data_hora"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_colaborador_data",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "colaborador_id"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_colaborador_data",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "data_hora"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_data_hora",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "data_hora"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "idx_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "agendamentos",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "INDEX_NAME": "idx_audit_tenant_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "INDEX_NAME": "idx_audit_tenant_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "criado_em"
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "INDEX_NAME": "idx_audit_user_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "INDEX_NAME": "idx_audit_user_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "criado_em"
+    },
+    {
+      "TABLE_NAME": "audit_logs",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "INDEX_NAME": "idx_admin_id",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "admin_id"
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "barbearias",
+      "INDEX_NAME": "uq_barbearias_slug",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "slug"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "fk_cash_creator",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "criado_por"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "fk_cash_payment",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "payment_id"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "idx_cash_tenant_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "idx_cash_tenant_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "ocorrido_em"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "cash_entries",
+      "INDEX_NAME": "uq_cash_appointment",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "appointment_id"
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "INDEX_NAME": "idx_barbearia_id",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "INDEX_NAME": "idx_usuario_id",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "INDEX_NAME": "uq_barbearia_usuario",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "colaboradores",
+      "INDEX_NAME": "uq_barbearia_usuario",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "fk_commission_colaborador",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "colaborador_id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "fk_commission_payment",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "payment_id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "idx_commission_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "idx_commission_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "idx_commission_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 3,
+      "COLUMN_NAME": "criado_em"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "uq_commission_appointment_professional",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "agendamento_id"
+    },
+    {
+      "TABLE_NAME": "commissions",
+      "INDEX_NAME": "uq_commission_appointment_professional",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "colaborador_id"
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "INDEX_NAME": "idx_device_user_active",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "INDEX_NAME": "idx_device_user_active",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "ativo"
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "device_tokens",
+      "INDEX_NAME": "uq_device_token",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "token"
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "INDEX_NAME": "idx_colaborador_periodo",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "colaborador_id"
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "INDEX_NAME": "idx_colaborador_periodo",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "data_hora_ini"
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "INDEX_NAME": "idx_colaborador_periodo",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 3,
+      "COLUMN_NAME": "data_hora_fim"
+    },
+    {
+      "TABLE_NAME": "horarios_bloqueados",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "INDEX_NAME": "idx_colaborador_dia",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "colaborador_id"
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "INDEX_NAME": "idx_colaborador_dia",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "dia_semana"
+    },
+    {
+      "TABLE_NAME": "horarios_funcionamento",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "fk_invitation_inviter",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "convidado_por"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "idx_invitation_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "idx_invitation_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "aceito_em"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "idx_invitation_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 3,
+      "COLUMN_NAME": "expira_em"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "invitations",
+      "INDEX_NAME": "uq_invitation_token",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "token_hash"
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "INDEX_NAME": "idx_membership_user",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "INDEX_NAME": "idx_membership_user",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "ativo"
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "INDEX_NAME": "uq_membership_tenant_user",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "memberships",
+      "INDEX_NAME": "uq_membership_tenant_user",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "INDEX_NAME": "fk_notif_agendamento",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "agendamento_id"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "INDEX_NAME": "idx_enviada_agendada",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "enviada"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "INDEX_NAME": "idx_enviada_agendada",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "agendada_para"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "INDEX_NAME": "idx_usuario_id",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "notificacoes",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "INDEX_NAME": "fk_notification_delivery_notification",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "notificacao_id"
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "INDEX_NAME": "idx_notification_delivery_queue",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "INDEX_NAME": "idx_notification_delivery_queue",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "proxima_tentativa_em"
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "notification_deliveries",
+      "INDEX_NAME": "uq_notification_delivery_key",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "idempotency_key"
+    },
+    {
+      "TABLE_NAME": "notification_preferences",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "INDEX_NAME": "idx_otp_lookup",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "destino_hash"
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "INDEX_NAME": "idx_otp_lookup",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "proposito"
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "INDEX_NAME": "idx_otp_lookup",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 3,
+      "COLUMN_NAME": "consumido_em"
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "INDEX_NAME": "idx_otp_lookup",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 4,
+      "COLUMN_NAME": "expira_em"
+    },
+    {
+      "TABLE_NAME": "otp_challenges",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "INDEX_NAME": "uq_payment_account_tenant_provider",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "payment_accounts",
+      "INDEX_NAME": "uq_payment_account_tenant_provider",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "provedor"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "fk_payment_agendamento",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "agendamento_id"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "fk_payment_usuario",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "idx_payment_tenant_status_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "idx_payment_tenant_status_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "idx_payment_tenant_status_date",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 3,
+      "COLUMN_NAME": "criado_em"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "uq_payment_idempotency",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "idempotency_key"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "uq_payment_provider_id",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "provedor"
+    },
+    {
+      "TABLE_NAME": "payments",
+      "INDEX_NAME": "uq_payment_provider_id",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "provedor_pagamento_id"
+    },
+    {
+      "TABLE_NAME": "plans",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "plans",
+      "INDEX_NAME": "uq_plan_codigo",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "codigo"
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "INDEX_NAME": "idx_token",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "token"
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "INDEX_NAME": "idx_usuario_id",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "usuario_id"
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "INDEX_NAME": "token",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "token"
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "INDEX_NAME": "fk_refund_payment",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "payment_id"
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "refunds",
+      "INDEX_NAME": "uq_refund_idempotency",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "idempotency_key"
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "schema_migrations",
+      "INDEX_NAME": "uq_schema_migrations_name",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "name"
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "INDEX_NAME": "idx_barbearia_ativo",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "INDEX_NAME": "idx_barbearia_ativo",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "ativo"
+    },
+    {
+      "TABLE_NAME": "servicos",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "fk_subscription_plan",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "plan_id"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "idx_subscription_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "barbearia_id"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "idx_subscription_tenant_status",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "uq_subscription_provider",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "provedor"
+    },
+    {
+      "TABLE_NAME": "subscriptions",
+      "INDEX_NAME": "uq_subscription_provider",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "provedor_assinatura_id"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "email",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "email"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "idx_email",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "email"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "idx_role",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "role"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "idx_telefone",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "telefone"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "telefone",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "telefone"
+    },
+    {
+      "TABLE_NAME": "usuarios",
+      "INDEX_NAME": "uq_usuarios_username",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "username"
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "INDEX_NAME": "idx_webhook_pending",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "processado_em"
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "INDEX_NAME": "idx_webhook_pending",
+      "NON_UNIQUE": 1,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "criado_em"
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "INDEX_NAME": "PRIMARY",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "INDEX_NAME": "uq_webhook_provider_event",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 1,
+      "COLUMN_NAME": "provedor"
+    },
+    {
+      "TABLE_NAME": "webhook_events",
+      "INDEX_NAME": "uq_webhook_provider_event",
+      "NON_UNIQUE": 0,
+      "SEQ_IN_INDEX": 2,
+      "COLUMN_NAME": "evento_externo_id"
+    }
+  ]
+}

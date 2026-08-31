@@ -1,59 +1,48 @@
-// ==========================================
-// THEME: Identidade visual do app
-// Baseado no design system do Cal.com — monocromático,
-// tipografia Inter, cards cinza-claro, CTA preta.
-// Cores dinâmicas — adapta a claro/escuro
-// ==========================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Modo atual — atualizado pelo BarbeariaThemeService
   static bool _modoClaro = false;
   static void setModo(bool claro) => _modoClaro = claro;
 
   // ==========================================
-  // Tokens Cal.com — cores base do sistema
+  // TOKENS — Dark + Gold Premium
   // ==========================================
-  static const Color _ink              = Color(0xFF111111); // colors.ink / primary
-  static const Color _inkActive        = Color(0xFF242424); // colors.primary-active
-  static const Color _body             = Color(0xFF374151); // colors.body
-  static const Color _muted            = Color(0xFF6B7280); // colors.muted
-  static const Color _canvas           = Color(0xFFFFFFFF); // colors.canvas
-  static const Color _surfaceSoft      = Color(0xFFF8F9FA); // colors.surface-soft
-  static const Color _surfaceCard      = Color(0xFFF5F5F5); // colors.surface-card
-  static const Color _surfaceStrong    = Color(0xFFE5E7EB); // colors.surface-strong / hairline
-  static const Color _surfaceDark      = Color(0xFF101010); // colors.surface-dark
-  static const Color _surfaceDarkElev  = Color(0xFF1A1A1A); // colors.surface-dark-elevated
-  static const Color _onDarkSoft       = Color(0xFFA1A1AA); // colors.on-dark-soft
+  static const Color gold = Color(0xFFD39400);
+  static const Color goldLight = Color(0xFFE0A000);
+
+  static const Color black = Color(0xFF120C0C);
+  static const Color blackPure = Color(0xFF0E0808);
+  static const Color surface = Color(0xFF1A1413);
+  static const Color surfaceElev = Color(0xFF211C1A);
+  static const Color border = Color(0xFF342C29);
+
+  static const Color text = Color(0xFFF4EFEB);
+  static const Color textMuted = Color(0xFFAAA29E);
+
+  static const Color canvasLight = Color(0xFFFAFAF9);
+  static const Color textLight = Color(0xFF1C1917);
+  static const Color mutedLight = Color(0xFF78716C);
+  static const Color surfaceLight = Color(0xFFF5F5F4);
 
   // ==========================================
-  // Cores dinâmicas (mudam com o tema)
+  // Cores funcionais
   // ==========================================
-  static Color get corFundo =>
-      _modoClaro ? _canvas : _surfaceDark;
-  static Color get corFundoSecundario =>
-      _modoClaro ? _surfaceSoft : _surfaceDarkElev;
-  static Color get corCard =>
-      _modoClaro ? _surfaceCard : _surfaceDarkElev;
-  static Color get corTexto =>
-      _modoClaro ? _ink : Colors.white;
-  static Color get corTextoSecundario =>
-      _modoClaro ? _muted : _onDarkSoft;
+  static const Color erro = Color(0xFFD45C5C);
+  static const Color sucesso = Color(0xFF6FA66F);
+  // Aliases de compatibilidade (legado)
+  static const Color corErro = erro;
+  static const Color corSucesso = sucesso;
 
   // ==========================================
-  // Cores fixas (não mudam com tema)
-  // Antes era o dourado da marca — trocado pro
-  // preto do Cal.com, já que várias telas usam
-  // essa constante direto (não só via Theme).
+  // Cores dinâmicas (alternam entre modos)
   // ==========================================
-  static const Color corPrimaria = Color(0xFF111111);
-  static const Color corErro     = Color(0xFFEF4444); // colors.error
-  static const Color corSucesso  = Color(0xFF10B981); // colors.success
+  static Color get corFundoSecundario => _modoClaro ? surfaceLight : surface;
+  static Color get corCard => _modoClaro ? Colors.white : surfaceElev;
+  static Color get corTexto => _modoClaro ? textLight : text;
+  static Color get corTextoSecundario => _modoClaro ? mutedLight : textMuted;
+  static Color get corBorda => _modoClaro ? const Color(0xFFE7E5E4) : border;
 
-  // ==========================================
-  // Adapta cor primária para visibilidade
-  // ==========================================
   static Color adaptarCor(Color cor, {required bool modoClaro}) {
     final lum = cor.computeLuminance();
     if (!modoClaro && lum < 0.06) {
@@ -65,185 +54,484 @@ class AppTheme {
     return cor;
   }
 
-  static Color corSobrePrimaria(Color cor) =>
-      cor.computeLuminance() > 0.35 ? const Color(0xFF1A1A1A) : Colors.white;
-
   // ==========================================
-  // Tipografia — Inter (Cal Sans não é web-safe;
-  // Inter 600 com letter-spacing negativo é a
-  // substituição recomendada pelo próprio Cal.com)
+  // TIPOGRAFIA — Playfair Display + Inter
   // ==========================================
   static TextTheme _textTheme(Color corTexto, Color corMuted) {
-    final base = GoogleFonts.interTextTheme();
-    return base.copyWith(
-      // display-lg — títulos de tela (Cal Sans substituído)
-      headlineLarge: GoogleFonts.inter(
-        color: corTexto, fontSize: 32, fontWeight: FontWeight.w600,
-        letterSpacing: -1.0, height: 1.15,
+    final playfair = GoogleFonts.playfairDisplay();
+    final inter = GoogleFonts.inter();
+    return TextTheme(
+      // Display — títulos monumentais (hero, splash)
+      displayLarge: playfair.copyWith(
+        color: corTexto,
+        fontSize: 48,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1.5,
+        height: 1.1,
       ),
-      // display-sm — subtítulos, preços, cards em destaque
-      headlineMedium: GoogleFonts.inter(
-        color: corTexto, fontSize: 22, fontWeight: FontWeight.w600,
-        letterSpacing: -0.4, height: 1.2,
+      displayMedium: playfair.copyWith(
+        color: corTexto,
+        fontSize: 40,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1.0,
+        height: 1.15,
       ),
-      // title-md — títulos de card
-      titleMedium: GoogleFonts.inter(
-        color: corTexto, fontSize: 18, fontWeight: FontWeight.w600,
+      displaySmall: playfair.copyWith(
+        color: corTexto,
+        fontSize: 32,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.8,
+        height: 1.2,
       ),
-      // title-sm
-      titleSmall: GoogleFonts.inter(
-        color: corTexto, fontSize: 16, fontWeight: FontWeight.w600,
+      // Headline — títulos de tela
+      headlineLarge: playfair.copyWith(
+        color: corTexto,
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.6,
+        height: 1.25,
       ),
-      // body-md — texto padrão
-      bodyLarge: GoogleFonts.inter(color: corTexto, fontSize: 16, height: 1.5),
-      // body-sm / muted
-      bodyMedium: GoogleFonts.inter(color: corMuted, fontSize: 14, height: 1.5),
-      // caption
-      bodySmall: GoogleFonts.inter(color: corMuted, fontSize: 13, fontWeight: FontWeight.w500),
-      // button
-      labelLarge: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+      headlineMedium: playfair.copyWith(
+        color: corTexto,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.4,
+        height: 1.3,
+      ),
+      headlineSmall: playfair.copyWith(
+        color: corTexto,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+        height: 1.35,
+      ),
+      // Title — cards, seções
+      titleLarge: inter.copyWith(
+        color: corTexto,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+        height: 1.4,
+      ),
+      titleMedium: inter.copyWith(
+        color: corTexto,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      titleSmall: inter.copyWith(
+        color: corTexto,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      // Body
+      bodyLarge: inter.copyWith(
+        color: corTexto,
+        fontSize: 16,
+        height: 1.6,
+      ),
+      bodyMedium: inter.copyWith(
+        color: corMuted,
+        fontSize: 14,
+        height: 1.6,
+      ),
+      bodySmall: inter.copyWith(
+        color: corMuted,
+        fontSize: 13,
+        height: 1.5,
+      ),
+      // Label — botões, chips, tags
+      labelLarge: inter.copyWith(
+        color: corTexto,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.2,
+      ),
+      labelMedium: inter.copyWith(
+        color: corMuted,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.3,
+      ),
+      labelSmall: inter.copyWith(
+        color: corMuted,
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.4,
+      ),
     );
   }
 
   // ==========================================
-  // Tema ESCURO
+  // TEMA ESCURO (padrão)
   // ==========================================
   static ThemeData temaEscuro(Color corPrimaria) {
-    final cor    = adaptarCor(corPrimaria, modoClaro: false);
-    // No dark, a CTA inverte pra branco (preto some no fundo escuro)
-    const ctaBg  = Colors.white;
-    const ctaFg  = Color(0xFF111111);
+    final cor = adaptarCor(corPrimaria, modoClaro: false);
     return ThemeData(
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: _surfaceDark,
+      scaffoldBackgroundColor: black,
       primaryColor: cor,
       colorScheme: ColorScheme.dark(
-        primary: cor, secondary: cor,
-        surface: _surfaceDarkElev,
-        error: corErro, onPrimary: ctaFg,
-        onSurface: Colors.white,
-        onSurfaceVariant: _onDarkSoft,
+        primary: cor,
+        secondary: cor,
+        surface: surface,
+        error: erro,
+        onPrimary: blackPure,
+        onSurface: text,
+        onSurfaceVariant: textMuted,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: _surfaceDark, elevation: 0, centerTitle: true,
-        titleTextStyle: GoogleFonts.inter(
-          color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: -0.3,
+        backgroundColor: black,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.playfairDisplay().copyWith(
+          color: text,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: text),
       ),
-      elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
-        backgroundColor: ctaBg, foregroundColor: ctaFg,
-        minimumSize: const Size(double.infinity, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
-      )),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white, side: const BorderSide(color: _surfaceStrong),
-        minimumSize: const Size(double.infinity, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      )),
+      // ==========================================
+      // Botão primário — gold, estilo Woovina Pro
+      // ==========================================
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: cor,
+          foregroundColor: blackPure,
+          disabledBackgroundColor: cor.withValues(alpha: 0.4),
+          disabledForegroundColor: blackPure.withValues(alpha: 0.4),
+          minimumSize: const Size(0, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+          elevation: 0,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ).copyWith(
+          overlayColor:
+              WidgetStateProperty.all(goldLight.withValues(alpha: 0.2)),
+        ),
+      ),
+      // ==========================================
+      // Botão outline — borda gold, estilo Woovina Pro
+      // ==========================================
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: cor,
+          side: BorderSide(color: cor.withValues(alpha: 0.6), width: 1.5),
+          backgroundColor: Colors.transparent,
+          minimumSize: const Size(0, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ).copyWith(
+          overlayColor: WidgetStateProperty.all(cor.withValues(alpha: 0.1)),
+        ),
+      ),
+      // ==========================================
+      // Text button
+      // ==========================================
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: cor,
+          textStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      // ==========================================
+      // Input fields — dark surface, gold focus
+      // ==========================================
       inputDecorationTheme: InputDecorationTheme(
-        filled: true, fillColor: _surfaceDarkElev,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Colors.white, width: 1.5)),
-        labelStyle: const TextStyle(color: _onDarkSoft),
-        hintStyle: const TextStyle(color: _onDarkSoft),
+        filled: true,
+        fillColor: surface,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: cor, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: erro),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: erro, width: 1.5),
+        ),
+        labelStyle: GoogleFonts.inter(color: textMuted, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: textMuted, fontSize: 14),
+        prefixIconColor: textMuted,
       ),
-      cardTheme: const CardThemeData(
-        color: _surfaceDarkElev, elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+      // ==========================================
+      // Cards
+      // ==========================================
+      cardTheme: CardThemeData(
+        color: surfaceElev,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: border.withValues(alpha: 0.5)),
+        ),
       ),
+      // ==========================================
+      // Bottom nav (fallback mobile)
+      // ==========================================
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: _surfaceDarkElev,
-        selectedItemColor: Colors.white, unselectedItemColor: _onDarkSoft,
+        backgroundColor: black,
+        selectedItemColor: cor,
+        unselectedItemColor: textMuted,
         type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        selectedLabelStyle: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: GoogleFonts.inter(fontSize: 12),
       ),
+      // ==========================================
+      // Switch
+      // ==========================================
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? cor : _onDarkSoft),
-        trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? cor.withOpacity(0.4) : _surfaceDarkElev),
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? cor : textMuted,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? cor.withValues(alpha: 0.3)
+              : surfaceElev,
+        ),
       ),
-      textTheme: _textTheme(Colors.white, _onDarkSoft),
+      // ==========================================
+      // Divider
+      // ==========================================
+      dividerTheme: DividerThemeData(
+        color: border.withValues(alpha: 0.5),
+        thickness: 1,
+        space: 1,
+      ),
+      // ==========================================
+      // Dialog
+      // ==========================================
+      dialogTheme: DialogThemeData(
+        backgroundColor: surfaceElev,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      // ==========================================
+      // Progress indicator
+      // ==========================================
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: cor,
+        linearTrackColor: cor.withValues(alpha: 0.2),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? cor : surface,
+        ),
+        side: const BorderSide(color: border),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          foregroundColor: textMuted,
+          minimumSize: const Size.square(44),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: surfaceElev,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: border),
+        ),
+        textStyle: GoogleFonts.inter(color: text, fontSize: 12),
+      ),
+      textTheme: _textTheme(text, textMuted),
     );
   }
 
   // ==========================================
-  // Tema CLARO (padrão Cal.com)
+  // TEMA CLARO
   // ==========================================
   static ThemeData temaClaro(Color corPrimaria) {
     final cor = adaptarCor(corPrimaria, modoClaro: true);
     return ThemeData(
       brightness: Brightness.light,
-      scaffoldBackgroundColor: _canvas,
-      primaryColor: _ink,
+      scaffoldBackgroundColor: canvasLight,
+      primaryColor: cor,
       colorScheme: ColorScheme.light(
-        primary: _ink, secondary: cor,
-        surface: _surfaceCard,
-        error: corErro, onPrimary: Colors.white,
-        onSurface: _ink,
-        onSurfaceVariant: _muted,
+        primary: cor,
+        secondary: cor,
+        surface: Colors.white,
+        error: erro,
+        onPrimary: Colors.white,
+        onSurface: textLight,
+        onSurfaceVariant: mutedLight,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: _canvas, elevation: 0, centerTitle: true,
-        titleTextStyle: GoogleFonts.inter(
-          color: _ink, fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: -0.3,
+        backgroundColor: canvasLight,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.playfairDisplay().copyWith(
+          color: textLight,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
         ),
-        iconTheme: const IconThemeData(color: _ink),
+        iconTheme: const IconThemeData(color: textLight),
       ),
-      // button-primary: fundo preto, texto branco, radius 8, altura 48
-      elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
-        backgroundColor: _ink, foregroundColor: Colors.white,
-        disabledBackgroundColor: _surfaceStrong,
-        minimumSize: const Size(double.infinity, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
-      ).copyWith(
-        overlayColor: WidgetStateProperty.all(_inkActive.withOpacity(0.1)),
-      )),
-      // button-secondary: fundo branco, borda hairline
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
-        foregroundColor: _ink, side: const BorderSide(color: _surfaceStrong),
-        backgroundColor: _canvas,
-        minimumSize: const Size(double.infinity, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
-      )),
-      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
-        foregroundColor: _ink,
-        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
-      )),
-      // text-input: radius 8, hairline border
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: cor,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color(0xFFD6D3D1),
+          minimumSize: const Size(0, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          textStyle: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+          elevation: 0,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ).copyWith(
+          overlayColor:
+              WidgetStateProperty.all(Colors.black.withValues(alpha: 0.15)),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: cor,
+          side: BorderSide(color: cor.withValues(alpha: 0.4), width: 1.5),
+          backgroundColor: Colors.transparent,
+          minimumSize: const Size(0, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          textStyle: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: cor,
+          textStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: true, fillColor: _canvas,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: _surfaceStrong)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: _surfaceStrong)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: _ink, width: 1.5)),
-        labelStyle: const TextStyle(color: _muted),
-        hintStyle: const TextStyle(color: _muted),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE7E5E4)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFE7E5E4)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: cor, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: erro),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: erro, width: 1.5),
+        ),
+        labelStyle: GoogleFonts.inter(color: mutedLight, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: mutedLight, fontSize: 14),
+        prefixIconColor: mutedLight,
       ),
-      // feature-card / content card: fundo cinza-claro, radius 12, sem sombra pesada
       cardTheme: const CardThemeData(
-        color: _surfaceCard, elevation: 0,
+        color: Colors.white,
+        elevation: 0,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: BorderRadius.all(Radius.circular(14)),
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: _canvas,
-        selectedItemColor: _ink, unselectedItemColor: _muted,
+        backgroundColor: Colors.white,
+        selectedItemColor: cor,
+        unselectedItemColor: mutedLight,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
+        selectedLabelStyle: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: GoogleFonts.inter(fontSize: 12),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? cor : _muted),
-        trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? cor.withOpacity(0.4) : _surfaceStrong),
+        thumbColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? cor : mutedLight,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected)
+              ? cor.withValues(alpha: 0.3)
+              : const Color(0xFFD6D3D1),
+        ),
       ),
-      dividerTheme: const DividerThemeData(color: _surfaceStrong, thickness: 1, space: 1),
-      textTheme: _textTheme(_ink, _muted),
+      dividerTheme: const DividerThemeData(
+        color: Color(0xFFE7E5E4),
+        thickness: 1,
+        space: 1,
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: cor,
+        linearTrackColor: cor.withValues(alpha: 0.2),
+      ),
+      textTheme: _textTheme(textLight, mutedLight),
     );
   }
 
   static ThemeData comCor(Color cor, {bool modoClaro = false}) =>
       modoClaro ? temaClaro(cor) : temaEscuro(cor);
-  static ThemeData get dark => temaEscuro(corPrimaria);
 }

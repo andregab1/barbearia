@@ -10,19 +10,15 @@ import '../theme/app_theme.dart';
 
 class BarbeariaThemeService extends ChangeNotifier {
   String? _logoUrl;
-  Color   _corPrimaria   = const Color(0xFF111111);
-  bool    _modoClaro     = false;
+  Color _corPrimaria = const Color(0xFFCA8A04);
+  bool _modoClaro = false;
 
-  String? get logoUrl     => _logoUrl;
-  Color   get corPrimaria => _corPrimaria;
-  bool    get modoClaro   => _modoClaro;
-
-  // Cor adaptada para visibilidade no tema atual
-  Color get corAdaptada =>
-      AppTheme.adaptarCor(_corPrimaria, modoClaro: _modoClaro);
+  String? get logoUrl => _logoUrl;
+  Color get corPrimaria => _corPrimaria;
+  bool get modoClaro => _modoClaro;
 
   static String get _baseServer {
-    final base = AppConstants.baseUrl;
+    const base = AppConstants.baseUrl;
     if (base.endsWith('/api')) return base.substring(0, base.length - 4);
     if (base.contains('/api/')) return base.split('/api/').first;
     return base;
@@ -33,12 +29,12 @@ class BarbeariaThemeService extends ChangeNotifier {
   }
 
   Future<void> _carregarCache() async {
-    final prefs     = await SharedPreferences.getInstance();
-    final logoUrl   = prefs.getString('logo_url');
-    final corHex    = prefs.getString('cor_primaria');
-    final claro     = prefs.getBool('modo_claro') ?? false;
-    if (logoUrl != null) _logoUrl     = logoUrl;
-    if (corHex  != null) _corPrimaria = _hexParaCor(corHex);
+    final prefs = await SharedPreferences.getInstance();
+    final logoUrl = prefs.getString('logo_url');
+    final corHex = prefs.getString('cor_primaria');
+    final claro = prefs.getBool('modo_claro') ?? false;
+    if (logoUrl != null) _logoUrl = logoUrl;
+    if (corHex != null) _corPrimaria = _hexParaCor(corHex);
     _modoClaro = claro;
     AppTheme.setModo(_modoClaro);
     notifyListeners();
@@ -46,14 +42,17 @@ class BarbeariaThemeService extends ChangeNotifier {
 
   Future<void> carregar({int barbeariaId = 1}) async {
     try {
-      final result = await ApiService.get('/barbearias/$barbeariaId', auth: false);
+      final result =
+          await ApiService.get('/barbearias/$barbeariaId', auth: false);
       if (result.containsKey('erro')) return;
       final prefs = await SharedPreferences.getInstance();
 
-      if (result['logo_url'] != null && result['logo_url'].toString().isNotEmpty) {
+      if (result['logo_url'] != null &&
+          result['logo_url'].toString().isNotEmpty) {
         final raw = result['logo_url'].toString();
         _logoUrl = raw.startsWith('data:') || raw.startsWith('http')
-            ? raw : '${_baseServer}$raw';
+            ? raw
+            : '$_baseServer$raw';
         await prefs.setString('logo_url', _logoUrl!);
       }
       if (result['cor_primaria'] != null) {
@@ -71,8 +70,10 @@ class BarbeariaThemeService extends ChangeNotifier {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     if (logoUrlServidor != null && logoUrlServidor.isNotEmpty) {
-      final toSave = logoUrlServidor.startsWith('data:') || logoUrlServidor.startsWith('http')
-          ? logoUrlServidor : '${_baseServer}$logoUrlServidor';
+      final toSave = logoUrlServidor.startsWith('data:') ||
+              logoUrlServidor.startsWith('http')
+          ? logoUrlServidor
+          : '$_baseServer$logoUrlServidor';
       await prefs.setString('logo_url', toSave);
       _logoUrl = logoUrlLocal ?? toSave;
     } else if (logoUrlLocal != null) {
@@ -90,15 +91,6 @@ class BarbeariaThemeService extends ChangeNotifier {
     AppTheme.setModo(_modoClaro);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('modo_claro', _modoClaro);
-    notifyListeners();
-  }
-
-  Future<void> limparCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('logo_url');
-    await prefs.remove('cor_primaria');
-    _logoUrl     = null;
-    _corPrimaria = const Color(0xFF111111);
     notifyListeners();
   }
 

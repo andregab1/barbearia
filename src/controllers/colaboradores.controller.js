@@ -4,6 +4,7 @@
 // ==========================================
 const bcrypt   = require('bcryptjs');
 const { pool } = require('../config/database');
+const { obterBarbeariaAdministrada, obterColaboradorAcessivel } = require('../utils/access');
 
 // ==========================================
 // RF14: Listar colaboradores da barbearia
@@ -26,6 +27,26 @@ async function listar(req, res) {
   }
 }
 
+// Lista administrativa, incluindo profissionais inativos.
+async function listarGerenciamento(req, res) {
+  const { barbearia_id } = req.params;
+  try {
+    const barbearia = await obterBarbeariaAdministrada(req.usuario.id, barbearia_id);
+    if (!barbearia) return res.status(403).json({ code: 'TENANT_FORBIDDEN', erro: 'Sem permissão para gerenciar esta barbearia.' });
+    const [rows] = await pool.query(
+      `SELECT c.id, c.usuario_id, u.nome, u.email, u.telefone, c.ativo
+       FROM colaboradores c
+       JOIN usuarios u ON u.id = c.usuario_id
+       WHERE c.barbearia_id = ?
+       ORDER BY c.ativo DESC, u.nome ASC`,
+      [barbearia_id]
+    );
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ erro: 'Erro interno ao listar colaboradores.' });
+  }
+}
+
 // ==========================================
 // RF14: Cadastrar novo colaborador
 // ==========================================
@@ -38,6 +59,8 @@ async function cadastrar(req, res) {
   }
 
   try {
+    const barbearia = await obterBarbeariaAdministrada(req.usuario.id, barbearia_id);
+    if (!barbearia) return res.status(403).json({ code: 'TENANT_FORBIDDEN', erro: 'Sem permissão para gerenciar esta barbearia.' });
     // Verificar se já existe usuário com esse telefone nesta barbearia
     const [existente] = await pool.query(
       `SELECT u.id, c.id AS colab_id, c.ativo AS colab_ativo
@@ -68,6 +91,19 @@ async function cadastrar(req, res) {
         );
         return res.status(201).json({ mensagem: 'Colaborador reativado!', id: u.id });
       }
+
+      // Usuário já existe, mas ainda não é colaborador desta barbearia →
+      // reutiliza o usuário e cria apenas o vínculo (evita erro de telefone duplicado)
+      const hash = await bcrypt.hash(senha, 10);
+      await pool.query(
+        'UPDATE usuarios SET nome = ?, senha_hash = ?, ativo = 1, role = ? WHERE id = ?',
+        [nome, hash, 'barbeiro', u.id]
+      );
+      await pool.query(
+        'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
+        [barbearia_id, u.id]
+      );
+      return res.status(201).json({ mensagem: 'Colaborador cadastrado!', id: u.id });
     }
 
     // Novo colaborador — criar usuário e vínculo
@@ -100,6 +136,8 @@ async function alterarStatus(req, res) {
   }
 
   try {
+    const acesso = await obterColaboradorAcessivel(req.usuario, id);
+    if (!acesso) return res.status(403).json({ code: 'COLLABORATOR_FORBIDDEN', erro: 'Sem permissão para alterar este colaborador.' });
     const [colab] = await pool.query('SELECT id FROM colaboradores WHERE id = ?', [id]);
     if (colab.length === 0) return res.status(404).json({ erro: 'Colaborador não encontrado.' });
 
@@ -110,6 +148,32 @@ async function alterarStatus(req, res) {
   }
 }
 
+async function atualizar(req, res) {
+  const { id } = req.params;
+  const nome = String(req.body.nome || '').trim();
+  const telefone = String(req.body.telefone || '').trim();
+  const email = req.body.email == null ? null : String(req.body.email).trim().toLowerCase();
+
+  if (nome.length < 2 || telefone.length < 8) {
+    return res.status(400).json({ erro: 'Informe nome e telefone válidos.' });
+  }
+
+  try {
+    const acesso = await obterColaboradorAcessivel(req.usuario, id);
+    if (!acesso) return res.status(403).json({ code: 'COLLABORATOR_FORBIDDEN', erro: 'Sem permissão para editar este colaborador.' });
+    const [rows] = await pool.query('SELECT usuario_id FROM colaboradores WHERE id = ?', [id]);
+    if (rows.length === 0) return res.status(404).json({ erro: 'Colaborador não encontrado.' });
+    await pool.query(
+      'UPDATE usuarios SET nome = ?, telefone = ?, email = ? WHERE id = ?',
+      [nome, telefone, email || null, rows[0].usuario_id]
+    );
+    return res.json({ mensagem: 'Colaborador atualizado com sucesso.' });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ erro: 'Telefone ou e-mail já utilizado por outra conta.' });
+    return res.status(500).json({ erro: 'Erro interno ao atualizar colaborador.' });
+  }
+}
+
 // ==========================================
 // RF14: Remover colaborador (soft delete)
 // ==========================================
@@ -117,6 +181,8 @@ async function remover(req, res) {
   const { id } = req.params;
 
   try {
+    const acesso = await obterColaboradorAcessivel(req.usuario, id);
+    if (!acesso) return res.status(403).json({ code: 'COLLABORATOR_FORBIDDEN', erro: 'Sem permissão para remover este colaborador.' });
     const [colab] = await pool.query(
       'SELECT c.id, c.usuario_id FROM colaboradores c WHERE c.id = ?', [id]
     );
@@ -135,8 +201,19 @@ async function remover(req, res) {
     }
 
     // Soft delete: desativa colaborador e usuário
-    await pool.query('UPDATE colaboradores SET ativo = 0 WHERE id = ?', [id]);
-    await pool.query('UPDATE usuarios SET ativo = 0 WHERE id = ?', [colab[0].usuario_id]);
+    const connection = await pool.getConnection();
+    try {
+      await connection.beginTransaction();
+      await connection.query('UPDATE colaboradores SET ativo = 0 WHERE id = ?', [id]);
+      await connection.query('UPDATE usuarios SET ativo = 0 WHERE id = ?', [colab[0].usuario_id]);
+      await connection.query('DELETE FROM refresh_tokens WHERE usuario_id = ?', [colab[0].usuario_id]);
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
 
     return res.json({ mensagem: 'Colaborador removido com sucesso!' });
   } catch (err) {
@@ -151,16 +228,24 @@ async function remover(req, res) {
 async function buscarPorUsuario(req, res) {
   const { usuario_id } = req.params;
 
+  if (req.usuario.role !== 'admin' && Number.parseInt(usuario_id, 10) !== req.usuario.id) {
+    return res.status(403).json({ code: 'COLLABORATOR_FORBIDDEN', erro: 'Sem permissão para consultar este colaborador.' });
+  }
+
   try {
     const [rows] = await pool.query(
       'SELECT id FROM colaboradores WHERE usuario_id = ? AND ativo = 1 LIMIT 1',
       [usuario_id]
     );
     if (rows.length === 0) return res.status(404).json({ erro: 'Colaborador não encontrado.' });
+    if (req.usuario.role === 'admin') {
+      const acesso = await obterColaboradorAcessivel(req.usuario, rows[0].id);
+      if (!acesso) return res.status(403).json({ code: 'COLLABORATOR_FORBIDDEN', erro: 'Sem permissão para consultar este colaborador.' });
+    }
     return res.json({ id: rows[0].id });
   } catch (err) {
     return res.status(500).json({ erro: 'Erro interno.' });
   }
 }
 
-module.exports = { listar, cadastrar, alterarStatus, remover, buscarPorUsuario };
+module.exports = { listar, listarGerenciamento, cadastrar, atualizar, alterarStatus, remover, buscarPorUsuario };

@@ -1,0 +1,14 @@
+{
+  "QA-E2E-050": {
+    "status": "passed",
+    "actualResult": "Reteste no Flutter Web/Chrome aprovado: credenciais inválidas preservam a mensagem segura 'Credenciais inválidas.', o formulário permanece utilizável e chamadas públicas não tentam renovar token após HTTP 401.",
+    "defectId": "",
+    "cleanupStatus": "passed",
+    "requestIds": [],
+    "evidence": [
+      "docs/evidence/DEFECT_FIX_RETEST_2026-08-19.md",
+      "Flutter Drive Chrome 151: QA-E2E-050 passed, exit code 0",
+      "app/lib/core/services/api_service.dart:_processarComRefresh preserves public 401 responses"
+    ]
+  }
+}

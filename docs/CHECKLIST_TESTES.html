@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>GetCutt — Checklist de homologação</title>
+  <style>
+    :root {
+      --bg: #0b0908;
+      --surface: #151311;
+      --surface-2: #1c1916;
+      --border: #332d26;
+      --text: #f6f2eb;
+      --muted: #aaa198;
+      --gold: #e3a008;
+      --gold-soft: #2c210b;
+      --green: #55c77a;
+      --green-soft: #10291a;
+      --red: #ef6868;
+      --red-soft: #321414;
+      --orange: #f5ad4e;
+      --orange-soft: #34230e;
+      --gray-soft: #24211e;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: radial-gradient(circle at 80% 0%, #261b0b 0, transparent 28rem), var(--bg);
+      color: var(--text);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, select, textarea, input { font: inherit; }
+    button, select { min-height: 44px; }
+    button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible {
+      outline: 3px solid rgba(227,160,8,.35);
+      outline-offset: 2px;
+    }
+
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(227,160,8,.16);
+      background: rgba(11,9,8,.88);
+      backdrop-filter: blur(18px);
+    }
+    .topbar-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--gold); font-weight: 800; font-size: 20px; }
+    .brand-mark { font-size: 28px; line-height: 1; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .button {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 15px;
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .button:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .button.primary { background: var(--gold); border-color: var(--gold); color: #171006; font-weight: 750; }
+    .button.danger { color: var(--red); }
+
+    header.hero { padding: 58px 0 28px; }
+    .eyebrow { margin: 0 0 9px; color: var(--gold); font-size: 12px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { max-width: 780px; margin: 0; font-size: clamp(32px, 5vw, 58px); line-height: 1.02; letter-spacing: -.045em; }
+    .intro { max-width: 700px; margin: 18px 0 0; color: var(--muted); font-size: 17px; }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .field input {
+      width: 100%; min-height: 44px; border: 1px solid var(--border); border-radius: 9px;
+      padding: 10px 12px; background: var(--surface); color: var(--text);
+    }
+
+    .summary { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 10px; margin: 16px 0 34px; }
+    .summary-card { min-height: 92px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .summary-card strong { display: block; margin-top: 5px; font-size: 27px; line-height: 1; }
+    .summary-card span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .07em; }
+    .progress-card { display: grid; align-content: center; }
+    .progress-track { height: 9px; margin-top: 13px; overflow: hidden; border-radius: 20px; background: var(--gray-soft); }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--gold); transition: width .3s ease; }
+    .approved strong { color: var(--green); }
+    .warning strong { color: var(--orange); }
+    .failed strong { color: var(--red); }
+
+    .filters { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .filters label { color: var(--muted); }
+    .filters select { border: 1px solid var(--border); border-radius: 9px; padding: 8px 38px 8px 12px; background: var(--surface); color: var(--text); }
+
+    .section { margin-bottom: 28px; scroll-margin-top: 95px; }
+    .section-header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 11px; }
+    .section h2 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    .section-count { color: var(--muted); font-size: 13px; }
+    .test-list { display: grid; gap: 9px; }
+    .test-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      gap: 18px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-left: 4px solid #514941;
+      border-radius: 11px;
+      background: linear-gradient(110deg, rgba(255,255,255,.018), transparent), var(--surface);
+    }
+    .test-card[data-status="aprovado"] { border-left-color: var(--green); }
+    .test-card[data-status="alerta"] { border-left-color: var(--orange); }
+    .test-card[data-status="reprovado"] { border-left-color: var(--red); }
+    .test-code { color: var(--gold); font: 700 12px/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .test-card h3 { margin: 3px 0 7px; font-size: 16px; }
+    .steps, .expected { margin: 0; color: var(--muted); }
+    .expected { margin-top: 8px; }
+    .expected b { color: #d7d0c7; }
+    .test-control { display: grid; align-content: start; gap: 9px; }
+    .status-select, .note {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); color: var(--text);
+    }
+    .status-select { padding: 9px 10px; font-weight: 700; }
+    .note { min-height: 76px; padding: 10px; resize: vertical; }
+    .status-select.is-approved { border-color: #28613b; background: var(--green-soft); color: var(--green); }
+    .status-select.is-warning { border-color: #754e18; background: var(--orange-soft); color: var(--orange); }
+    .status-select.is-failed { border-color: #753030; background: var(--red-soft); color: var(--red); }
+    .test-card[hidden] { display: none; }
+
+    .notice { margin: 35px 0; padding: 18px; border: 1px solid #604715; border-radius: var(--radius); background: var(--gold-soft); color: #e8d5ae; }
+    .notice strong { color: var(--gold); }
+    footer { padding: 26px 0 55px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 820px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+      .progress-card { grid-column: 1 / -1; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .test-card { grid-template-columns: 1fr; }
+      .test-control { grid-template-columns: minmax(160px, .7fr) 1fr; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 20px, 1180px); }
+      .topbar-inner { align-items: flex-start; padding: 12px 0; }
+      .brand { padding-top: 8px; }
+      .actions .button:not(.primary) { display: none; }
+      header.hero { padding-top: 38px; }
+      .summary { grid-template-columns: 1fr 1fr; }
+      .test-card { padding: 15px; }
+      .test-control { grid-template-columns: 1fr; }
+      .section-header { align-items: start; flex-direction: column; gap: 3px; }
+    }
+    @media print {
+      body { background: #fff; color: #111; font-size: 11px; }
+      .topbar, .filters, .button { display: none !important; }
+      .shell { width: 100%; }
+      header.hero { padding: 0 0 12px; }
+      h1 { font-size: 30px; }
+      .intro, .steps, .expected, footer, .section-count { color: #444; }
+      .summary-card, .test-card, .field input, .status-select, .note { background: #fff; color: #111; border-color: #bbb; }
+      .test-card { break-inside: avoid; padding: 10px; }
+      .section { break-before: auto; }
+      .note { min-height: 45px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Ações do checklist">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✂</span><span>GetCutt QA</span></div>
+      <div class="actions">
+        <button class="button" id="exportButton" type="button">Exportar dados</button>
+        <button class="button danger" id="resetButton" type="button">Limpar respostas</button>
+        <button class="button primary" type="button" onclick="window.print()">Imprimir / PDF</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Roteiro de qualidade</p>
+      <h1>Checklist de homologação do GetCutt</h1>
+      <p class="intro">Execute cada cenário no ambiente local, registre o resultado e descreva qualquer diferença encontrada. As respostas são salvas automaticamente neste navegador.</p>
+    </header>
+
+    <section class="meta-grid" aria-label="Informações da execução">
+      <div class="field"><label for="tester">Responsável pelo teste</label><input id="tester" data-meta placeholder="Nome do responsável"></div>
+      <div class="field"><label for="testDate">Data da execução</label><input id="testDate" data-meta type="date"></div>
+      <div class="field"><label for="environment">Ambiente e navegador</label><input id="environment" data-meta value="Local — Chrome"></div>
+    </section>
+
+    <section class="summary" aria-label="Resumo dos resultados">
+      <div class="summary-card progress-card">
+        <span>Progresso da execução</span><strong id="progressText">0%</strong>
+        <div class="progress-track" role="progressbar" aria-label="Progresso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="summary-card approved"><span>Aprovados</span><strong id="approvedCount">0</strong></div>
+      <div class="summary-card warning"><span>Com alerta</span><strong id="warningCount">0</strong></div>
+      <div class="summary-card failed"><span>Reprovados</span><strong id="failedCount">0</strong></div>
+      <div class="summary-card"><span>Pendentes</span><strong id="pendingCount">0</strong></div>
+    </section>
+
+    <div class="filters">
+      <label for="statusFilter">Mostrar:</label>
+      <select id="statusFilter"><option value="todos">Todos os testes</option><option value="pendente">Pendentes</option><option value="aprovado">Aprovados</option><option value="alerta">Aprovados com alerta</option><option value="reprovado">Reprovados</option></select>
+    </div>
+
+    <div id="checklist"></div>
+
+    <aside class="notice"><strong>Integrações externas:</strong> pagamentos reais, WhatsApp, push e e-mail exigem credenciais dos respectivos provedores. Marque como “Aprovado com alerta” quando a estrutura local funcionar, mas a validação externa estiver pendente por credencial.</aside>
+  </main>
+
+  <footer><div class="shell">GetCutt · Documento de homologação local · <span id="savedAt">Ainda não salvo</span></div></footer>
+
+  <script>
+    const sections = [
+      { title: '1. Ambiente e disponibilidade', tests: [
+        ['ENV-01','Aplicação web disponível','Acesse http://localhost:5454.','A landing page carrega sem tela branca ou erro visível.'],
+        ['ENV-02','API disponível','Acesse http://localhost:3000/health.','A resposta é HTTP 200 com {"status":"ok"}.'],
+        ['ENV-03','Banco de dados conectado','Faça cadastro e login com dados válidos.','As informações são persistidas e recuperadas após atualizar a página.']
+      ]},
+      { title: '2. Landing page e navegação', tests: [
+        ['LAND-01','Tesoura acompanha o mouse','Movimente o mouse somente na horizontal sobre a página.','O modelo gira suavemente em 360° no eixo horizontal.'],
+        ['LAND-02','Background fixo no scroll','Role da primeira até a última seção da landing page.','A tesoura permanece fixa, centralizada e não invade o conteúdo.'],
+        ['LAND-03','Links do cabeçalho','Teste Início, Serviços, Sobre e Contato.','Cada link leva à seção correta e a navegação permanece centralizada.'],
+        ['LAND-04','Chamadas para ação','Clique em Agendar agora e Entrar.','Os botões abrem corretamente cadastro/agendamento e login.'],
+        ['LAND-05','Cards e conteúdo','Revise títulos, textos, ícones e alinhamentos das seções.','Conteúdo legível, alinhado e sem sobreposição com o modelo 3D.']
+      ]},
+      { title: '3. Cadastro e autenticação', tests: [
+        ['AUTH-01','Cadastro de proprietário','Escolha Tenho barbearia e informe dados válidos do proprietário e da empresa.','Cria usuário administrador, barbearia e assinatura trial de 14 dias.'],
+        ['AUTH-02','Validação do cadastro','Tente enviar campos vazios, e-mail inválido, senha fraca e telefone inválido.','Cada erro aparece próximo ao campo correspondente e o cadastro não é enviado.'],
+        ['AUTH-03','Duplicidade de e-mail','Tente cadastrar novamente um e-mail já utilizado.','O sistema informa o conflito sem criar registros duplicados.'],
+        ['AUTH-04','Cadastro de cliente','Escolha Sou cliente, preencha os dados e conclua.','A conta é criada com perfil cliente e pode acessar a área de agendamento.'],
+        ['AUTH-05','Login válido','Entre com e-mail e senha corretos de cada perfil.','Admin, profissional e cliente são enviados ao painel adequado.'],
+        ['AUTH-06','Login inválido','Teste senha errada e e-mail inexistente.','Acesso negado com mensagem clara, sem expor detalhes internos.'],
+        ['AUTH-07','Persistência e logout','Atualize a página logado e depois use Sair.','A sessão persiste no refresh e é removida completamente no logout.']
+      ]},
+      { title: '4. Administração da barbearia', tests: [
+        ['ADM-01','Dashboard administrativo','Abra o painel como proprietário.','Indicadores e atalhos carregam sem erros e refletem dados reais.'],
+        ['ADM-02','Gerenciar serviços','Crie, edite e desative um serviço com preço e duração.','Alterações aparecem nas listas e na experiência do cliente.'],
+        ['ADM-03','Gerenciar profissionais','Cadastre, edite, ative e desative um profissional.','A equipe é atualizada e profissionais inativos deixam de receber horários.'],
+        ['ADM-04','Configurar horários','Defina dias e horários de funcionamento de um profissional.','A disponibilidade respeita exatamente a configuração salva.'],
+        ['ADM-05','Perfil da barbearia','Edite nome, contato, descrição e imagem disponíveis.','Dados permanecem salvos após fechar e reabrir a tela.'],
+        ['ADM-06','Relatórios','Consulte faturamento diário, mensal e por período.','Totais correspondem aos atendimentos concluídos no intervalo.']
+      ]},
+      { title: '5. Agendamento do cliente', tests: [
+        ['AGD-01','Fluxo completo de agendamento','Escolha barbearia, profissional, serviço, data e horário; confirme.','O agendamento é criado uma única vez e aparece no histórico.'],
+        ['AGD-02','Disponibilidade real','Compare horários configurados, ocupados e bloqueados.','Somente horários realmente disponíveis podem ser selecionados.'],
+        ['AGD-03','Conflito de horário','Tente reservar duas vezes o mesmo profissional e horário.','A segunda reserva é bloqueada com mensagem clara.'],
+        ['AGD-04','Meus agendamentos','Consulte agendamentos futuros e passados.','Dados de serviço, profissional, data, horário e status estão corretos.'],
+        ['AGD-05','Cancelamento','Cancele um agendamento futuro permitido.','Status muda para cancelado e o horário volta a ficar disponível.']
+      ]},
+      { title: '6. Área do profissional', tests: [
+        ['PRO-01','Agenda do dia','Entre como profissional e abra o painel.','Lista mostra somente os atendimentos atribuídos ao usuário.'],
+        ['PRO-02','Conclusão do atendimento','Marque um atendimento confirmado como concluído.','Status é atualizado e o valor passa a compor os relatórios.'],
+        ['PRO-03','Bloqueio simples','Bloqueie um intervalo livre.','O intervalo deixa de aparecer para novos agendamentos.'],
+        ['PRO-04','Bloqueio recorrente','Crie uma indisponibilidade com repetição.','Todos os períodos previstos são criados sem afetar reservas existentes indevidamente.'],
+        ['PRO-05','Remoção de bloqueio','Remova uma indisponibilidade cadastrada.','O período liberado volta a aparecer na agenda.'],
+        ['PRO-06','Clientes ativos','Abra a lista de contatos/clientes.','Apenas dados autorizados são exibidos e ações funcionam corretamente.']
+      ]},
+      { title: '7. Perfil, segurança e qualidade visual', tests: [
+        ['PER-01','Dados pessoais','Edite nome, telefone, e-mail e nome de usuário.','Campos validam e salvam os dados corretamente.'],
+        ['PER-02','Alteração de senha','Informe senha atual e uma nova senha válida.','A nova senha funciona e a antiga deixa de funcionar.'],
+        ['PER-03','Estados da interface','Observe carregamento, vazio, sucesso, erro e botões desabilitados.','Cada estado tem retorno visual claro e não permite ações duplicadas.'],
+        ['VIS-01','Desktop','Teste em 1440 × 900.','Layout equilibrado, sem cortes, sobreposições ou rolagem horizontal.'],
+        ['VIS-02','Tablet','Teste em 768 × 1024.','Cards e navegação se reorganizam sem perda de conteúdo.'],
+        ['VIS-03','Celular','Teste em 390 × 844.','Textos, formulários e ações permanecem legíveis e utilizáveis.'],
+        ['VIS-04','Teclado e foco','Navegue usando Tab, Shift+Tab, Enter e Espaço.','Ordem de foco é lógica e o foco está sempre visível.']
+      ]},
+      { title: '8. Fundações SaaS e integrações', tests: [
+        ['SAA-01','Convites de equipe pela API','Crie, liste e aceite um convite de profissional.','Membership e colaborador são criados sem duplicidade.'],
+        ['FIN-01','Resumo financeiro pela API','Consulte resumo e lançamentos de uma barbearia autorizada.','Receitas, despesas e saldo correspondem aos lançamentos.'],
+        ['FIN-02','Cadastro de despesa pela API','Cadastre uma despesa válida e repita com dados inválidos.','A válida aparece no caixa; a inválida retorna erro de validação.'],
+        ['PAY-01','Assinatura Mercado Pago','Com credenciais sandbox, crie uma assinatura mensal.','O provedor retorna a assinatura e o ID é salvo localmente.'],
+        ['PAY-02','Webhook Mercado Pago','Envie evento assinado e depois repita o mesmo evento.','Assinatura é validada e a repetição é tratada de forma idempotente.'],
+        ['COM-01','Notificações externas','Com credenciais configuradas, dispare push, WhatsApp e e-mail de teste.','Cada entrega registra sucesso ou falha sem expor credenciais.']
+      ]}
+    ];
+
+    const storageKey = 'getcutt-qa-checklist-v1';
+    const checklist = document.querySelector('#checklist');
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+
+    function render() {
+      checklist.innerHTML = sections.map((section, sectionIndex) => `
+        <section class="section" aria-labelledby="section-${sectionIndex}">
+          <div class="section-header"><h2 id="section-${sectionIndex}">${escapeHtml(section.title)}</h2><span class="section-count">${section.tests.length} cenários</span></div>
+          <div class="test-list">${section.tests.map(test => `
+            <article class="test-card" data-id="${test[0]}" data-status="pendente">
+              <div>
+                <span class="test-code">${test[0]}</span><h3>${escapeHtml(test[1])}</h3>
+                <p class="steps">${escapeHtml(test[2])}</p><p class="expected"><b>Esperado:</b> ${escapeHtml(test[3])}</p>
+              </div>
+              <div class="test-control">
+                <select class="status-select" aria-label="Status do teste ${test[0]}">
+                  <option value="pendente">Pendente</option><option value="aprovado">Aprovado</option><option value="alerta">Aprovado com alerta</option><option value="reprovado">Reprovado</option>
+                </select>
+                <textarea class="note" aria-label="Observação do teste ${test[0]}" placeholder="Observação, erro ou evidência..."></textarea>
+              </div>
+            </article>`).join('')}</div>
+        </section>`).join('');
+    }
+
+    function loadData() {
+      let data = {};
+      try { data = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (_) {}
+      document.querySelectorAll('[data-meta]').forEach(input => { if (data.meta?.[input.id] != null) input.value = data.meta[input.id]; });
+      document.querySelectorAll('.test-card').forEach(card => {
+        const saved = data.tests?.[card.dataset.id];
+        if (!saved) return;
+        card.querySelector('.status-select').value = saved.status || 'pendente';
+        card.querySelector('.note').value = saved.note || '';
+      });
+      if (!document.querySelector('#testDate').value) document.querySelector('#testDate').value = new Date().toISOString().slice(0,10);
+      updateAll(false);
+    }
+
+    function saveData() {
+      const data = { meta: {}, tests: {}, updatedAt: new Date().toISOString() };
+      document.querySelectorAll('[data-meta]').forEach(input => data.meta[input.id] = input.value);
+      document.querySelectorAll('.test-card').forEach(card => data.tests[card.dataset.id] = { status: card.querySelector('.status-select').value, note: card.querySelector('.note').value.trim() });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      document.querySelector('#savedAt').textContent = `Salvo em ${new Date().toLocaleString('pt-BR')}`;
+      return data;
+    }
+
+    function updateAll(shouldSave = true) {
+      const cards = [...document.querySelectorAll('.test-card')];
+      const counts = { pendente: 0, aprovado: 0, alerta: 0, reprovado: 0 };
+      cards.forEach(card => {
+        const select = card.querySelector('.status-select');
+        const status = select.value;
+        counts[status]++;
+        card.dataset.status = status;
+        select.className = `status-select ${status === 'aprovado' ? 'is-approved' : status === 'alerta' ? 'is-warning' : status === 'reprovado' ? 'is-failed' : ''}`;
+      });
+      const completed = cards.length - counts.pendente;
+      const percentage = Math.round(completed / cards.length * 100);
+      document.querySelector('#approvedCount').textContent = counts.aprovado;
+      document.querySelector('#warningCount').textContent = counts.alerta;
+      document.querySelector('#failedCount').textContent = counts.reprovado;
+      document.querySelector('#pendingCount').textContent = counts.pendente;
+      document.querySelector('#progressText').textContent = `${percentage}%`;
+      document.querySelector('#progressFill').style.width = `${percentage}%`;
+      document.querySelector('.progress-track').setAttribute('aria-valuenow', percentage);
+      applyFilter();
+      if (shouldSave) saveData();
+    }
+
+    function applyFilter() {
+      const filter = document.querySelector('#statusFilter').value;
+      document.querySelectorAll('.test-card').forEach(card => card.hidden = filter !== 'todos' && card.dataset.status !== filter);
+    }
+
+    function exportData() {
+      const data = saveData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `getcutt-homologacao-${new Date().toISOString().slice(0,10)}.json`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    render();
+    loadData();
+    document.addEventListener('change', event => {
+      if (event.target.matches('.status-select, [data-meta]')) updateAll();
+      if (event.target.id === 'statusFilter') applyFilter();
+    });
+    document.addEventListener('input', event => { if (event.target.matches('.note, [data-meta]')) saveData(); });
+    document.querySelector('#exportButton').addEventListener('click', exportData);
+    document.querySelector('#resetButton').addEventListener('click', () => {
+      if (!confirm('Limpar todos os status, observações e dados desta execução?')) return;
+      localStorage.removeItem(storageKey);
+      document.querySelectorAll('.status-select').forEach(select => select.value = 'pendente');
+      document.querySelectorAll('.note').forEach(note => note.value = '');
+      document.querySelectorAll('[data-meta]').forEach(input => input.value = input.id === 'environment' ? 'Local — Chrome' : '');
+      document.querySelector('#testDate').value = new Date().toISOString().slice(0,10);
+      updateAll();
+    });
+  </script>
+</body>
+</html>

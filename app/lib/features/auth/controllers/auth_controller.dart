@@ -8,17 +8,17 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/constants/app_constants.dart';
 
 class AuthController extends ChangeNotifier {
-  bool    _estaLogado   = false;
-  String  _role         = '';
-  bool    _carregando   = false;
-  String  _erro         = '';
+  bool _estaLogado = false;
+  String _role = '';
+  bool _carregando = false;
+  String _erro = '';
   String? _nomeUsuario;
 
-  bool    get estaLogado   => _estaLogado;
-  String  get role         => _role;
-  bool    get carregando   => _carregando;
-  String  get erro         => _erro;
-  String? get nomeUsuario  => _nomeUsuario;
+  bool get estaLogado => _estaLogado;
+  String get role => _role;
+  bool get carregando => _carregando;
+  String get erro => _erro;
+  String? get nomeUsuario => _nomeUsuario;
 
   void atualizarNome(String novoNome) {
     _nomeUsuario = novoNome;
@@ -34,10 +34,10 @@ class AuthController extends ChangeNotifier {
   // ==========================================
   Future<void> _verificarSessao() async {
     final logado = await AuthService.estaLogado();
-    final role   = await AuthService.getRoleAtual();
-    final nome   = await AuthService.getUsuarioNome();
-    _estaLogado  = logado;
-    _role        = role ?? '';
+    final role = await AuthService.getRoleAtual();
+    final nome = await AuthService.getUsuarioNome();
+    _estaLogado = logado;
+    _role = role ?? '';
     _nomeUsuario = nome;
     notifyListeners();
   }
@@ -47,7 +47,7 @@ class AuthController extends ChangeNotifier {
   // ==========================================
   Future<bool> login(String loginInput, String senha) async {
     _carregando = true;
-    _erro       = '';
+    _erro = '';
     notifyListeners();
 
     final result = await AuthService.login(loginInput, senha);
@@ -59,14 +59,15 @@ class AuthController extends ChangeNotifier {
       return false;
     }
 
-    _estaLogado  = true;
-    _role        = result['usuario']['role'];
+    _estaLogado = true;
+    _role = result['usuario']['role'];
     _nomeUsuario = result['usuario']['nome'];
 
     // Salva colaborador_id se for barbeiro ou admin
     if (result['colaborador_id'] != null) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(AppConstants.keyColaboradorId, result['colaborador_id']);
+      await prefs.setInt(
+          AppConstants.keyColaboradorId, result['colaborador_id']);
     }
 
     notifyListeners();
@@ -76,12 +77,14 @@ class AuthController extends ChangeNotifier {
   // ==========================================
   // RF01: Cadastro de cliente
   // ==========================================
-  Future<bool> cadastrar(String nome, String telefone, String senha, {String? email}) async {
+  Future<bool> cadastrar(String nome, String telefone, String senha,
+      {String? email, String? username}) async {
     _carregando = true;
-    _erro       = '';
+    _erro = '';
     notifyListeners();
 
-    final result = await AuthService.cadastrar(nome, telefone, senha, email: email);
+    final result = await AuthService.cadastrar(nome, telefone, senha,
+        email: email, username: username);
 
     _carregando = false;
     if (result.containsKey('erro')) {
@@ -94,19 +97,41 @@ class AuthController extends ChangeNotifier {
     return true;
   }
 
+  Future<bool> cadastrarProprietario({
+    required String nomeProprietario,
+    required String nomeBarbearia,
+    required String telefone,
+    required String email,
+    required String senha,
+  }) async {
+    _carregando = true;
+    _erro = '';
+    notifyListeners();
+    final result = await AuthService.cadastrarProprietario(
+      nomeProprietario: nomeProprietario,
+      nomeBarbearia: nomeBarbearia,
+      telefone: telefone,
+      email: email,
+      senha: senha,
+    );
+    _carregando = false;
+    if (result.containsKey('erro')) {
+      _erro = result['erro'];
+      notifyListeners();
+      return false;
+    }
+    notifyListeners();
+    return true;
+  }
+
   // ==========================================
   // RNF01: Logout
   // ==========================================
   Future<void> logout() async {
     await AuthService.logout();
-    _estaLogado  = false;
-    _role        = '';
+    _estaLogado = false;
+    _role = '';
     _nomeUsuario = null;
-    notifyListeners();
-  }
-
-  void limparErro() {
-    _erro = '';
     notifyListeners();
   }
 }

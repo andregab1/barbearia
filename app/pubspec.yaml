@@ -12,9 +12,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # HTTP e API
   http: ^1.2.0
+
+  # Gráficos
+  fl_chart: ^0.68.0
 
   # Gerenciamento de estado
   provider: ^6.1.2
@@ -26,7 +31,7 @@ dependencies:
   go_router: ^13.2.0
 
   # Formatação de datas
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # Integração com contatos do celular (RF09)
   flutter_contacts: ^1.1.9+2
@@ -45,14 +50,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
-
-  # RF04: Assets de imagens e logo da barbearia
-  assets:
 
 flutter_launcher_icons:
   android: "ic_launcher"

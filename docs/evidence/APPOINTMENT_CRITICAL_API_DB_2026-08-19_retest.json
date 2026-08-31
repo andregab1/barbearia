@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 1,
+  "runLabel": "retest",
+  "startedAt": "2026-08-19T23:33:52.694Z",
+  "finishedAt": "2026-08-19T23:33:57.970Z",
+  "environment": {
+    "node": "v24.16.0",
+    "database": "barbearia_appointment_critical_test",
+    "databaseHost": "127.0.0.1",
+    "production": false,
+    "api": "in-process Express server bound to 127.0.0.1 on an ephemeral port",
+    "migrations": [
+      "000_initial_schema.sql",
+      "001_add_profile_photo.sql",
+      "002_hash_refresh_tokens.sql",
+      "003_add_appointment_services.sql",
+      "004_expand_user_profile.sql",
+      "005_saas_foundation.sql",
+      "006_identity_finance_communications.sql",
+      "007_link_cash_entries_to_appointments.sql"
+    ]
+  },
+  "scope": "Critical appointment API, persistence, cancellation and concurrency",
+  "command": "node scripts/appointment-critical-tests.js --label=retest",
+  "results": [
+    {
+      "id": "APPT-API-001",
+      "catalogIds": [
+        "AI-BOOK-02"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Authenticated client; empty appointment table.",
+      "testData": "Missing service, professional, date/time and empty service list.",
+      "expectedResult": "Every missing-required-field request returns 400 and writes nothing.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.841Z",
+      "durationMs": 53,
+      "actualResult": "Every missing-required-field request returns 400 and writes nothing.",
+      "evidence": {
+        "responses": [
+          {
+            "status": 400,
+            "body": {
+              "erro": "Colaborador, serviço e data/hora são obrigatórios."
+            }
+          },
+          {
+            "status": 400,
+            "body": {
+              "erro": "Colaborador, serviço e data/hora são obrigatórios."
+            }
+          },
+          {
+            "status": 400,
+            "body": {
+              "erro": "Colaborador, serviço e data/hora são obrigatórios."
+            }
+          },
+          {
+            "status": 400,
+            "body": {
+              "erro": "Colaborador, serviço e data/hora são obrigatórios."
+            }
+          },
+          {
+            "status": 400,
+            "body": {
+              "erro": "Colaborador, serviço e data/hora são obrigatórios."
+            }
+          }
+        ],
+        "database": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-002",
+      "catalogIds": [
+        "AI-BOOK-03",
+        "QA-E2E-027"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Professional works daily from 08:00 to 20:00.",
+      "testData": "Past appointment and appointment beginning before working hours.",
+      "expectedResult": "Past/out-of-schedule reservations are rejected and not persisted.",
+      "defectId": null,
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.894Z",
+      "durationMs": 28,
+      "actualResult": "Past/out-of-schedule reservations are rejected and not persisted.",
+      "evidence": {
+        "past": {
+          "status": 400,
+          "body": {
+            "code": "INVALID_APPOINTMENT",
+            "erro": "Informe serviço, profissional e uma data futura válida."
+          }
+        },
+        "outsideSchedule": {
+          "status": 409,
+          "body": {
+            "code": "SCHEDULE_UNAVAILABLE",
+            "erro": "Horário fora do expediente do profissional."
+          }
+        },
+        "database": {
+          "persisted": 0
+        }
+      },
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-003",
+      "catalogIds": [
+        "AI-BOOK-05"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Protected appointment route.",
+      "testData": "No token and malformed token.",
+      "expectedResult": "Both calls return 401 and create no appointment.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.922Z",
+      "durationMs": 12,
+      "actualResult": "Both calls return 401 and create no appointment.",
+      "evidence": {
+        "missing": {
+          "status": 401,
+          "body": {
+            "erro": "Token não fornecido."
+          }
+        },
+        "invalid": {
+          "status": 401,
+          "body": {
+            "erro": "Token inválido ou expirado."
+          }
+        },
+        "database": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-004",
+      "catalogIds": [
+        "AI-BOOK-06"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Valid admin and barber sessions.",
+      "testData": "Admin and barber call client-only POST /agendamentos.",
+      "expectedResult": "Both forbidden roles return 403 and create no appointment.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.934Z",
+      "durationMs": 12,
+      "actualResult": "Both forbidden roles return 403 and create no appointment.",
+      "evidence": {
+        "responses": [
+          {
+            "status": 403,
+            "body": {
+              "erro": "Acesso não permitido para este perfil."
+            }
+          },
+          {
+            "status": 403,
+            "body": {
+              "erro": "Acesso não permitido para este perfil."
+            }
+          }
+        ],
+        "database": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-005",
+      "catalogIds": [
+        "AI-BOOK-07"
+      ],
+      "layer": [
+        "api",
+        "database",
+        "tenant_isolation"
+      ],
+      "preconditions": "Tenants A and B contain distinct professional/service IDs.",
+      "testData": "Professional A with service B and professional B with service A.",
+      "expectedResult": "Cross-tenant resource combinations are rejected without writes or disclosure.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.946Z",
+      "durationMs": 21,
+      "actualResult": "Cross-tenant resource combinations are rejected without writes or disclosure.",
+      "evidence": {
+        "responses": [
+          {
+            "status": 404,
+            "body": {
+              "erro": "Serviço ou profissional indisponível."
+            }
+          },
+          {
+            "status": 404,
+            "body": {
+              "erro": "Serviço ou profissional indisponível."
+            }
+          }
+        ],
+        "database": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-006",
+      "catalogIds": [
+        "QA-E2E-035",
+        "QA-E2E-042"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Inactive service exists; active professional can be deactivated for an isolated call.",
+      "testData": "Inactive service and inactive professional.",
+      "expectedResult": "Inactive resources cannot receive new reservations and no appointment is written.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:56.967Z",
+      "durationMs": 33,
+      "actualResult": "Inactive resources cannot receive new reservations and no appointment is written.",
+      "evidence": {
+        "inactiveService": {
+          "status": 404,
+          "body": {
+            "erro": "Serviço ou profissional indisponível."
+          }
+        },
+        "inactiveProfessional": {
+          "status": 404,
+          "body": {
+            "erro": "Serviço ou profissional indisponível."
+          }
+        },
+        "database": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-007",
+      "catalogIds": [
+        "AI-BOOK-01",
+        "QA-E2E-030",
+        "QA-E2E-031"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Active client, professional, two services and free future slot.",
+      "testData": "Two services totaling BRL 65.00 and 65 minutes.",
+      "expectedResult": "One confirmed appointment and two snapshot service rows are committed atomically.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.000Z",
+      "durationMs": 34,
+      "actualResult": "One confirmed appointment and two snapshot service rows are committed atomically.",
+      "evidence": {
+        "response": {
+          "status": 201,
+          "body": {
+            "mensagem": "Agendamento realizado com sucesso!",
+            "id": 1
+          }
+        },
+        "database": {
+          "appointments": [
+            {
+              "id": 1,
+              "cliente_id": 3,
+              "colaborador_id": 1,
+              "servico_id": 1,
+              "data_hora": "2026-08-23 10:00:00",
+              "duracao_min": 65,
+              "valor_cobrado": "65.00",
+              "status": "confirmado"
+            }
+          ],
+          "services": [
+            {
+              "servico_id": 1,
+              "preco_cobrado": "40.00",
+              "duracao_min": 45
+            },
+            {
+              "servico_id": 2,
+              "preco_cobrado": "25.00",
+              "duracao_min": 20
+            }
+          ],
+          "notifications": [
+            {
+              "tipo": "lembrete",
+              "total": 1
+            },
+            {
+              "tipo": "confirmacao",
+              "total": 1
+            }
+          ]
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-008",
+      "catalogIds": [
+        "AI-BOOK-11",
+        "QA-E2E-003"
+      ],
+      "layer": [
+        "api",
+        "database",
+        "session"
+      ],
+      "preconditions": "Multi-service appointment committed by client A1.",
+      "testData": "Fresh reads, logout, fresh login and barber agenda read.",
+      "expectedResult": "Appointment remains visible to client and barber after logout/login and fresh database query.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.034Z",
+      "durationMs": 215,
+      "actualResult": "Appointment remains visible to client and barber after logout/login and fresh database query.",
+      "evidence": {
+        "clientAgenda": {
+          "status": 200,
+          "body": [
+            {
+              "id": 1,
+              "data_hora": "2026-08-23 10:00:00",
+              "status": "confirmado",
+              "valor_cobrado": "65.00",
+              "observacao": null,
+              "duracao_min": 65,
+              "servico": "QA Corte 45",
+              "barbeiro": "QA Appointment Barber A",
+              "barbearia": "QA Appointment Shop A"
+            }
+          ]
+        },
+        "barberAgenda": {
+          "status": 200,
+          "body": [
+            {
+              "id": 1,
+              "data_hora": "2026-08-23 10:00:00",
+              "status": "confirmado",
+              "valor_cobrado": "65.00",
+              "duracao_min": 65,
+              "servico": "QA Corte 45",
+              "observacao": null,
+              "cliente": "QA Appointment Client A1",
+              "cliente_telefone": "41983000003"
+            }
+          ]
+        },
+        "logout": {
+          "status": 200,
+          "body": {
+            "mensagem": "Logout realizado."
+          }
+        },
+        "agendaAfterRelogin": {
+          "status": 200,
+          "body": [
+            {
+              "id": 1,
+              "data_hora": "2026-08-23 10:00:00",
+              "status": "confirmado",
+              "valor_cobrado": "65.00",
+              "observacao": null,
+              "duracao_min": 65,
+              "servico": "QA Corte 45",
+              "barbeiro": "QA Appointment Barber A",
+              "barbearia": "QA Appointment Shop A"
+            }
+          ]
+        },
+        "database": [
+          {
+            "id": 1,
+            "status": "confirmado"
+          }
+        ]
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-009",
+      "catalogIds": [
+        "QA-E2E-002",
+        "QA-E2E-021"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Future confirmed appointment more than one hour away.",
+      "testData": "Client cancellation followed by agenda/history/availability reads.",
+      "expectedResult": "Status becomes canceled, active agenda loses it, history gains it and slot is released.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.249Z",
+      "durationMs": 39,
+      "actualResult": "Status becomes canceled, active agenda loses it, history gains it and slot is released.",
+      "evidence": {
+        "cancellation": {
+          "status": 200,
+          "body": {
+            "mensagem": "Agendamento cancelado com sucesso!"
+          }
+        },
+        "activeAgenda": {
+          "status": 200,
+          "body": []
+        },
+        "history": {
+          "status": 200,
+          "body": [
+            {
+              "id": 1,
+              "data_hora": "2026-08-23 10:00:00",
+              "status": "cancelado",
+              "valor_cobrado": "65.00",
+              "observacao": null,
+              "duracao_min": 65,
+              "servico": "QA Corte 45",
+              "barbeiro": "QA Appointment Barber A",
+              "barbearia": "QA Appointment Shop A"
+            }
+          ]
+        },
+        "availability": {
+          "status": 200,
+          "body": {
+            "disponiveis": [
+              "08:00",
+              "08:30",
+              "09:00",
+              "09:30",
+              "10:00",
+              "10:30",
+              "11:00",
+              "11:30",
+              "12:00",
+              "12:30",
+              "13:00",
+              "13:30",
+              "14:00",
+              "14:30",
+              "15:00",
+              "15:30",
+              "16:00",
+              "16:30",
+              "17:00",
+              "17:30",
+              "18:00",
+              "18:30"
+            ]
+          }
+        },
+        "database": [
+          {
+            "id": 1,
+            "status": "cancelado"
+          }
+        ]
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-010",
+      "catalogIds": [
+        "QA-E2E-018"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Appointment is already canceled.",
+      "testData": "Repeat cancellation through API.",
+      "expectedResult": "Repeat is rejected deterministically and creates no additional cancellation notification.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.288Z",
+      "durationMs": 11,
+      "actualResult": "Repeat is rejected deterministically and creates no additional cancellation notification.",
+      "evidence": {
+        "response": {
+          "status": 409,
+          "body": {
+            "code": "APPOINTMENT_ALREADY_CANCELED",
+            "erro": "Agendamento já foi cancelado."
+          }
+        },
+        "database": {
+          "before": 1,
+          "after": 1
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-011",
+      "catalogIds": [
+        "AI-BOOK-08",
+        "QA-E2E-022"
+      ],
+      "layer": [
+        "api",
+        "database",
+        "concurrency"
+      ],
+      "preconditions": "Two authenticated clients and one free last slot.",
+      "testData": "Synchronized requests for the same professional, date and 45-minute interval.",
+      "expectedResult": "Exactly one 201 and one deterministic 409; database has one active reservation and no finance entry.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.300Z",
+      "durationMs": 50,
+      "actualResult": "Exactly one 201 and one deterministic 409; database has one active reservation and no finance entry.",
+      "evidence": {
+        "responses": [
+          {
+            "status": 201,
+            "body": {
+              "mensagem": "Agendamento realizado com sucesso!",
+              "id": 2
+            }
+          },
+          {
+            "status": 409,
+            "body": {
+              "code": "APPOINTMENT_CONFLICT",
+              "erro": "Horário indisponível. Escolha outro horário."
+            }
+          }
+        ],
+        "database": [
+          {
+            "id": 2,
+            "cliente_id": 3,
+            "status": "confirmado"
+          }
+        ],
+        "financeEntries": 0,
+        "availability": {
+          "status": 200,
+          "body": {
+            "disponiveis": [
+              "08:00",
+              "08:30",
+              "09:00",
+              "09:30",
+              "10:00",
+              "12:00",
+              "12:30",
+              "13:00",
+              "13:30",
+              "14:00",
+              "14:30",
+              "15:00",
+              "15:30",
+              "16:00",
+              "16:30",
+              "17:00",
+              "17:30",
+              "18:00",
+              "18:30",
+              "19:00"
+            ]
+          }
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-012",
+      "catalogIds": [
+        "AI-BOOK-09"
+      ],
+      "layer": [
+        "api",
+        "database",
+        "idempotency"
+      ],
+      "preconditions": "The concurrent slot already contains exactly one active appointment.",
+      "testData": "Immediate retry of the same request by the winning client.",
+      "expectedResult": "Retry returns deterministic conflict or prior result and does not create another appointment/notification.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.350Z",
+      "durationMs": 23,
+      "actualResult": "Retry returns deterministic conflict or prior result and does not create another appointment/notification.",
+      "evidence": {
+        "retry": {
+          "status": 409,
+          "body": {
+            "code": "APPOINTMENT_CONFLICT",
+            "erro": "Horário indisponível. Escolha outro horário."
+          }
+        },
+        "database": {
+          "activeAppointments": 1
+        },
+        "notifications": {
+          "before": 1,
+          "after": 1
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-013-SETUP",
+      "catalogIds": [
+        "AI-BOOK-01"
+      ],
+      "layer": [
+        "api",
+        "database"
+      ],
+      "preconditions": "Free isolated slot for cancellation concurrency setup.",
+      "testData": "Single-service appointment.",
+      "expectedResult": "Setup appointment is committed once.",
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.373Z",
+      "durationMs": 24,
+      "actualResult": "Setup appointment is committed once.",
+      "evidence": {
+        "response": {
+          "status": 201,
+          "body": {
+            "mensagem": "Agendamento realizado com sucesso!",
+            "id": 3
+          }
+        },
+        "database": {
+          "count": 1
+        }
+      },
+      "defectId": null,
+      "cleanup": "covered by isolated database teardown"
+    },
+    {
+      "id": "APPT-API-013",
+      "catalogIds": [
+        "QA-E2E-018"
+      ],
+      "layer": [
+        "api",
+        "database",
+        "concurrency"
+      ],
+      "preconditions": "One confirmed appointment and no cancellation notification.",
+      "testData": "Two simultaneous PATCH cancellation requests from the owning client.",
+      "expectedResult": "Exactly one cancellation succeeds; one is rejected; status changes once and only one notification exists.",
+      "defectId": null,
+      "status": "passed",
+      "startedAt": "2026-08-19T23:33:57.397Z",
+      "durationMs": 18,
+      "actualResult": "Exactly one cancellation succeeds; one is rejected; status changes once and only one notification exists.",
+      "evidence": {
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "mensagem": "Agendamento cancelado com sucesso!"
+            }
+          },
+          {
+            "status": 409,
+            "body": {
+              "code": "APPOINTMENT_ALREADY_CANCELED",
+              "erro": "Agendamento já foi cancelado."
+            }
+          }
+        ],
+        "database": [
+          {
+            "id": 3,
+            "status": "cancelado"
+          }
+        ],
+        "cancellationNotifications": 1
+      },
+      "cleanup": "covered by isolated database teardown"
+    }
+  ],
+  "summary": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0
+  },
+  "cleanup": {
+    "serverClosed": true,
+    "poolClosed": true,
+    "databaseDropped": true
+  }
+}

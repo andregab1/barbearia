@@ -1,0 +1,377 @@
+# DER do banco de dados MySQL
+
+Schema analisado: `barbearia_db`
+
+Inventário real: **26 tabelas**, **231 colunas**, **38 chaves estrangeiras** e **120 entradas de índice**.
+
+> Gerado diretamente de `information_schema`; nenhuma tabela foi inferida a partir das migrations.
+
+```mermaid
+erDiagram
+  agendamento_servicos {
+    int agendamento_id PK,FK "int unsigned; NOT NULL"
+    int servico_id PK,FK "int unsigned; NOT NULL"
+    decimal preco_cobrado "decimal(8,2); NOT NULL"
+    smallint duracao_min "smallint unsigned; NOT NULL"
+  }
+  agendamentos {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int cliente_id FK "int unsigned; NOT NULL"
+    int colaborador_id FK "int unsigned; NOT NULL"
+    int servico_id FK "int unsigned; NOT NULL"
+    datetime data_hora "datetime; NOT NULL"
+    smallint duracao_min "smallint; NOT NULL"
+    enum status "enum('pendente','confirmado','concluido','cancelado'); NOT NULL"
+    decimal valor_cobrado "decimal(8,2); NOT NULL"
+    text observacao "text; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  audit_logs {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NULL"
+    int usuario_id FK "int unsigned; NULL"
+    varchar acao "varchar(80); NOT NULL"
+    varchar recurso "varchar(80); NOT NULL"
+    varchar recurso_id "varchar(80); NULL"
+    char request_id "char(36); NULL"
+    json detalhes "json; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  barbearias {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int admin_id FK "int unsigned; NOT NULL"
+    varchar nome "varchar(150); NOT NULL"
+    varchar slug UK "varchar(80); NULL"
+    text descricao "text; NULL"
+    varchar logo_url "varchar(500); NULL"
+    varchar cor_primaria "varchar(7); NULL"
+    varchar cor_secundaria "varchar(7); NULL"
+    varchar telefone "varchar(20); NULL"
+    varchar email "varchar(150); NULL"
+    varchar endereco "varchar(300); NULL"
+    varchar timezone "varchar(64); NOT NULL"
+    tinyint ativa "tinyint(1); NOT NULL"
+    tinyint onboarding_concluido "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  cash_entries {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    bigint payment_id FK "bigint unsigned; NULL"
+    int appointment_id FK,UK "int unsigned; NULL"
+    int criado_por FK "int unsigned; NULL"
+    enum tipo "enum('income','expense','refund','commission'); NOT NULL"
+    varchar categoria "varchar(60); NOT NULL"
+    varchar descricao "varchar(240); NULL"
+    decimal valor "decimal(10,2); NOT NULL"
+    datetime ocorrido_em "datetime; NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  colaboradores {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK,UK "int unsigned; NOT NULL"
+    int usuario_id FK,UK "int unsigned; NOT NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  commissions {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    int colaborador_id FK,UK "int unsigned; NOT NULL"
+    int agendamento_id FK,UK "int unsigned; NOT NULL"
+    bigint payment_id FK "bigint unsigned; NULL"
+    decimal percentual "decimal(5,2); NOT NULL"
+    decimal base_calculo "decimal(10,2); NOT NULL"
+    decimal valor "decimal(10,2); NOT NULL"
+    enum status "enum('pending','available','paid','canceled'); NOT NULL"
+    datetime disponivel_em "datetime; NULL"
+    datetime pago_em "datetime; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  device_tokens {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int usuario_id FK "int unsigned; NOT NULL"
+    enum plataforma "enum('web','android','ios'); NOT NULL"
+    varchar token UK "varchar(500); NOT NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+    datetime ultimo_uso_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  horarios_bloqueados {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int colaborador_id FK "int unsigned; NOT NULL"
+    datetime data_hora_ini "datetime; NOT NULL"
+    datetime data_hora_fim "datetime; NOT NULL"
+    varchar motivo "varchar(200); NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  horarios_funcionamento {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int colaborador_id FK "int unsigned; NOT NULL"
+    tinyint dia_semana "tinyint; NOT NULL; 0=Dom, 1=Seg, ..., 6=Sab"
+    time hora_inicio "time; NOT NULL"
+    time hora_fim "time; NOT NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+  }
+  invitations {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    varchar email "varchar(150); NULL"
+    varchar telefone "varchar(20); NULL"
+    enum papel "enum('manager','receptionist','professional'); NOT NULL"
+    char token_hash UK "char(64); NOT NULL"
+    datetime expira_em "datetime; NOT NULL"
+    datetime aceito_em "datetime; NULL"
+    int convidado_por FK "int unsigned; NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  memberships {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK,UK "int unsigned; NOT NULL"
+    int usuario_id FK,UK "int unsigned; NOT NULL"
+    enum papel "enum('owner','manager','receptionist','professional'); NOT NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  notificacoes {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int usuario_id FK "int unsigned; NOT NULL"
+    int agendamento_id FK "int unsigned; NULL"
+    enum tipo "enum('lembrete','cancelamento','confirmacao','bloqueio'); NOT NULL"
+    varchar titulo "varchar(150); NOT NULL"
+    text mensagem "text; NOT NULL"
+    tinyint enviada "tinyint(1); NOT NULL"
+    datetime enviada_em "datetime; NULL"
+    datetime agendada_para "datetime; NOT NULL; Quando deve ser disparada"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  notification_deliveries {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int notificacao_id FK "int unsigned; NOT NULL"
+    enum canal "enum('push','whatsapp','email'); NOT NULL"
+    varchar provedor "varchar(40); NOT NULL"
+    varchar idempotency_key UK "varchar(120); NOT NULL"
+    enum status "enum('queued','sending','delivered','failed','canceled'); NOT NULL"
+    tinyint tentativas "tinyint unsigned; NOT NULL"
+    datetime proxima_tentativa_em "datetime; NULL"
+    varchar provedor_mensagem_id "varchar(160); NULL"
+    varchar ultimo_erro "varchar(500); NULL"
+    datetime entregue_em "datetime; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  notification_preferences {
+    int usuario_id PK,FK "int unsigned; NOT NULL"
+    tinyint push_ativo "tinyint(1); NOT NULL"
+    tinyint whatsapp_ativo "tinyint(1); NOT NULL"
+    tinyint email_ativo "tinyint(1); NOT NULL"
+    tinyint marketing_ativo "tinyint(1); NOT NULL"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  otp_challenges {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    char destino_hash "char(64); NOT NULL"
+    enum canal "enum('email','whatsapp','sms'); NOT NULL"
+    enum proposito "enum('quick_access','verify_contact','password_reset'); NOT NULL"
+    varchar codigo_hash "varchar(255); NOT NULL"
+    tinyint tentativas "tinyint unsigned; NOT NULL"
+    datetime expira_em "datetime; NOT NULL"
+    datetime consumido_em "datetime; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  payment_accounts {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK,UK "int unsigned; NOT NULL"
+    varchar provedor UK "varchar(30); NOT NULL"
+    varchar conta_externa_id "varchar(120); NULL"
+    enum status "enum('pending','active','restricted','disabled'); NOT NULL"
+    text credencial_criptografada "text; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  payments {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    int agendamento_id FK "int unsigned; NULL"
+    int usuario_id FK "int unsigned; NULL"
+    varchar provedor UK "varchar(30); NOT NULL"
+    varchar provedor_pagamento_id UK "varchar(120); NULL"
+    varchar idempotency_key UK "varchar(100); NOT NULL"
+    enum tipo "enum('subscription','deposit','service'); NOT NULL"
+    enum metodo "enum('pix','credit_card','debit_card','cash','other'); NOT NULL"
+    enum status "enum('pending','authorized','paid','failed','canceled','refunded','partially_refunded'); NOT NULL"
+    decimal valor "decimal(10,2); NOT NULL"
+    char moeda "char(3); NOT NULL"
+    datetime pago_em "datetime; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  plans {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    varchar codigo UK "varchar(40); NOT NULL"
+    varchar nome "varchar(80); NOT NULL"
+    decimal preco_mensal "decimal(10,2); NOT NULL"
+    smallint limite_profissionais "smallint unsigned; NULL"
+    json recursos "json; NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  refresh_tokens {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int usuario_id FK "int unsigned; NOT NULL"
+    varchar token UK "varchar(500); NOT NULL"
+    datetime expira_em "datetime; NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  refunds {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    bigint payment_id FK "bigint unsigned; NOT NULL"
+    varchar provedor_reembolso_id "varchar(120); NULL"
+    varchar idempotency_key UK "varchar(100); NOT NULL"
+    enum status "enum('pending','processed','failed'); NOT NULL"
+    decimal valor "decimal(10,2); NOT NULL"
+    varchar motivo "varchar(240); NULL"
+    datetime processado_em "datetime; NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  schema_migrations {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    varchar name UK "varchar(255); NOT NULL"
+    datetime applied_at "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  servicos {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    varchar nome "varchar(100); NOT NULL"
+    text descricao "text; NULL"
+    decimal preco "decimal(8,2); NOT NULL"
+    smallint duracao_min "smallint unsigned; NOT NULL; Duração em minutos"
+    tinyint ativo "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  subscriptions {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    int barbearia_id FK "int unsigned; NOT NULL"
+    int plan_id FK "int unsigned; NOT NULL"
+    varchar provedor UK "varchar(30); NOT NULL"
+    varchar provedor_assinatura_id UK "varchar(120); NULL"
+    enum status "enum('trial','active','past_due','paused','canceled'); NOT NULL"
+    datetime periodo_inicio "datetime; NOT NULL"
+    datetime periodo_fim "datetime; NOT NULL"
+    tinyint cancelar_ao_final "tinyint(1); NOT NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  usuarios {
+    int id PK "int unsigned; NOT NULL; auto_increment"
+    varchar nome "varchar(100); NOT NULL"
+    varchar email UK "varchar(150); NULL"
+    varchar username UK "varchar(50); NULL"
+    varchar telefone UK "varchar(20); NOT NULL"
+    date data_nascimento "date; NULL"
+    varchar senha_hash "varchar(255); NOT NULL"
+    enum role "enum('cliente','barbeiro','admin'); NOT NULL"
+    tinyint ativo "tinyint(1); NOT NULL"
+    text foto_url "text; NULL"
+    varchar bio "varchar(280); NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+    datetime atualizado_em "datetime; NOT NULL; DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+  }
+  webhook_events {
+    bigint id PK "bigint unsigned; NOT NULL; auto_increment"
+    varchar provedor UK "varchar(30); NOT NULL"
+    varchar evento_externo_id UK "varchar(160); NOT NULL"
+    varchar tipo "varchar(80); NOT NULL"
+    json payload "json; NOT NULL"
+    datetime processado_em "datetime; NULL"
+    varchar erro "varchar(500); NULL"
+    datetime criado_em "datetime; NOT NULL; DEFAULT_GENERATED"
+  }
+  agendamentos ||--o{ agendamento_servicos : "fk_agendamento_servicos_agendamento: agendamento_id -> id"
+  servicos ||--o{ agendamento_servicos : "fk_agendamento_servicos_servico: servico_id -> id"
+  usuarios ||--o{ agendamentos : "fk_agend_cliente: cliente_id -> id"
+  colaboradores ||--o{ agendamentos : "fk_agend_colaborador: colaborador_id -> id"
+  servicos ||--o{ agendamentos : "fk_agend_servico: servico_id -> id"
+  barbearias o|--o{ audit_logs : "fk_audit_barbearia: barbearia_id -> id"
+  usuarios o|--o{ audit_logs : "fk_audit_usuario: usuario_id -> id"
+  usuarios ||--o{ barbearias : "fk_barbearia_admin: admin_id -> id"
+  agendamentos o|--o{ cash_entries : "fk_cash_appointment: appointment_id -> id"
+  barbearias ||--o{ cash_entries : "fk_cash_barbearia: barbearia_id -> id"
+  usuarios o|--o{ cash_entries : "fk_cash_creator: criado_por -> id"
+  payments o|--o{ cash_entries : "fk_cash_payment: payment_id -> id"
+  barbearias ||--o{ colaboradores : "fk_colab_barbearia: barbearia_id -> id"
+  usuarios ||--o{ colaboradores : "fk_colab_usuario: usuario_id -> id"
+  agendamentos ||--o{ commissions : "fk_commission_agendamento: agendamento_id -> id"
+  barbearias ||--o{ commissions : "fk_commission_barbearia: barbearia_id -> id"
+  colaboradores ||--o{ commissions : "fk_commission_colaborador: colaborador_id -> id"
+  payments o|--o{ commissions : "fk_commission_payment: payment_id -> id"
+  usuarios ||--o{ device_tokens : "fk_device_token_user: usuario_id -> id"
+  colaboradores ||--o{ horarios_bloqueados : "fk_bloqueio_colaborador: colaborador_id -> id"
+  colaboradores ||--o{ horarios_funcionamento : "fk_horario_colaborador: colaborador_id -> id"
+  barbearias ||--o{ invitations : "fk_invitation_barbearia: barbearia_id -> id"
+  usuarios ||--o{ invitations : "fk_invitation_inviter: convidado_por -> id"
+  barbearias ||--o{ memberships : "fk_membership_barbearia: barbearia_id -> id"
+  usuarios ||--o{ memberships : "fk_membership_usuario: usuario_id -> id"
+  agendamentos o|--o{ notificacoes : "fk_notif_agendamento: agendamento_id -> id"
+  usuarios ||--o{ notificacoes : "fk_notif_usuario: usuario_id -> id"
+  notificacoes ||--o{ notification_deliveries : "fk_notification_delivery_notification: notificacao_id -> id"
+  usuarios ||--o{ notification_preferences : "fk_notification_preference_user: usuario_id -> id"
+  barbearias ||--o{ payment_accounts : "fk_payment_account_barbearia: barbearia_id -> id"
+  agendamentos o|--o{ payments : "fk_payment_agendamento: agendamento_id -> id"
+  barbearias ||--o{ payments : "fk_payment_barbearia: barbearia_id -> id"
+  usuarios o|--o{ payments : "fk_payment_usuario: usuario_id -> id"
+  usuarios ||--o{ refresh_tokens : "fk_token_usuario: usuario_id -> id"
+  payments ||--o{ refunds : "fk_refund_payment: payment_id -> id"
+  barbearias ||--o{ servicos : "fk_servico_barbearia: barbearia_id -> id"
+  barbearias ||--o{ subscriptions : "fk_subscription_barbearia: barbearia_id -> id"
+  plans ||--o{ subscriptions : "fk_subscription_plan: plan_id -> id"
+```
+
+## Regras de relacionamento
+
+| Restrição | Tabela/coluna filha | Tabela/coluna pai | ON UPDATE | ON DELETE |
+|---|---|---|---|---|
+| fk_agendamento_servicos_agendamento | agendamento_servicos.agendamento_id | agendamentos.id | CASCADE | CASCADE |
+| fk_agendamento_servicos_servico | agendamento_servicos.servico_id | servicos.id | CASCADE | RESTRICT |
+| fk_agend_cliente | agendamentos.cliente_id | usuarios.id | CASCADE | RESTRICT |
+| fk_agend_colaborador | agendamentos.colaborador_id | colaboradores.id | CASCADE | RESTRICT |
+| fk_agend_servico | agendamentos.servico_id | servicos.id | CASCADE | RESTRICT |
+| fk_audit_barbearia | audit_logs.barbearia_id | barbearias.id | NO ACTION | SET NULL |
+| fk_audit_usuario | audit_logs.usuario_id | usuarios.id | NO ACTION | SET NULL |
+| fk_barbearia_admin | barbearias.admin_id | usuarios.id | CASCADE | RESTRICT |
+| fk_cash_appointment | cash_entries.appointment_id | agendamentos.id | NO ACTION | SET NULL |
+| fk_cash_barbearia | cash_entries.barbearia_id | barbearias.id | NO ACTION | RESTRICT |
+| fk_cash_creator | cash_entries.criado_por | usuarios.id | NO ACTION | SET NULL |
+| fk_cash_payment | cash_entries.payment_id | payments.id | NO ACTION | SET NULL |
+| fk_colab_barbearia | colaboradores.barbearia_id | barbearias.id | CASCADE | CASCADE |
+| fk_colab_usuario | colaboradores.usuario_id | usuarios.id | CASCADE | CASCADE |
+| fk_commission_agendamento | commissions.agendamento_id | agendamentos.id | NO ACTION | RESTRICT |
+| fk_commission_barbearia | commissions.barbearia_id | barbearias.id | NO ACTION | RESTRICT |
+| fk_commission_colaborador | commissions.colaborador_id | colaboradores.id | NO ACTION | RESTRICT |
+| fk_commission_payment | commissions.payment_id | payments.id | NO ACTION | SET NULL |
+| fk_device_token_user | device_tokens.usuario_id | usuarios.id | NO ACTION | CASCADE |
+| fk_bloqueio_colaborador | horarios_bloqueados.colaborador_id | colaboradores.id | CASCADE | CASCADE |
+| fk_horario_colaborador | horarios_funcionamento.colaborador_id | colaboradores.id | CASCADE | CASCADE |
+| fk_invitation_barbearia | invitations.barbearia_id | barbearias.id | NO ACTION | CASCADE |
+| fk_invitation_inviter | invitations.convidado_por | usuarios.id | NO ACTION | RESTRICT |
+| fk_membership_barbearia | memberships.barbearia_id | barbearias.id | NO ACTION | CASCADE |
+| fk_membership_usuario | memberships.usuario_id | usuarios.id | NO ACTION | CASCADE |
+| fk_notif_agendamento | notificacoes.agendamento_id | agendamentos.id | CASCADE | SET NULL |
+| fk_notif_usuario | notificacoes.usuario_id | usuarios.id | CASCADE | CASCADE |
+| fk_notification_delivery_notification | notification_deliveries.notificacao_id | notificacoes.id | NO ACTION | CASCADE |
+| fk_notification_preference_user | notification_preferences.usuario_id | usuarios.id | NO ACTION | CASCADE |
+| fk_payment_account_barbearia | payment_accounts.barbearia_id | barbearias.id | NO ACTION | CASCADE |
+| fk_payment_agendamento | payments.agendamento_id | agendamentos.id | NO ACTION | SET NULL |
+| fk_payment_barbearia | payments.barbearia_id | barbearias.id | NO ACTION | RESTRICT |
+| fk_payment_usuario | payments.usuario_id | usuarios.id | NO ACTION | SET NULL |
+| fk_token_usuario | refresh_tokens.usuario_id | usuarios.id | CASCADE | CASCADE |
+| fk_refund_payment | refunds.payment_id | payments.id | NO ACTION | RESTRICT |
+| fk_servico_barbearia | servicos.barbearia_id | barbearias.id | CASCADE | CASCADE |
+| fk_subscription_barbearia | subscriptions.barbearia_id | barbearias.id | NO ACTION | CASCADE |
+| fk_subscription_plan | subscriptions.plan_id | plans.id | NO ACTION | RESTRICT |
+
+O snapshot técnico completo está em `docs/database-schema-snapshot.json`.

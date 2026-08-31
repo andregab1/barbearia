@@ -8,20 +8,31 @@ import 'package:flutter/material.dart';
 
 class LogoWidget extends StatelessWidget {
   final String? logoUrl;
-  final double  size;
-  final BoxFit  fit;
+  final double size;
+  final BoxFit fit;
   final Widget? placeholder;
 
   const LogoWidget({
     super.key,
     required this.logoUrl,
-    this.size        = 60,
-    this.fit         = BoxFit.cover,
+    this.size = 60,
+    this.fit = BoxFit.cover,
     this.placeholder,
   });
 
-  Widget _placeholder() =>
-      placeholder ?? Icon(Icons.content_cut, size: size * 0.5, color: Colors.grey);
+  Widget _placeholder() => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: const Color(0xFFD39400).withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(size * 0.22),
+        ),
+        child: Icon(
+          Icons.content_cut_rounded,
+          size: size * 0.45,
+          color: const Color(0xFFD39400),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +40,13 @@ class LogoWidget extends StatelessWidget {
 
     // Arquivo local (path absoluto)
     if (logoUrl!.startsWith('/') || logoUrl!.startsWith('file://')) {
-      final path = logoUrl!.startsWith('file://') ? logoUrl!.substring(7) : logoUrl!;
+      final path =
+          logoUrl!.startsWith('file://') ? logoUrl!.substring(7) : logoUrl!;
       return Image.file(
-        File(path), width: size, height: size, fit: fit,
+        File(path),
+        width: size,
+        height: size,
+        fit: fit,
         errorBuilder: (_, __, ___) => _placeholder(),
       );
     }
@@ -41,7 +56,10 @@ class LogoWidget extends StatelessWidget {
       try {
         final bytes = base64Decode(logoUrl!.split(',').last);
         return Image.memory(
-          bytes, width: size, height: size, fit: fit,
+          bytes,
+          width: size,
+          height: size,
+          fit: fit,
           errorBuilder: (_, __, ___) => _placeholder(),
         );
       } catch (_) {
@@ -51,7 +69,10 @@ class LogoWidget extends StatelessWidget {
 
     // URL normal (https://...)
     return Image.network(
-      logoUrl!, width: size, height: size, fit: fit,
+      logoUrl!,
+      width: size,
+      height: size,
+      fit: fit,
       errorBuilder: (_, __, ___) => _placeholder(),
     );
   }

@@ -3,8 +3,10 @@
 // ==========================================
 const router = require('express').Router();
 const { cadastrar, login, refresh, logout } = require('../controllers/auth.controller');
+const { registerOwner } = require('../controllers/onboarding.controller');
 
 router.post('/cadastrar', cadastrar);
+router.post('/register-owner', registerOwner);
 router.post('/login',     login);
 router.post('/refresh',   refresh);
 router.post('/logout',    logout);

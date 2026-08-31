@@ -7,11 +7,20 @@ const PORT = process.env.PORT || 3000;
 
 const { pool } = require('./src/config/database');
 
+function validarConfiguracao() {
+  const obrigatorias = ['JWT_SECRET', 'JWT_REFRESH_SECRET'];
+  const ausentes = obrigatorias.filter((nome) => !process.env[nome]);
+  if (ausentes.length > 0) throw new Error(`Variáveis obrigatórias ausentes: ${ausentes.join(', ')}`);
+  const fracas = obrigatorias.filter((nome) => process.env[nome].length < 32);
+  if (fracas.length > 0) throw new Error(`Segredos devem ter ao menos 32 caracteres: ${fracas.join(', ')}`);
+}
+
 async function iniciar() {
   try {
+    validarConfiguracao();
     const [rows] = await pool.query('SELECT 1');
     console.log('✅ Banco de dados conectado com sucesso!');
-    console.log('🔑 JWT_SECRET configurado:', process.env.JWT_SECRET ? `Sim (${process.env.JWT_SECRET.length} chars)` : 'NÃO CONFIGURADO!');
+    console.log('🔑 JWT_SECRET configurado:', process.env.JWT_SECRET ? 'Sim' : 'NÃO CONFIGURADO!');
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
     });

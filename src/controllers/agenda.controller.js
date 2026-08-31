@@ -3,6 +3,95 @@
 // RF05 - Visualização | RF10 - Histórico
 // ==========================================
 const { pool } = require('../config/database');
+const { obterColaboradorAcessivel } = require('../utils/access');
+
+async function dashboard(req, res) {
+  try {
+    const colaborador = await obterColaboradorAcessivel(req.usuario, req.params.colaborador_id);
+    if (!colaborador) {
+      return res.status(403).json({ code: 'AGENDA_FORBIDDEN', erro: 'Sem permissao para acessar esta agenda.' });
+    }
+
+    const id = colaborador.id;
+    const [[summaryRows], [appointments], [working], [blocked]] = await Promise.all([
+      pool.query(
+        `SELECT
+           SUM(CASE WHEN DATE(data_hora) = CURDATE() AND status IN ('confirmado','pendente') THEN 1 ELSE 0 END) AS today,
+           SUM(CASE WHEN data_hora > NOW() AND status IN ('confirmado','pendente') THEN 1 ELSE 0 END) AS upcoming,
+           COUNT(*) AS total
+         FROM agendamentos
+         WHERE colaborador_id = ?`,
+        [id],
+      ),
+      pool.query(
+        `SELECT a.id, a.data_hora, a.status, a.valor_cobrado, a.duracao_min,
+                s.nome AS servico, a.observacao,
+                u.nome AS cliente, u.telefone AS cliente_telefone
+           FROM agendamentos a
+           JOIN servicos s ON s.id = a.servico_id
+           JOIN usuarios u ON u.id = a.cliente_id
+          WHERE a.colaborador_id = ?
+            AND a.data_hora >= CURDATE()
+            AND a.data_hora < DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+            AND a.status IN ('confirmado','pendente')
+          ORDER BY a.data_hora ASC`,
+        [id],
+      ),
+      pool.query(
+        `SELECT hora_inicio, hora_fim
+           FROM horarios_funcionamento
+          WHERE colaborador_id = ? AND dia_semana = DAYOFWEEK(CURDATE()) - 1 AND ativo = 1
+          LIMIT 1`,
+        [id],
+      ),
+      pool.query(
+        `SELECT COALESCE(SUM(TIMESTAMPDIFF(MINUTE, data_hora_ini, data_hora_fim)), 0) AS minutes
+           FROM horarios_bloqueados
+          WHERE colaborador_id = ? AND DATE(data_hora_ini) = CURDATE()`,
+        [id],
+      ),
+    ]);
+
+    const todayAppointments = appointments.filter((item) => {
+      const value = item.data_hora instanceof Date
+        ? item.data_hora
+        : new Date(String(item.data_hora).replace(' ', 'T'));
+      const now = new Date();
+      return value.getFullYear() === now.getFullYear()
+        && value.getMonth() === now.getMonth()
+        && value.getDate() === now.getDate();
+    });
+    const bookedMinutes = todayAppointments.reduce((sum, item) => sum + Number(item.duracao_min || 0), 0);
+    let availableMinutes = 0;
+    if (working[0]) {
+      const toMinutes = (value) => {
+        const [hour, minute] = String(value).split(':').map(Number);
+        return hour * 60 + minute;
+      };
+      availableMinutes = Math.max(0, toMinutes(working[0].hora_fim) - toMinutes(working[0].hora_inicio) - Number(blocked[0]?.minutes || 0));
+    }
+
+    const summary = summaryRows[0] || {};
+    return res.json({
+      summary: {
+        today: Number(summary.today || 0),
+        upcoming: Number(summary.upcoming || 0),
+        total: Number(summary.total || 0),
+      },
+      nextAppointment: appointments.find((item) => new Date(String(item.data_hora).replace(' ', 'T')) > new Date()) || null,
+      todayAppointments,
+      upcomingAppointments: appointments,
+      occupancy: {
+        bookedMinutes,
+        availableMinutes,
+        percentage: availableMinutes > 0 ? Math.min(100, Math.round((bookedMinutes / availableMinutes) * 100)) : 0,
+      },
+    });
+  } catch (err) {
+    console.error('ERRO dashboard agenda:', err.message);
+    return res.status(500).json({ code: 'AGENDA_LOAD_ERROR', erro: 'Nao foi possivel carregar a agenda.' });
+  }
+}
 
 // ==========================================
 // RF05: Buscar horários disponíveis
@@ -118,6 +207,10 @@ async function horariosdisponiveis(req, res) {
 async function historico(req, res) {
   const { cliente_id } = req.params;
 
+  if (Number.parseInt(cliente_id, 10) !== req.usuario.id) {
+    return res.status(403).json({ code: 'HISTORY_FORBIDDEN', erro: 'Sem permissão para acessar este histórico.' });
+  }
+
   try {
     const [rows] = await pool.query(
       `SELECT a.id, a.data_hora, a.status, a.valor_cobrado,
@@ -136,4 +229,4 @@ async function historico(req, res) {
   }
 }
 
-module.exports = { horariosdisponiveis, historico };
+module.exports = { horariosdisponiveis, historico, dashboard };

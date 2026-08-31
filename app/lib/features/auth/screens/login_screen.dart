@@ -1,20 +1,15 @@
-// ==========================================
-// TELA: Login
-// RF02 - Login | RF04 - Logo como background
-// Em telas largas (web), vira uma landing page:
-// hero (headline + destaques) à esquerda,
-// formulário de login funcional à direita —
-// no estilo Cal.com (produto real embutido no
-// hero, não uma ilustração).
-// ==========================================
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/barbearia_theme_service.dart';
 import '../../../shared/widgets/logo_widget.dart';
 import '../controllers/auth_controller.dart';
+import '../../../web/sphere_helper_stub.dart'
+    if (dart.library.js_interop) '../../../web/sphere_helper_web.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,13 +19,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey      = GlobalKey<FormState>();
-  final _loginCtrl    = TextEditingController();
-  final _senhaCtrl    = TextEditingController();
-  bool  _senhaVisivel = false;
+  final _formKey = GlobalKey<FormState>();
+  final _loginCtrl = TextEditingController();
+  final _senhaCtrl = TextEditingController();
+  bool _senhaVisivel = false;
+  bool _lembrarDeMim = true;
+
+  Future<void> _mostrarAjudaSenha() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Ajuda com acesso'),
+        content: const Text(
+          'A recuperação automática de senha ainda não está disponível. '
+          'Entre em contato com o administrador da sua barbearia para criar ou redefinir seu acesso.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Entendi'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa a esfera na tela de login (web only, após o primeiro frame)
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) initSphere(0);
+      });
+    }
+  }
 
   @override
   void dispose() {
+    if (kIsWeb) destroySphere();
     _loginCtrl.dispose();
     _senhaCtrl.dispose();
     super.dispose();
@@ -39,264 +66,536 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _entrar() async {
     if (!_formKey.currentState!.validate()) return;
     final auth = context.read<AuthController>();
-    final ok   = await auth.login(_loginCtrl.text.trim(), _senhaCtrl.text);
+    final ok = await auth.login(_loginCtrl.text.trim(), _senhaCtrl.text);
 
     if (!mounted) return;
     if (ok) {
-      if (auth.role == AppConstants.roleAdmin)         context.go(AppConstants.routeHomeAdmin);
-      else if (auth.role == AppConstants.roleBarbeiro) context.go(AppConstants.routeHomeBarbeiro);
-      else                                             context.go(AppConstants.routeHomeCliente);
+      if (auth.role == AppConstants.roleAdmin) {
+        context.go(AppConstants.routeHomeAdmin);
+      } else if (auth.role == AppConstants.roleBarbeiro)
+        context.go(AppConstants.routeHomeBarbeiro);
+      else
+        context.go(AppConstants.routeHomeCliente);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final tema = context.watch<BarbeariaThemeService>();
+    final cor = Theme.of(context).colorScheme.primary;
+    final largura = MediaQuery.sizeOf(context).width;
+    final isDesktop = largura >= 900;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isWeb = constraints.maxWidth >= 900;
-
-            if (!isWeb) {
-              // Mobile: só o formulário, como já era antes
-              return _buildFundoLogo(
-                tema,
-                SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
-                  child: _buildFormulario(context, tema, centralizarLogo: true),
-                ),
-              );
-            }
-
-            // Web: layout de landing page — hero à esquerda, form à direita
-            return Row(
-              children: [
-                Expanded(
-                  flex: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 64),
-                    child: Center(child: _buildHero(context, tema)),
-                  ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: _buildFundoLogo(
-                    tema,
-                    Container(
-                      color: AppTheme.corCard,
-                      padding: const EdgeInsets.symmetric(horizontal: 56, vertical: 40),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 380),
-                          child: SingleChildScrollView(
-                            child: _buildFormulario(context, tema, centralizarLogo: false),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+      backgroundColor: AppTheme.black,
+      body: isDesktop ? _buildDesktop(tema, cor) : _buildMobile(tema, cor),
     );
   }
 
   // ==========================================
-  // Coluna esquerda (só aparece no formato site):
-  // headline + destaques do produto, estilo hero
-  // de landing page.
+  // DESKTOP: Split layout
   // ==========================================
-  Widget _buildHero(BuildContext context, BarbeariaThemeService tema) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppTheme.corCard,
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.content_cut, size: 16, color: tema.corPrimaria),
-            const SizedBox(width: 8),
-            Text('GetCutt', style: TextStyle(color: AppTheme.corTexto, fontSize: 13, fontWeight: FontWeight.w600)),
-          ]),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Agendamento sem\nfricção pra sua barbearia',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 44),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: 440,
-          child: Text(
-            'Clientes marcam horário em segundos, barbeiros administram a agenda em tempo real — tudo em um só lugar.',
-            style: TextStyle(color: AppTheme.corTextoSecundario, fontSize: 16, height: 1.5),
-          ),
-        ),
-        const SizedBox(height: 40),
-        Row(
-          children: [
-            _buildDestaque(Icons.calendar_today_outlined, 'Agenda em tempo real'),
-            const SizedBox(width: 32),
-            _buildDestaque(Icons.notifications_none, 'Lembretes automáticos'),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _buildDestaque(Icons.groups_outlined, 'Gestão de equipe'),
-            const SizedBox(width: 32),
-            _buildDestaque(Icons.bar_chart_outlined, 'Relatórios e métricas'),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDestaque(IconData icone, String texto) {
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icone, size: 18, color: AppTheme.corTextoSecundario),
-      const SizedBox(width: 8),
-      Text(texto, style: TextStyle(color: AppTheme.corTexto, fontSize: 14, fontWeight: FontWeight.w500)),
+  Widget _buildDesktop(BarbeariaThemeService tema, Color cor) {
+    return Row(children: [
+      // Hero à esquerda
+      Expanded(flex: 5, child: _buildHero(tema, cor)),
+      // Form à direita
+      Expanded(flex: 5, child: _buildFormArea(tema, cor)),
     ]);
   }
 
   // ==========================================
-  // RF04: Logo PNG como background, com opacidade
+  // MOBILE: Form only
   // ==========================================
-  Widget _buildFundoLogo(BarbeariaThemeService tema, Widget child) {
-    return Stack(
-      children: [
-        if (tema.logoUrl != null)
-          Center(
-            child: Opacity(
-              opacity: 0.06,
-              child: LogoWidget(logoUrl: tema.logoUrl, size: double.infinity, fit: BoxFit.contain),
+  Widget _buildMobile(BarbeariaThemeService tema, Color cor) {
+    return Stack(children: [
+      // Particle sphere (web only — camada mais atrás)
+      if (kIsWeb)
+        const Positioned.fill(
+          child: HtmlElementView(viewType: 'sphere-container'),
+        ),
+      // Background com imagem sutil
+      Positioned.fill(
+        child: Opacity(
+          opacity: 0.06,
+          child: tema.logoUrl != null
+              ? LogoWidget(
+                  logoUrl: tema.logoUrl,
+                  size: double.infinity,
+                  fit: BoxFit.cover)
+              : Icon(Icons.content_cut_rounded, size: 300, color: cor),
+        ),
+      ),
+      // Gradiente de fundo
+      Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppTheme.black, AppTheme.black.withValues(alpha: 0.95)],
             ),
           ),
-        child,
-      ],
-    );
+        ),
+      ),
+      // Form
+      SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: _buildFormContent(tema, cor),
+        ),
+      ),
+    ]);
   }
 
   // ==========================================
-  // Formulário de login — igual em mobile e web,
-  // só muda o container ao redor.
+  // HERO (lado esquerdo desktop)
   // ==========================================
-  Widget _buildFormulario(BuildContext context, BarbeariaThemeService tema, {required bool centralizarLogo}) {
-    final auth = context.watch<AuthController>();
-
-    final logo = Container(
-      width: 90, height: 90,
-      decoration: BoxDecoration(
-        color: AppTheme.corCard,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: tema.corPrimaria, width: 2),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: LogoWidget(
-          logoUrl: tema.logoUrl,
-          size: 90,
-          fit: BoxFit.cover,
-          placeholder: Icon(Icons.content_cut, color: tema.corPrimaria, size: 44),
+  Widget _buildHero(BarbeariaThemeService tema, Color cor) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.surface,
+            AppTheme.black,
+          ],
         ),
       ),
+      child: Stack(children: [
+        // Particle sphere (web only — camada mais atrás)
+        if (kIsWeb)
+          const Positioned.fill(
+            child: HtmlElementView(viewType: 'sphere-container'),
+          ),
+        // Imagem de fundo sutil
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.05,
+            child: tema.logoUrl != null
+                ? LogoWidget(
+                    logoUrl: tema.logoUrl,
+                    size: double.infinity,
+                    fit: BoxFit.cover)
+                : Icon(Icons.content_cut_rounded, size: 400, color: cor),
+          ),
+        ),
+        // Gradiente de profundidade
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.black.withValues(alpha: 0.3),
+                  AppTheme.black.withValues(alpha: 0.6),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Conteúdo
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo
+                  Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.content_cut_rounded, size: 28, color: cor),
+                    const SizedBox(width: 12),
+                    Text('GetCutt',
+                        style: GoogleFonts.inter(
+                          color: cor,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                        )),
+                  ]),
+                  const SizedBox(height: 40),
+                  // Título
+                  Text('Sua barbearia,\ndo seu jeito.',
+                      style: GoogleFonts.playfairDisplay(
+                          color: AppTheme.text,
+                          fontSize: 38,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.8,
+                          height: 1.12)),
+                  const SizedBox(height: 16),
+                  // Subtítulo
+                  Text(
+                      'Gerencie agendamentos, serviços, horários e equipe de forma simples e eficiente.',
+                      style: GoogleFonts.inter(
+                          color: AppTheme.textMuted,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          height: 1.6)),
+                  const SizedBox(height: 40),
+                  // Features
+                  _buildFeature(
+                      cor,
+                      Icons.calendar_today_outlined,
+                      'Agendamentos inteligentes',
+                      'Mais organização e menos falhas.'),
+                  const SizedBox(height: 16),
+                  _buildFeature(
+                      cor,
+                      Icons.content_cut_rounded,
+                      'Serviços personalizados',
+                      'Do jeito que sua barbearia trabalha.'),
+                  const SizedBox(height: 16),
+                  _buildFeature(
+                      cor,
+                      Icons.bar_chart_outlined,
+                      'Gestão completa',
+                      'Tudo que você precisa em um só lugar.'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
+  }
+
+  Widget _buildFeature(Color cor, IconData icone, String titulo, String desc) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: cor.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icone, size: 20, color: cor),
+      ),
+      const SizedBox(width: 16),
+      Expanded(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(titulo,
+              style: GoogleFonts.inter(
+                  color: AppTheme.text,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text(desc,
+              style: GoogleFonts.inter(
+                  color: AppTheme.textMuted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400)),
+        ],
+      )),
+    ]);
+  }
+
+  // ==========================================
+  // ÁREA DO FORMULÁRIO
+  // ==========================================
+  Widget _buildFormArea(BarbeariaThemeService tema, Color cor) {
+    return Stack(children: [
+      // Fundo
+      Positioned.fill(child: Container(color: AppTheme.black)),
+      // Gradiente sutil
+      Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppTheme.surface.withValues(alpha: 0.3),
+                AppTheme.black,
+              ],
+            ),
+          ),
+        ),
+      ),
+      // Conteúdo
+      Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+          child: _buildFormContent(tema, cor),
+        ),
+      ),
+    ]);
+  }
+
+  // ==========================================
+  // CONTEÚDO DO FORMULÁRIO (compartilhado)
+  // ==========================================
+  Widget _buildFormContent(BarbeariaThemeService tema, Color cor) {
+    final auth = context.watch<AuthController>();
 
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (centralizarLogo) Center(child: logo) else logo,
-          const SizedBox(height: 32),
-
-          Text('Bem-vindo',
-              style: TextStyle(color: AppTheme.corTexto, fontSize: 28, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text('Entre na sua conta',
-              style: TextStyle(color: AppTheme.corTextoSecundario, fontSize: 14)),
-          const SizedBox(height: 32),
-
-          TextFormField(
-            controller: _loginCtrl,
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(color: AppTheme.corTexto),
-            decoration: InputDecoration(
-              labelText: 'E-mail ou Telefone',
-              prefixIcon: Icon(Icons.person_outline, color: tema.corPrimaria),
-            ),
-            validator: (v) => v == null || v.isEmpty ? 'Informe seu e-mail ou telefone' : null,
-          ),
-          const SizedBox(height: 16),
-
-          TextFormField(
-            controller: _senhaCtrl,
-            obscureText: !_senhaVisivel,
-            style: TextStyle(color: AppTheme.corTexto),
-            decoration: InputDecoration(
-              labelText: 'Senha',
-              prefixIcon: Icon(Icons.lock_outline, color: tema.corPrimaria),
-              suffixIcon: IconButton(
-                icon: Icon(_senhaVisivel ? Icons.visibility_off : Icons.visibility,
-                    color: AppTheme.corTextoSecundario),
-                onPressed: () => setState(() => _senhaVisivel = !_senhaVisivel),
-              ),
-            ),
-            validator: (v) => v == null || v.isEmpty ? 'Informe sua senha' : null,
-          ),
-          const SizedBox(height: 12),
-
-          if (auth.erro.isNotEmpty)
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Card do form
             Container(
-              padding: const EdgeInsets.all(12),
+              width: double.infinity,
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
-                color: AppTheme.corErro.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(8),
+                color: AppTheme.surfaceElev,
+                borderRadius: BorderRadius.circular(18),
+                border:
+                    Border.all(color: AppTheme.border.withValues(alpha: 0.5)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 32,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
-              child: Row(children: [
-                Icon(Icons.error_outline, color: AppTheme.corErro, size: 18),
-                const SizedBox(width: 8),
-                Expanded(child: Text(auth.erro, style: TextStyle(color: AppTheme.corErro, fontSize: 13))),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Título
+                  Text('Bem-vindo de volta',
+                      style: GoogleFonts.playfairDisplay(
+                          color: AppTheme.text,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 6),
+                  Text('Faça login para acessar sua conta.',
+                      style: GoogleFonts.inter(
+                          color: AppTheme.textMuted, fontSize: 14)),
+                  const SizedBox(height: 32),
+
+                  // Campo E-mail
+                  _buildInputLabel('E-mail'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _loginCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    style:
+                        GoogleFonts.inter(color: AppTheme.text, fontSize: 14),
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? 'Informe seu e-mail ou telefone'
+                        : null,
+                    decoration: InputDecoration(
+                      hintText: 'seu@email.com',
+                      hintStyle: GoogleFonts.inter(
+                          color: AppTheme.textMuted.withValues(alpha: 0.5),
+                          fontSize: 14),
+                      prefixIcon: const Icon(Icons.email_outlined,
+                          color: AppTheme.textMuted, size: 20),
+                      filled: true,
+                      fillColor: AppTheme.surface,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.border),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: cor, width: 1.5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Campo Senha
+                  _buildInputLabel('Senha'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _senhaCtrl,
+                    obscureText: !_senhaVisivel,
+                    style:
+                        GoogleFonts.inter(color: AppTheme.text, fontSize: 14),
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? 'Informe sua senha' : null,
+                    decoration: InputDecoration(
+                      hintText: '••••••••',
+                      hintStyle: GoogleFonts.inter(
+                          color: AppTheme.textMuted.withValues(alpha: 0.5),
+                          fontSize: 14),
+                      prefixIcon: const Icon(Icons.lock_outline,
+                          color: AppTheme.textMuted, size: 20),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            _senhaVisivel
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: AppTheme.textMuted,
+                            size: 20),
+                        onPressed: () =>
+                            setState(() => _senhaVisivel = !_senhaVisivel),
+                      ),
+                      filled: true,
+                      fillColor: AppTheme.surface,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.border),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: cor, width: 1.5),
+                      ),
+                    ),
+                  ),
+
+                  // Erro
+                  if (auth.erro.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.erro.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: AppTheme.erro.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(children: [
+                        const Icon(Icons.error_outline,
+                            color: AppTheme.erro, size: 18),
+                        const SizedBox(width: 10),
+                        Expanded(
+                            child: Text(auth.erro,
+                                style: GoogleFonts.inter(
+                                    color: AppTheme.erro,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500))),
+                      ]),
+                    ),
+                  ],
+
+                  const SizedBox(height: 16),
+
+                  // Esqueceu a senha + Lembrar de mim
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Checkbox(
+                              value: _lembrarDeMim,
+                              onChanged: (v) =>
+                                  setState(() => _lembrarDeMim = v ?? true),
+                              activeColor: cor,
+                              side: BorderSide(
+                                  color: AppTheme.textMuted
+                                      .withValues(alpha: 0.3)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4)),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('Lembrar de mim',
+                              style: GoogleFonts.inter(
+                                  color: AppTheme.textMuted, fontSize: 13)),
+                        ]),
+                        TextButton(
+                          onPressed: _mostrarAjudaSenha,
+                          child: Text('Esqueceu sua senha?',
+                              style: GoogleFonts.inter(
+                                  color: cor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500)),
+                        ),
+                      ]),
+                  const SizedBox(height: 20),
+
+                  // Botão Entrar
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: auth.carregando ? null : _entrar,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: cor,
+                        foregroundColor: AppTheme.blackPure,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      child: auth.carregando
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  color: AppTheme.blackPure, strokeWidth: 2))
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                  Text('Entrar',
+                                      style: GoogleFonts.inter(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600)),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_forward, size: 18),
+                                ]),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                ],
+              ),
             ),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          ElevatedButton(
-            onPressed: auth.carregando ? null : _entrar,
-            style: ElevatedButton.styleFrom(backgroundColor: tema.corPrimaria),
-            child: auth.carregando
-                ? SizedBox(height: 20, width: 20,
-                    child: CircularProgressIndicator(color: AppTheme.corFundo, strokeWidth: 2))
-                : const Text('Entrar'),
-          ),
-          const SizedBox(height: 16),
-
-          Center(
-            child: TextButton(
-              onPressed: () => context.go(AppConstants.routeCadastro),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'Não tem conta? ',
-                    style: TextStyle(color: AppTheme.corTextoSecundario)),
-                TextSpan(text: 'Cadastre-se',
-                    style: TextStyle(color: tema.corPrimaria, fontWeight: FontWeight.bold)),
-              ])),
+            // Footer
+            Center(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.center,
+                children: [
+                  Text('Não tem uma conta?',
+                      style: GoogleFonts.inter(
+                          color: AppTheme.textMuted, fontSize: 13)),
+                  TextButton(
+                    onPressed: _mostrarAjudaSenha,
+                    child: Text('Fale com nosso suporte',
+                        style: GoogleFonts.inter(
+                            color: cor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Center(
+              child: Text('© 2025 GetCutt. Todos os direitos reservados.',
+                  style: GoogleFonts.inter(
+                      color: AppTheme.textMuted.withValues(alpha: 0.5),
+                      fontSize: 11)),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _buildInputLabel(String label) {
+    return Text(label,
+        style: GoogleFonts.inter(
+            color: AppTheme.text, fontSize: 13, fontWeight: FontWeight.w500));
   }
 }

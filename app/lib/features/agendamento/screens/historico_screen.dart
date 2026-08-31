@@ -1,12 +1,9 @@
-// ==========================================
-// TELA: Histórico de Atendimentos
-// RF10 - Concluídos e cancelados, SEM total investido
-// ==========================================
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/services/barbearia_theme_service.dart';
+
+import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/agendamento_controller.dart';
 
 class HistoricoScreen extends StatefulWidget {
@@ -25,117 +22,109 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
     });
   }
 
-  Color _corStatus(String status) =>
-      status == 'concluido' ? AppTheme.corSucesso : AppTheme.corErro;
-
-  IconData _iconeStatus(String status) =>
-      status == 'concluido' ? Icons.check_circle_outline : Icons.cancel_outlined;
-
   @override
   Widget build(BuildContext context) {
     final ctrl = context.watch<AgendamentoController>();
-    context.watch<BarbeariaThemeService>(); // garante rebuild ao mudar tema
-    final cor  = Theme.of(context).colorScheme.primary;
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('Histórico')),
-      body: ctrl.carregandoAgendamentos
-          ? Center(child: CircularProgressIndicator(color: cor))
+    return PremiumPage(
+      title: 'Histórico',
+      subtitle: 'Consulte os atendimentos concluídos e cancelados.',
+      actions: [
+        IconButton(
+          onPressed:
+              ctrl.carregandoAgendamentos ? null : ctrl.carregarHistorico,
+          tooltip: 'Atualizar histórico',
+          icon: const Icon(Icons.refresh_rounded),
+          color: PremiumColors.textSecondary,
+        ),
+      ],
+      child: ctrl.carregandoAgendamentos
+          ? const PremiumLoadingState(label: 'Carregando histórico')
           : ctrl.historico.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.history_outlined,
-                          color: cor.withOpacity(0.4), size: 64),
-                      const SizedBox(height: 16),
-                      Text('Nenhum serviço no histórico.',
-                          style: TextStyle(color: AppTheme.corTextoSecundario)),
-                    ],
+              ? const PremiumSurface(
+                  child: PremiumEmptyState(
+                    icon: Icons.history_rounded,
+                    title: 'Nenhum atendimento no histórico',
+                    subtitle: 'Atendimentos finalizados aparecerão nesta área.',
                   ),
                 )
               : RefreshIndicator(
-                  color: cor,
-                  onRefresh: () => ctrl.carregarHistorico(),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                  color: PremiumColors.gold,
+                  onRefresh: ctrl.carregarHistorico,
+                  child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: ctrl.historico.length,
-                    itemBuilder: (context, i) {
-                      final h      = ctrl.historico[i];
-                      final data   = DateTime.parse(h['data_hora']);
-                      final status = h['status'] as String;
-
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppTheme.corCard,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border(
-                            left: BorderSide(
-                                color: _corStatus(status), width: 4),
-                          ),
-                        ),
-                        child: Row(children: [
-                          Container(
-                            width: 44, height: 44,
-                            decoration: BoxDecoration(
-                              color: _corStatus(status).withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(_iconeStatus(status),
-                                color: _corStatus(status), size: 22),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(h['servico'] ?? '',
-                                    style: TextStyle(
-                                        color: AppTheme.corTexto,
-                                        fontWeight: FontWeight.w600)),
-                                const SizedBox(height: 2),
-                                Text(h['barbeiro'] ?? '',
-                                    style: TextStyle(
-                                        color: AppTheme.corTextoSecundario,
-                                        fontSize: 12)),
-                                Text(
-                                  DateFormat('dd/MM/yyyy · HH:mm').format(data),
-                                  style: TextStyle(
-                                      color: AppTheme.corTextoSecundario,
-                                      fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: _corStatus(status).withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  status == 'concluido' ? 'Concluído' : 'Cancelado',
-                                  style: TextStyle(
-                                    color: _corStatus(status),
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ]),
-                      );
-                    },
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (_, index) =>
+                        _HistoryRow(item: ctrl.historico[index]),
                   ),
                 ),
+    );
+  }
+}
+
+class _HistoryRow extends StatelessWidget {
+  final Map<String, dynamic> item;
+  const _HistoryRow({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    final date = DateTime.parse(item['data_hora']);
+    final completed = item['status'] == 'concluido';
+    final statusColor = completed ? PremiumColors.success : PremiumColors.error;
+    return PremiumSurface(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      color: PremiumColors.card,
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: .1),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(
+              completed ? Icons.check_rounded : Icons.close_rounded,
+              color: statusColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item['servico']?.toString() ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: PremiumColors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${item['barbearia'] ?? 'Barbearia'} • ${item['barbeiro'] ?? ''}\n${DateFormat('dd/MM/yyyy • HH:mm').format(date)}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: PremiumColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          PremiumStatusBadge(
+            label: completed ? 'Concluído' : 'Cancelado',
+            color: statusColor,
+          ),
+        ],
+      ),
     );
   }
 }

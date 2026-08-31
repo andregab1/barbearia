@@ -10,8 +10,8 @@ const { listar, criar, atualizar, desativar } = require('../controllers/servicos
 router.get('/:barbearia_id', listar);
 
 // Protegido — apenas admin e barbeiro podem gerenciar
-router.post('/:barbearia_id', autenticar, autorizar('admin', 'barbeiro'), criar);
-router.put('/:id',            autenticar, autorizar('admin', 'barbeiro'), atualizar);
-router.delete('/:id',         autenticar, autorizar('admin', 'barbeiro'), desativar);
+router.post('/:barbearia_id', autenticar, autorizar('admin'), criar);
+router.put('/:id',            autenticar, autorizar('admin'), atualizar);
+router.delete('/:id',         autenticar, autorizar('admin'), desativar);
 
 module.exports = router;

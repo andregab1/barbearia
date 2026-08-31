@@ -3,6 +3,16 @@
 // RF13 - Faturamento diário, mensal e por período
 // ==========================================
 const { pool } = require('../config/database');
+const { obterBarbeariaAdministrada } = require('../utils/access');
+
+async function validarAcesso(req, res) {
+  const barbearia = await obterBarbeariaAdministrada(req.usuario.id, req.params.barbearia_id);
+  if (!barbearia) {
+    res.status(403).json({ code: 'TENANT_FORBIDDEN', erro: 'Sem permissão para acessar estes relatórios.' });
+    return false;
+  }
+  return true;
+}
 
 // ==========================================
 // RF13: Relatório diário
@@ -13,6 +23,7 @@ async function faturamentoDiario(req, res) {
   const dataConsulta     = data || new Date().toISOString().slice(0, 10);
 
   try {
+    if (!await validarAcesso(req, res)) return;
     const [concluidos] = await pool.query(
       `SELECT a.id, a.data_hora, a.valor_cobrado,
               s.nome AS servico, u.nome AS barbeiro, uc.nome AS cliente
@@ -64,6 +75,7 @@ async function faturamentoMensal(req, res) {
   const dataFim   = `${anoRef}-${String(mesRef).padStart(2,'0')}-${String(ultimoDia).padStart(2,'0')}`;
 
   try {
+    if (!await validarAcesso(req, res)) return;
     const [rows] = await pool.query(
       `SELECT
          COUNT(*) as total_atendimentos,
@@ -117,6 +129,7 @@ async function faturamentoPeriodo(req, res) {
   }
 
   try {
+    if (!await validarAcesso(req, res)) return;
     const [rows] = await pool.query(
       `SELECT DATE(a.data_hora) AS data,
               COUNT(*) AS total_atendimentos,

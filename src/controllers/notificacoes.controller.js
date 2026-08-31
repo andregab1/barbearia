@@ -31,7 +31,7 @@ async function listar(req, res) {
 async function dispararPendentes(req, res) {
   try {
     const [pendentes] = await pool.query(
-      `SELECT n.id, n.usuario_id, n.titulo, n.mensagem, u.telefone
+      `SELECT n.id
        FROM notificacoes n
        JOIN usuarios u ON u.id = n.usuario_id
        WHERE n.enviada = 0 AND n.agendada_para <= NOW()
@@ -50,7 +50,7 @@ async function dispararPendentes(req, res) {
       [ids]
     );
 
-    return res.json({ disparadas: pendentes.length, notificacoes: pendentes });
+    return res.json({ disparadas: pendentes.length });
   } catch (err) {
     return res.status(500).json({ erro: 'Erro interno ao disparar notificações.' });
   }

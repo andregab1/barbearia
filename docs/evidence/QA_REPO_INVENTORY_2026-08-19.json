@@ -1,0 +1,1109 @@
+{
+  "project": {
+    "root_name": "barbearia",
+    "absolute_path": "C:\\barbearia"
+  },
+  "safety": {
+    "sensitive_files_listed_not_read": [
+      ".env",
+      ".env.example",
+      "backend/.env"
+    ],
+    "large_or_unreadable_text_files_skipped": 0,
+    "inventory_truncated": false,
+    "max_files": 20000,
+    "max_read_bytes_per_file": 1000000
+  },
+  "summary": {
+    "files": 489,
+    "source_files": 188,
+    "test_files": 18,
+    "api_routes_detected": 94,
+    "flutter_route_references_detected": 1
+  },
+  "stack": {
+    "frameworks": [
+      "flutter",
+      "nodejs",
+      "express",
+      "mysql",
+      "jwt"
+    ],
+    "test_tools": [
+      "flutter_test",
+      "integration_test"
+    ],
+    "platforms": [],
+    "discovered_test_commands": {
+      "test": "node --test",
+      "test:catalog": "node scripts/ai-test-executor.js",
+      "test:catalog:plan": "node scripts/ai-test-executor.js --dry-run --no-support-suites",
+      "test:flutter:buttons": "node scripts/run-flutter-catalog-e2e.js --button-audit",
+      "test:flutter:e2e": "node scripts/run-flutter-catalog-e2e.js",
+      "test:system:300": "node scripts/system-300.js"
+    }
+  },
+  "package_manifests": [
+    {
+      "name": "backend",
+      "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "multer": "^1.4.5-lts.1",
+        "mysql2": "^3.6.0",
+        "nodemon": "^3.0.1"
+      },
+      "scripts": {
+        "check": "node scripts/check.js",
+        "dev": "nodemon server.js",
+        "migrate": "node scripts/migrate.js",
+        "start": "node server.js",
+        "test": "node --test",
+        "test:catalog": "node scripts/ai-test-executor.js",
+        "test:catalog:plan": "node scripts/ai-test-executor.js --dry-run --no-support-suites",
+        "test:flutter:buttons": "node scripts/run-flutter-catalog-e2e.js --button-audit",
+        "test:flutter:e2e": "node scripts/run-flutter-catalog-e2e.js",
+        "test:system:300": "node scripts/system-300.js"
+      },
+      "path": "package.json"
+    },
+    {
+      "name": "backend",
+      "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "multer": "^1.4.5-lts.1",
+        "mysql2": "^3.6.0",
+        "nodemon": "^3.0.1"
+      },
+      "scripts": {
+        "dev": "nodemon server.js",
+        "start": "node server.js"
+      },
+      "path": "backend/package.json"
+    }
+  ],
+  "pubspec_manifests": [
+    {
+      "name": "getcutt",
+      "dependencies": [
+        "cupertino_icons",
+        "fl_chart",
+        "flutter",
+        "flutter_contacts",
+        "flutter_launcher_icons",
+        "flutter_lints",
+        "flutter_local_notifications",
+        "flutter_localizations",
+        "flutter_test",
+        "go_router",
+        "google_fonts",
+        "http",
+        "image_picker",
+        "integration_test",
+        "intl",
+        "provider",
+        "sdk",
+        "shared_preferences",
+        "url_launcher"
+      ],
+      "is_flutter": true,
+      "path": "app/pubspec.yaml"
+    },
+    {
+      "name": "getcutt",
+      "dependencies": [
+        "cupertino_icons",
+        "flutter",
+        "flutter_contacts",
+        "flutter_launcher_icons",
+        "flutter_lints",
+        "flutter_local_notifications",
+        "flutter_test",
+        "go_router",
+        "http",
+        "image_picker",
+        "intl",
+        "provider",
+        "sdk",
+        "shared_preferences",
+        "url_launcher"
+      ],
+      "is_flutter": true,
+      "path": "backend/app/pubspec.yaml"
+    }
+  ],
+  "categories": {
+    "ci_devops": [
+      ".github/workflows/ci.yml"
+    ],
+    "database_sql": [
+      "backend/barbearia.sql",
+      "barbearia.sql",
+      "barbearia_dump.sql",
+      "migrations/000_initial_schema.sql",
+      "migrations/001_add_profile_photo.sql",
+      "migrations/002_hash_refresh_tokens.sql",
+      "migrations/003_add_appointment_services.sql",
+      "migrations/004_expand_user_profile.sql",
+      "migrations/005_saas_foundation.sql",
+      "migrations/006_identity_finance_communications.sql",
+      "migrations/007_link_cash_entries_to_appointments.sql"
+    ],
+    "middleware_auth": [
+      "app/lib/core/services/auth_service.dart",
+      "app/lib/features/auth/controllers/auth_controller.dart",
+      "app/lib/features/auth/screens/cadastro_screen.dart",
+      "app/lib/features/auth/screens/login_screen.dart",
+      "app/lib/features/auth/screens/splash_screen.dart",
+      "backend/app/lib/core/services/auth_service.dart",
+      "backend/app/lib/features/auth/controllers/auth_controller.dart",
+      "backend/app/lib/features/auth/screens/cadastro_screen.dart",
+      "backend/app/lib/features/auth/screens/login_screen.dart",
+      "backend/app/lib/features/auth/screens/splash_screen.dart",
+      "backend/src/controllers/auth.controller.js",
+      "backend/src/middlewares/auth.middleware.js",
+      "backend/src/routes/auth.routes.js",
+      "src/controllers/auth.controller.js",
+      "src/middlewares/auth.middleware.js",
+      "src/middlewares/request.middleware.js",
+      "src/middlewares/security.middleware.js",
+      "src/routes/auth.routes.js"
+    ],
+    "migrations_seeds": [
+      "migrations/000_initial_schema.sql",
+      "migrations/001_add_profile_photo.sql",
+      "migrations/002_hash_refresh_tokens.sql",
+      "migrations/003_add_appointment_services.sql",
+      "migrations/004_expand_user_profile.sql",
+      "migrations/005_saas_foundation.sql",
+      "migrations/006_identity_finance_communications.sql",
+      "migrations/007_link_cash_entries_to_appointments.sql"
+    ],
+    "models_entities": [
+      "app/web/models/modelo_getcutt_tesoura_barbeiro.glb",
+      "app/web/models/modelo_tesoura.mtl",
+      "app/web/models/modelo_tesoura.obj",
+      "app/web/models/modelo_tesoura.stl",
+      "backend/app/lib/core/models/user_model.dart",
+      "migrations/000_initial_schema.sql"
+    ],
+    "repositories_data": [
+      "backend/src/config/database.js",
+      "src/config/database.js"
+    ],
+    "routes_navigation": [
+      "app/lib/core/routes/app_router.dart",
+      "backend/app/lib/core/routes/app_router.dart",
+      "backend/src/routes/agenda.routes.js",
+      "backend/src/routes/agendamentos.routes.js",
+      "backend/src/routes/auth.routes.js",
+      "backend/src/routes/barbearias.routes.js",
+      "backend/src/routes/colaboradores.routes.js",
+      "backend/src/routes/horarios.routes.js",
+      "backend/src/routes/notificacoes.routes.js",
+      "backend/src/routes/relatorios.routes.js",
+      "backend/src/routes/servicos.routes.js",
+      "backend/src/routes/usuarios.routes.js",
+      "docs/evidence/BUTTON_NAVIGATION_AUDIT.md",
+      "src/routes/agenda.routes.js",
+      "src/routes/agendamentos.routes.js",
+      "src/routes/auth.routes.js",
+      "src/routes/barbearias.routes.js",
+      "src/routes/billing.routes.js",
+      "src/routes/colaboradores.routes.js",
+      "src/routes/finance.routes.js",
+      "src/routes/horarios.routes.js",
+      "src/routes/invitations.routes.js",
+      "src/routes/notificacoes.routes.js",
+      "src/routes/relatorios.routes.js",
+      "src/routes/servicos.routes.js",
+      "src/routes/usuarios.routes.js",
+      "src/routes/webhooks.routes.js"
+    ],
+    "screens_ui": [
+      "app/lib/features/admin/screens/admin_home_screen.dart",
+      "app/lib/features/admin/screens/financeiro_screen.dart",
+      "app/lib/features/admin/screens/personalizacao_screen.dart",
+      "app/lib/features/admin/widgets/chart_card.dart",
+      "app/lib/features/admin/widgets/kpi_card.dart",
+      "app/lib/features/agendamento/screens/agendar_screen.dart",
+      "app/lib/features/agendamento/screens/cliente_home_screen.dart",
+      "app/lib/features/agendamento/screens/historico_screen.dart",
+      "app/lib/features/agendamento/screens/meus_agendamentos_screen.dart",
+      "app/lib/features/auth/screens/cadastro_screen.dart",
+      "app/lib/features/auth/screens/login_screen.dart",
+      "app/lib/features/auth/screens/splash_screen.dart",
+      "app/lib/features/barbeiro/screens/bloquear_horario_screen.dart",
+      "app/lib/features/barbeiro/screens/contatos_screen.dart",
+      "app/lib/features/barbeiro/screens/horarios_screen.dart",
+      "app/lib/features/barbeiro/screens/profissional_home_screen.dart",
+      "app/lib/features/barbeiro/widgets/agenda_dashboard.dart",
+      "app/lib/features/landing/landing_screen.dart",
+      "app/lib/shared/widgets/app_modal.dart",
+      "app/lib/shared/widgets/app_toast.dart",
+      "app/lib/shared/widgets/logo_widget.dart",
+      "app/lib/shared/widgets/perfil_screen.dart",
+      "app/lib/shared/widgets/premium_ui.dart",
+      "app/lib/shared/widgets/responsive_nav_shell.dart",
+      "app/test/widget_test.dart",
+      "backend/app/lib/features/admin/screens/admin_home_screen.dart",
+      "backend/app/lib/features/admin/screens/personalizacao_screen.dart",
+      "backend/app/lib/features/agendamento/screens/agendar_screen.dart",
+      "backend/app/lib/features/agendamento/screens/cliente_home_screen.dart",
+      "backend/app/lib/features/agendamento/screens/historico_screen.dart",
+      "backend/app/lib/features/agendamento/screens/meus_agendamentos_screen.dart",
+      "backend/app/lib/features/auth/screens/cadastro_screen.dart",
+      "backend/app/lib/features/auth/screens/login_screen.dart",
+      "backend/app/lib/features/auth/screens/splash_screen.dart",
+      "backend/app/lib/features/barbeiro/screens/barbeiro_home_screen.dart",
+      "backend/app/lib/features/barbeiro/screens/bloquear_horario_screen.dart",
+      "backend/app/lib/features/barbeiro/screens/contatos_screen.dart",
+      "backend/app/lib/features/barbeiro/screens/horarios_screen.dart",
+      "backend/app/lib/features/barbeiro/screens/profissional_home_screen.dart",
+      "backend/app/lib/shared/widgets/logo_widget.dart",
+      "backend/app/lib/shared/widgets/menu_drawer.dart",
+      "backend/app/lib/shared/widgets/perfil_screen.dart",
+      "backend/app/test/widget_test.dart"
+    ],
+    "services_use_cases": [
+      "app/lib/core/services/api_service.dart",
+      "app/lib/core/services/auth_service.dart",
+      "app/lib/core/services/barbearia_theme_service.dart",
+      "backend/app/lib/core/services/api_service.dart",
+      "backend/app/lib/core/services/auth_service.dart",
+      "backend/app/lib/core/services/barbearia_theme_service.dart",
+      "migrations/003_add_appointment_services.sql",
+      "src/services/mercado-pago.service.js"
+    ],
+    "state_controllers": [
+      "app/lib/features/admin/controllers/admin_controller.dart",
+      "app/lib/features/agendamento/controllers/agendamento_controller.dart",
+      "app/lib/features/auth/controllers/auth_controller.dart",
+      "app/lib/features/barbeiro/controllers/barbeiro_controller.dart",
+      "backend/app/lib/features/admin/controllers/admin_controller.dart",
+      "backend/app/lib/features/agendamento/controllers/agendamento_controller.dart",
+      "backend/app/lib/features/auth/controllers/auth_controller.dart",
+      "backend/app/lib/features/barbeiro/controllers/barbeiro_controller.dart",
+      "backend/src/controllers/agenda.controller.js",
+      "backend/src/controllers/agendamentos.controller.js",
+      "backend/src/controllers/auth.controller.js",
+      "backend/src/controllers/barbearias.controller.js",
+      "backend/src/controllers/colaboradores.controller.js",
+      "backend/src/controllers/horarios.controller.js",
+      "backend/src/controllers/notificacoes.controller.js",
+      "backend/src/controllers/relatorios.controller.js",
+      "backend/src/controllers/servicos.controller.js",
+      "backend/src/controllers/usuarios.controller.js",
+      "src/controllers/agenda.controller.js",
+      "src/controllers/agendamentos.controller.js",
+      "src/controllers/auth.controller.js",
+      "src/controllers/barbearias.controller.js",
+      "src/controllers/billing.controller.js",
+      "src/controllers/colaboradores.controller.js",
+      "src/controllers/finance.controller.js",
+      "src/controllers/horarios.controller.js",
+      "src/controllers/invitations.controller.js",
+      "src/controllers/notificacoes.controller.js",
+      "src/controllers/onboarding.controller.js",
+      "src/controllers/relatorios.controller.js",
+      "src/controllers/servicos.controller.js",
+      "src/controllers/usuarios.controller.js",
+      "src/controllers/webhooks.controller.js"
+    ],
+    "tests": [
+      "app/integration_test/README.md",
+      "app/integration_test/catalog_e2e_test.dart",
+      "app/test/widget_test.dart",
+      "app/test_driver/integration_test.dart",
+      "backend/app/test/widget_test.dart",
+      "docs/AI_TEST_CATALOG.csv",
+      "docs/AI_TEST_CATALOG.json",
+      "docs/AI_TEST_EXECUTION_GUIDE.md",
+      "docs/AI_TEST_EXECUTION_RESULTS.json",
+      "docs/AI_TEST_RESULT_OVERRIDES.json",
+      "docs/evidence/QA-E2E-050.md",
+      "scripts/ai-test-executor.js",
+      "scripts/generate-ai-test-catalog.js",
+      "scripts/run-flutter-catalog-e2e.js",
+      "test/ai-test-executor.test.js",
+      "test/mercado-pago.test.js",
+      "test/security.test.js",
+      "test/validation.test.js"
+    ]
+  },
+  "api_routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "app.js",
+      "line": 65
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "backend/app.js",
+      "line": 40
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "backend/src/routes/notificacoes.routes.js",
+      "line": 9
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "src/routes/barbearias.routes.js",
+      "line": 22
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "src/routes/notificacoes.routes.js",
+      "line": 9
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 12
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "file": "backend/src/routes/barbearias.routes.js",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 12
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "file": "src/routes/barbearias.routes.js",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id",
+      "file": "backend/src/routes/colaboradores.routes.js",
+      "line": 13
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id",
+      "file": "backend/src/routes/servicos.routes.js",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 14
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id",
+      "file": "src/routes/invitations.routes.js",
+      "line": 6
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id",
+      "file": "src/routes/servicos.routes.js",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id",
+      "file": "backend/src/routes/colaboradores.routes.js",
+      "line": 15
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id",
+      "file": "backend/src/routes/servicos.routes.js",
+      "line": 13
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 16
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id",
+      "file": "src/routes/invitations.routes.js",
+      "line": 7
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id",
+      "file": "src/routes/servicos.routes.js",
+      "line": 13
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/diario",
+      "file": "backend/src/routes/relatorios.routes.js",
+      "line": 5
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/diario",
+      "file": "src/routes/relatorios.routes.js",
+      "line": 5
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/entries",
+      "file": "src/routes/finance.routes.js",
+      "line": 7
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id/expenses",
+      "file": "src/routes/finance.routes.js",
+      "line": 8
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/mensal",
+      "file": "backend/src/routes/relatorios.routes.js",
+      "line": 6
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/mensal",
+      "file": "src/routes/relatorios.routes.js",
+      "line": 6
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/periodo",
+      "file": "backend/src/routes/relatorios.routes.js",
+      "line": 7
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/periodo",
+      "file": "src/routes/relatorios.routes.js",
+      "line": 7
+    },
+    {
+      "method": "POST",
+      "path": "/:barbearia_id/subscriptions",
+      "file": "src/routes/billing.routes.js",
+      "line": 5
+    },
+    {
+      "method": "GET",
+      "path": "/:barbearia_id/summary",
+      "file": "src/routes/finance.routes.js",
+      "line": 6
+    },
+    {
+      "method": "GET",
+      "path": "/:colaborador_id",
+      "file": "backend/src/routes/horarios.routes.js",
+      "line": 9
+    },
+    {
+      "method": "GET",
+      "path": "/:colaborador_id",
+      "file": "src/routes/horarios.routes.js",
+      "line": 9
+    },
+    {
+      "method": "POST",
+      "path": "/:colaborador_id",
+      "file": "backend/src/routes/horarios.routes.js",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/:colaborador_id",
+      "file": "src/routes/horarios.routes.js",
+      "line": 10
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "file": "backend/src/routes/colaboradores.routes.js",
+      "line": 17
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "file": "backend/src/routes/servicos.routes.js",
+      "line": 15
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 19
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "file": "src/routes/servicos.routes.js",
+      "line": 15
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "file": "backend/src/routes/barbearias.routes.js",
+      "line": 22
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "file": "backend/src/routes/usuarios.routes.js",
+      "line": 9
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "file": "src/routes/barbearias.routes.js",
+      "line": 23
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "file": "src/routes/usuarios.routes.js",
+      "line": 9
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "backend/src/routes/barbearias.routes.js",
+      "line": 23
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "backend/src/routes/servicos.routes.js",
+      "line": 14
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "backend/src/routes/usuarios.routes.js",
+      "line": 10
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "src/routes/barbearias.routes.js",
+      "line": 24
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 17
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "src/routes/servicos.routes.js",
+      "line": 14
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "file": "src/routes/usuarios.routes.js",
+      "line": 10
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/cancelar",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 16
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/cancelar",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 17
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/concluir",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 17
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/concluir",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 18
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/personalizar",
+      "file": "backend/src/routes/barbearias.routes.js",
+      "line": 24
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/personalizar",
+      "file": "src/routes/barbearias.routes.js",
+      "line": 25
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/status",
+      "file": "backend/src/routes/colaboradores.routes.js",
+      "line": 16
+    },
+    {
+      "method": "PATCH",
+      "path": "/:id/status",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 18
+    },
+    {
+      "method": "POST",
+      "path": "/accept",
+      "file": "src/routes/invitations.routes.js",
+      "line": 5
+    },
+    {
+      "method": "GET",
+      "path": "/barbeiro/:colaborador_id",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 14
+    },
+    {
+      "method": "GET",
+      "path": "/barbeiro/:colaborador_id",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 14
+    },
+    {
+      "method": "POST",
+      "path": "/bloquear",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/bloquear",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 20
+    },
+    {
+      "method": "DELETE",
+      "path": "/bloquear/:id",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 20
+    },
+    {
+      "method": "DELETE",
+      "path": "/bloquear/:id",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 23
+    },
+    {
+      "method": "POST",
+      "path": "/bloquear/preview",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/bloquear/recorrente",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 22
+    },
+    {
+      "method": "GET",
+      "path": "/bloqueios/:colaborador_id",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 18
+    },
+    {
+      "method": "GET",
+      "path": "/bloqueios/:colaborador_id",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/cadastrar",
+      "file": "backend/src/routes/auth.routes.js",
+      "line": 7
+    },
+    {
+      "method": "POST",
+      "path": "/cadastrar",
+      "file": "src/routes/auth.routes.js",
+      "line": 8
+    },
+    {
+      "method": "GET",
+      "path": "/clientes",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 16
+    },
+    {
+      "method": "GET",
+      "path": "/clientes-ativos",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 15
+    },
+    {
+      "method": "GET",
+      "path": "/clientes-ativos",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 15
+    },
+    {
+      "method": "GET",
+      "path": "/dashboard/:colaborador_id",
+      "file": "src/routes/agenda.routes.js",
+      "line": 12
+    },
+    {
+      "method": "POST",
+      "path": "/disparar",
+      "file": "backend/src/routes/notificacoes.routes.js",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/disparar",
+      "file": "src/routes/notificacoes.routes.js",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/disponiveis/:colaborador_id",
+      "file": "backend/src/routes/agenda.routes.js",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/disponiveis/:colaborador_id",
+      "file": "src/routes/agenda.routes.js",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/gerenciar/:barbearia_id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 11
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "file": "app.js",
+      "line": 66
+    },
+    {
+      "method": "GET",
+      "path": "/historico/:cliente_id",
+      "file": "backend/src/routes/agenda.routes.js",
+      "line": 11
+    },
+    {
+      "method": "GET",
+      "path": "/historico/:cliente_id",
+      "file": "src/routes/agenda.routes.js",
+      "line": 11
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "file": "backend/src/routes/auth.routes.js",
+      "line": 8
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "file": "src/routes/auth.routes.js",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/logout",
+      "file": "backend/src/routes/auth.routes.js",
+      "line": 10
+    },
+    {
+      "method": "POST",
+      "path": "/logout",
+      "file": "src/routes/auth.routes.js",
+      "line": 12
+    },
+    {
+      "method": "PATCH",
+      "path": "/me/senha",
+      "file": "src/routes/usuarios.routes.js",
+      "line": 11
+    },
+    {
+      "method": "POST",
+      "path": "/mercado-pago",
+      "file": "src/routes/webhooks.routes.js",
+      "line": 4
+    },
+    {
+      "method": "GET",
+      "path": "/meus",
+      "file": "backend/src/routes/agendamentos.routes.js",
+      "line": 13
+    },
+    {
+      "method": "GET",
+      "path": "/meus",
+      "file": "src/routes/agendamentos.routes.js",
+      "line": 13
+    },
+    {
+      "method": "POST",
+      "path": "/refresh",
+      "file": "backend/src/routes/auth.routes.js",
+      "line": 9
+    },
+    {
+      "method": "POST",
+      "path": "/refresh",
+      "file": "src/routes/auth.routes.js",
+      "line": 11
+    },
+    {
+      "method": "POST",
+      "path": "/register-owner",
+      "file": "src/routes/auth.routes.js",
+      "line": 9
+    },
+    {
+      "method": "GET",
+      "path": "/usuario/:usuario_id",
+      "file": "backend/src/routes/colaboradores.routes.js",
+      "line": 10
+    },
+    {
+      "method": "GET",
+      "path": "/usuario/:usuario_id",
+      "file": "src/routes/colaboradores.routes.js",
+      "line": 10
+    }
+  ],
+  "flutter_routes": [
+    {
+      "kind": "go_router",
+      "path": "/",
+      "file": "app/lib/core/routes/app_router.dart",
+      "line": 43
+    }
+  ],
+  "source_files": [
+    "app.js",
+    "app/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+    "app/android/app/src/main/kotlin/com/barbearia/barbearia_app/MainActivity.kt",
+    "app/integration_test/catalog_e2e_test.dart",
+    "app/ios/Flutter/ephemeral/flutter_lldb_helper.py",
+    "app/ios/Runner/AppDelegate.swift",
+    "app/ios/Runner/SceneDelegate.swift",
+    "app/ios/RunnerTests/RunnerTests.swift",
+    "app/lib/core/constants/app_constants.dart",
+    "app/lib/core/routes/app_router.dart",
+    "app/lib/core/services/api_service.dart",
+    "app/lib/core/services/auth_service.dart",
+    "app/lib/core/services/barbearia_theme_service.dart",
+    "app/lib/core/theme/app_theme.dart",
+    "app/lib/features/admin/controllers/admin_controller.dart",
+    "app/lib/features/admin/screens/admin_home_screen.dart",
+    "app/lib/features/admin/screens/financeiro_screen.dart",
+    "app/lib/features/admin/screens/personalizacao_screen.dart",
+    "app/lib/features/admin/widgets/chart_card.dart",
+    "app/lib/features/admin/widgets/kpi_card.dart",
+    "app/lib/features/agendamento/controllers/agendamento_controller.dart",
+    "app/lib/features/agendamento/screens/agendar_screen.dart",
+    "app/lib/features/agendamento/screens/cliente_home_screen.dart",
+    "app/lib/features/agendamento/screens/historico_screen.dart",
+    "app/lib/features/agendamento/screens/meus_agendamentos_screen.dart",
+    "app/lib/features/auth/controllers/auth_controller.dart",
+    "app/lib/features/auth/screens/cadastro_screen.dart",
+    "app/lib/features/auth/screens/login_screen.dart",
+    "app/lib/features/auth/screens/splash_screen.dart",
+    "app/lib/features/barbeiro/controllers/barbeiro_controller.dart",
+    "app/lib/features/barbeiro/screens/bloquear_horario_screen.dart",
+    "app/lib/features/barbeiro/screens/contatos_screen.dart",
+    "app/lib/features/barbeiro/screens/horarios_screen.dart",
+    "app/lib/features/barbeiro/screens/profissional_home_screen.dart",
+    "app/lib/features/barbeiro/widgets/agenda_dashboard.dart",
+    "app/lib/features/landing/landing_screen.dart",
+    "app/lib/main.dart",
+    "app/lib/shared/widgets/app_modal.dart",
+    "app/lib/shared/widgets/app_toast.dart",
+    "app/lib/shared/widgets/logo_widget.dart",
+    "app/lib/shared/widgets/perfil_screen.dart",
+    "app/lib/shared/widgets/premium_ui.dart",
+    "app/lib/shared/widgets/responsive_nav_shell.dart",
+    "app/lib/web/sphere_helper_stub.dart",
+    "app/lib/web/sphere_helper_web.dart",
+    "app/macos/Flutter/GeneratedPluginRegistrant.swift",
+    "app/macos/Runner/AppDelegate.swift",
+    "app/macos/Runner/MainFlutterWindow.swift",
+    "app/macos/RunnerTests/RunnerTests.swift",
+    "app/test/widget_test.dart",
+    "app/test_driver/integration_test.dart",
+    "app/web/index.html",
+    "app/web/sphere_particles.js",
+    "app/windows/runner/flutter_window.cpp",
+    "app/windows/runner/main.cpp",
+    "app/windows/runner/utils.cpp",
+    "app/windows/runner/win32_window.cpp",
+    "backend/app.js",
+    "backend/app/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+    "backend/app/android/app/src/main/kotlin/com/barbearia/barbearia_app/MainActivity.kt",
+    "backend/app/ios/Flutter/ephemeral/flutter_lldb_helper.py",
+    "backend/app/ios/Runner/AppDelegate.swift",
+    "backend/app/ios/Runner/SceneDelegate.swift",
+    "backend/app/ios/RunnerTests/RunnerTests.swift",
+    "backend/app/lib/core/constants/app_constants.dart",
+    "backend/app/lib/core/models/user_model.dart",
+    "backend/app/lib/core/routes/app_router.dart",
+    "backend/app/lib/core/services/api_service.dart",
+    "backend/app/lib/core/services/auth_service.dart",
+    "backend/app/lib/core/services/barbearia_theme_service.dart",
+    "backend/app/lib/core/theme/app_theme.dart",
+    "backend/app/lib/core/utils/whatsapp_helper.dart",
+    "backend/app/lib/features/admin/controllers/admin_controller.dart",
+    "backend/app/lib/features/admin/screens/admin_home_screen.dart",
+    "backend/app/lib/features/admin/screens/personalizacao_screen.dart",
+    "backend/app/lib/features/agendamento/controllers/agendamento_controller.dart",
+    "backend/app/lib/features/agendamento/screens/agendar_screen.dart",
+    "backend/app/lib/features/agendamento/screens/cliente_home_screen.dart",
+    "backend/app/lib/features/agendamento/screens/historico_screen.dart",
+    "backend/app/lib/features/agendamento/screens/meus_agendamentos_screen.dart",
+    "backend/app/lib/features/auth/controllers/auth_controller.dart",
+    "backend/app/lib/features/auth/screens/cadastro_screen.dart",
+    "backend/app/lib/features/auth/screens/login_screen.dart",
+    "backend/app/lib/features/auth/screens/splash_screen.dart",
+    "backend/app/lib/features/barbeiro/controllers/barbeiro_controller.dart",
+    "backend/app/lib/features/barbeiro/screens/barbeiro_home_screen.dart",
+    "backend/app/lib/features/barbeiro/screens/bloquear_horario_screen.dart",
+    "backend/app/lib/features/barbeiro/screens/contatos_screen.dart",
+    "backend/app/lib/features/barbeiro/screens/horarios_screen.dart",
+    "backend/app/lib/features/barbeiro/screens/profissional_home_screen.dart",
+    "backend/app/lib/main.dart",
+    "backend/app/lib/shared/widgets/logo_widget.dart",
+    "backend/app/lib/shared/widgets/menu_drawer.dart",
+    "backend/app/lib/shared/widgets/perfil_screen.dart",
+    "backend/app/macos/Flutter/GeneratedPluginRegistrant.swift",
+    "backend/app/macos/Runner/AppDelegate.swift",
+    "backend/app/macos/Runner/MainFlutterWindow.swift",
+    "backend/app/macos/RunnerTests/RunnerTests.swift",
+    "backend/app/test/widget_test.dart",
+    "backend/app/web/index.html",
+    "backend/app/windows/runner/flutter_window.cpp",
+    "backend/app/windows/runner/main.cpp",
+    "backend/app/windows/runner/utils.cpp",
+    "backend/app/windows/runner/win32_window.cpp",
+    "backend/barbearia.sql",
+    "backend/server.js",
+    "backend/src/config/database.js",
+    "backend/src/controllers/agenda.controller.js",
+    "backend/src/controllers/agendamentos.controller.js",
+    "backend/src/controllers/auth.controller.js",
+    "backend/src/controllers/barbearias.controller.js",
+    "backend/src/controllers/colaboradores.controller.js",
+    "backend/src/controllers/horarios.controller.js",
+    "backend/src/controllers/notificacoes.controller.js",
+    "backend/src/controllers/relatorios.controller.js",
+    "backend/src/controllers/servicos.controller.js",
+    "backend/src/controllers/usuarios.controller.js",
+    "backend/src/middlewares/auth.middleware.js",
+    "backend/src/routes/agenda.routes.js",
+    "backend/src/routes/agendamentos.routes.js",
+    "backend/src/routes/auth.routes.js",
+    "backend/src/routes/barbearias.routes.js",
+    "backend/src/routes/colaboradores.routes.js",
+    "backend/src/routes/horarios.routes.js",
+    "backend/src/routes/notificacoes.routes.js",
+    "backend/src/routes/relatorios.routes.js",
+    "backend/src/routes/servicos.routes.js",
+    "backend/src/routes/usuarios.routes.js",
+    "barbearia.sql",
+    "barbearia_dump.sql",
+    "docs/CHECKLIST_TESTES.html",
+    "docs/PLANO_DE_MELHORIAS.html",
+    "docs/RELATORIO_300_TESTES.html",
+    "migrations/000_initial_schema.sql",
+    "migrations/001_add_profile_photo.sql",
+    "migrations/002_hash_refresh_tokens.sql",
+    "migrations/003_add_appointment_services.sql",
+    "migrations/004_expand_user_profile.sql",
+    "migrations/005_saas_foundation.sql",
+    "migrations/006_identity_finance_communications.sql",
+    "migrations/007_link_cash_entries_to_appointments.sql",
+    "scripts/ai-test-executor.js",
+    "scripts/check.js",
+    "scripts/generate-ai-test-catalog.js",
+    "scripts/migrate.js",
+    "scripts/run-flutter-catalog-e2e.js",
+    "scripts/system-300.js",
+    "server.js",
+    "src/config/database.js",
+    "src/controllers/agenda.controller.js",
+    "src/controllers/agendamentos.controller.js",
+    "src/controllers/auth.controller.js",
+    "src/controllers/barbearias.controller.js",
+    "src/controllers/billing.controller.js",
+    "src/controllers/colaboradores.controller.js",
+    "src/controllers/finance.controller.js",
+    "src/controllers/horarios.controller.js",
+    "src/controllers/invitations.controller.js",
+    "src/controllers/notificacoes.controller.js",
+    "src/controllers/onboarding.controller.js",
+    "src/controllers/relatorios.controller.js",
+    "src/controllers/servicos.controller.js",
+    "src/controllers/usuarios.controller.js",
+    "src/controllers/webhooks.controller.js",
+    "src/middlewares/auth.middleware.js",
+    "src/middlewares/request.middleware.js",
+    "src/middlewares/security.middleware.js",
+    "src/routes/agenda.routes.js",
+    "src/routes/agendamentos.routes.js",
+    "src/routes/auth.routes.js",
+    "src/routes/barbearias.routes.js",
+    "src/routes/billing.routes.js",
+    "src/routes/colaboradores.routes.js",
+    "src/routes/finance.routes.js",
+    "src/routes/horarios.routes.js",
+    "src/routes/invitations.routes.js",
+    "src/routes/notificacoes.routes.js",
+    "src/routes/relatorios.routes.js",
+    "src/routes/servicos.routes.js",
+    "src/routes/usuarios.routes.js",
+    "src/routes/webhooks.routes.js",
+    "src/services/mercado-pago.service.js",
+    "src/utils/access.js",
+    "src/utils/validation.js",
+    "test/ai-test-executor.test.js",
+    "test/mercado-pago.test.js",
+    "test/security.test.js",
+    "test/validation.test.js"
+  ],
+  "notes": [
+    "Heuristic inventory: verify critical findings in source before reporting them as facts.",
+    "Route extraction is intentionally conservative and may not resolve composed prefixes or generated routes."
+  ]
+}

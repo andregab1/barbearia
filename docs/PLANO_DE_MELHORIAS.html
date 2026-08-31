@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Plano de Melhorias — GetCutt / Barbearia</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm 18mm; }
+    * { box-sizing: border-box; }
+    body { font: 10.5pt/1.48 Arial, sans-serif; color: #20242a; margin: 0; }
+    h1 { color: #5b3a12; font-size: 23pt; margin: 0 0 6px; }
+    h2 { color: #5b3a12; font-size: 16pt; border-bottom: 1px solid #d7bd8d; padding-bottom: 4px; margin-top: 24px; }
+    h3 { color: #76501c; font-size: 12.5pt; margin: 18px 0 7px; break-after: avoid; }
+    p { margin: 6px 0; }
+    ul, ol { margin: 6px 0 10px 22px; padding: 0; }
+    li { margin: 3px 0; }
+    .cover { min-height: 235mm; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+    .subtitle { font-size: 14pt; color: #555; }
+    .meta { margin-top: 32px; color: #666; }
+    .summary { background: #f7f1e7; border-left: 5px solid #b8873d; padding: 12px 15px; margin: 14px 0; }
+    .priority { display: inline-block; font-size: 8.5pt; color: white; background: #9d2d2d; padding: 2px 7px; border-radius: 10px; vertical-align: 2px; }
+    .p1 { background: #a56300; } .p2 { background: #486477; }
+    .item { break-inside: avoid; }
+    strong { color: #31363c; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 9pt; }
+    th, td { border: 1px solid #c9c9c9; padding: 6px; vertical-align: top; }
+    th { background: #eadcc4; text-align: left; }
+    footer { color: #777; font-size: 8.5pt; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <h1>Plano de Melhorias</h1>
+    <div class="subtitle">GetCutt / Sistema de Barbearia</div>
+    <p class="meta"><strong>Diagnóstico:</strong> 15 de agosto de 2026<br>
+    <strong>Escopo:</strong> API Node.js/Express, aplicativo Flutter, banco de dados e repositório.</p>
+    <div class="summary">Documento de referência com riscos, ações recomendadas e critérios de conclusão para preparar o projeto para produção.</div>
+  </section>
+
+  <h2>Resumo executivo</h2>
+  <p>O projeto possui uma base funcional, mas precisa de reforços antes da publicação. Os principais riscos são segredos versionados, autorização incompleta, preço e duração controláveis pelo cliente e ausência de proteção contra reservas simultâneas.</p>
+  <h3>Ordem recomendada</h3>
+  <ol><li>Remover e trocar credenciais expostas.</li><li>Corrigir autorização e isolamento de dados.</li><li>Calcular preços e durações no servidor.</li><li>Garantir atomicidade dos agendamentos.</li><li>Limpar o repositório.</li><li>Validar entradas e proteger a API.</li><li>Reforçar sessões.</li><li>Configurar ambientes.</li><li>Criar testes e CI.</li><li>Completar a documentação.</li></ol>
+
+  <h2><span class="priority">P0</span> Segurança crítica</h2>
+  <div class="item"><h3>1. Remover credenciais do Git</h3><p><strong>Situação:</strong> o arquivo <code>.env</code> está versionado e contém banco e segredos JWT.</p><p><strong>Ações:</strong></p><ul><li>Adicionar <code>.env</code> ao <code>.gitignore</code> e criar <code>.env.example</code>.</li><li>Remover segredos do índice e histórico.</li><li>Trocar senha do banco e chaves JWT.</li><li>Usar segredos da hospedagem e impedir inicialização com valores ausentes ou fracos.</li></ul><p><strong>Concluído quando:</strong> nenhum segredo real estiver no Git e todas as credenciais expostas tiverem sido rotacionadas.</p></div>
+  <div class="item"><h3>2. Corrigir autorização e propriedade</h3><p><strong>Situação:</strong> algumas rotas validam o token/papel, mas não confirmam se o recurso pertence ao usuário, profissional ou barbearia.</p><ul><li>Cliente acessa somente seus dados e agendamentos.</li><li>Barbeiro opera somente sua agenda e seus bloqueios.</li><li>Administrador opera somente dentro da própria barbearia.</li><li>Derivar identidades do token/banco e centralizar policies.</li><li>Criar testes de acesso cruzado para todos os perfis.</li></ul><p><strong>Concluído quando:</strong> toda tentativa de acesso cruzado falhar com resposta apropriada.</p></div>
+  <div class="item"><h3>3. Calcular preço e duração no servidor</h3><p><strong>Situação:</strong> a criação aceita <code>valor_override</code> e <code>duracao_override</code> do cliente.</p><ul><li>Remover esses campos da API pública.</li><li>Receber IDs de serviços e calcular totais no backend.</li><li>Reservar ajustes manuais para rota administrativa auditada.</li><li>Validar limites monetários e durações.</li></ul><p><strong>Concluído quando:</strong> o cliente não conseguir influenciar preço ou duração com uma requisição manipulada.</p></div>
+
+  <h2><span class="priority p1">P1</span> Integridade e confiabilidade</h2>
+  <div class="item"><h3>4. Evitar agendamento duplo</h3><p>A consulta de conflito e o INSERT são separados, permitindo corrida entre requisições.</p><ul><li>Usar transação e bloqueio apropriado, ou slots com restrição única.</li><li>Tratar conflito como HTTP 409.</li><li>Testar duas requisições simultâneas.</li></ul><p><strong>Concluído quando:</strong> somente uma reserva concorrente for confirmada para o mesmo intervalo.</p></div>
+  <div class="item"><h3>5. Usar transações em operações compostas</h3><ul><li>Proteger criação de usuário/colaborador, agendamento/notificação e substituição de horários.</li><li>Aplicar rollback, chaves estrangeiras, índices e restrições.</li><li>Evitar estados parciais e registros órfãos.</li></ul></div>
+  <div class="item"><h3>6. Validar entradas e regras</h3><ul><li>Validar schemas de body, params e query.</li><li>Normalizar telefone/e-mail e validar IDs.</li><li>Rejeitar datas inválidas/passadas e intervalos invertidos.</li><li>Confirmar que serviço e colaborador estão ativos e na mesma barbearia.</li><li>Limitar textos, valores e uploads; padronizar erros.</li></ul></div>
+  <div class="item"><h3>7. Proteger a API HTTP</h3><ul><li>Restringir CORS por ambiente.</li><li>Adicionar headers seguros e rate limit em autenticação.</li><li>Validar tipo/tamanho de uploads.</li><li>Centralizar erros e usar logs estruturados sem segredos.</li></ul></div>
+  <div class="item"><h3>8. Reforçar refresh tokens</h3><ul><li>Armazenar somente o hash.</li><li>Rotacionar no refresh e revogar o anterior.</li><li>Revogar sessões de usuários desativados.</li><li>Sincronizar o prazo persistido com a configuração JWT.</li><li>Limpar tokens expirados e considerar armazenamento seguro no dispositivo.</li></ul></div>
+
+  <h2><span class="priority p2">P2</span> Organização e manutenção</h2>
+  <div class="item"><h3>9. Limpar o repositório</h3><p>Foram observados cerca de 1.604 arquivos de <code>node_modules</code>, <code>app/lib.zip</code> e um repositório embutido em <code>backend/</code>, além de cópias semelhantes.</p><ul><li>Definir uma única fonte de verdade.</li><li>Remover dependências e artefatos gerados do versionamento.</li><li>Remover ou configurar corretamente o repositório embutido.</li><li>Ampliar o <code>.gitignore</code> e manter apenas dumps sanitizados necessários.</li></ul></div>
+  <div class="item"><h3>10. Configurar ambientes no Flutter</h3><ul><li>Substituir a URL fixa de localhost por <code>--dart-define</code> ou configuração equivalente.</li><li>Separar desenvolvimento, homologação e produção.</li><li>Documentar emulador Android, dispositivo físico e web.</li><li>Exigir HTTPS fora do desenvolvimento.</li></ul></div>
+  <div class="item"><h3>11. Padronizar qualidade estática e codificação</h3><ul><li>Padronizar UTF-8 e corrigir textos realmente corrompidos.</li><li>Investigar o travamento observado em <code>flutter analyze</code>.</li><li>Executar formatter/linter no CI para Flutter e JavaScript.</li></ul></div>
+
+  <h2><span class="priority p2">P2</span> Testes e operação</h2>
+  <div class="item"><h3>12. Criar testes automatizados</h3><p>O backend não tem script de teste e o Flutter possui apenas um smoke test.</p><ul><li>Testar autenticação, papéis, isolamento entre barbearias e usuário desativado.</li><li>Testar preço/duração, concorrência, cancelamento, conclusão e bloqueios.</li><li>Testar rollback, services/controllers Flutter e fluxos principais.</li></ul></div>
+  <div class="item"><h3>13. Criar integração contínua</h3><ul><li>Instalar pelos locks e executar testes, lint, análise e formatação.</li><li>Verificar vulnerabilidades e segredos acidentais.</li><li>Bloquear merge com verificações obrigatórias falhando.</li></ul></div>
+  <div class="item"><h3>14. Melhorar documentação</h3><ul><li>README principal com arquitetura, requisitos e comandos.</li><li>Variáveis de ambiente, banco/migrações e execução por plataforma.</li><li>Papéis, regras de autorização e API em OpenAPI/Swagger.</li><li>Health checks, backup e restauração.</li></ul></div>
+  <div class="item"><h3>15. Observabilidade e privacidade</h3><ul><li>Logs estruturados, correlação, métricas de erro e latência.</li><li>Health/readiness checks separados.</li><li>Minimizar exposição de dados pessoais e estabelecer retenção alinhada à LGPD.</li><li>Auditar operações administrativas sensíveis.</li></ul></div>
+
+  <h2>Backlog resumido</h2>
+  <table><thead><tr><th>Prioridade</th><th>Item</th><th>Resultado</th></tr></thead><tbody>
+  <tr><td>P0</td><td>Segredos</td><td>Credenciais expostas deixam de funcionar</td></tr><tr><td>P0</td><td>Autorização</td><td>Sem acesso cruzado</td></tr><tr><td>P0</td><td>Preço/duração</td><td>Cálculo confiável no servidor</td></tr><tr><td>P1</td><td>Reserva atômica</td><td>Sem agendamento duplo</td></tr><tr><td>P1</td><td>Validação e API</td><td>Dados consistentes e menor abuso</td></tr><tr><td>P1</td><td>Sessões</td><td>Tokens rotativos e revogáveis</td></tr><tr><td>P2</td><td>Estrutura e ambientes</td><td>Fonte única e configuração reproduzível</td></tr><tr><td>P2</td><td>Testes, CI e docs</td><td>Manutenção previsível</td></tr>
+  </tbody></table>
+  <footer>Estado observado em 15/08/2026. Antes das mudanças, preservar o trabalho local e criar backup do banco. Retirar o .env do commit atual não remove segredos do histórico; a rotação é obrigatória.</footer>
+</body>
+</html>

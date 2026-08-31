@@ -4,43 +4,108 @@
 // ==========================================
 import 'package:flutter/material.dart';
 import '../../../core/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/constants/app_constants.dart';
 
 class AgendamentoController extends ChangeNotifier {
-  List<Map<String, dynamic>> _servicos            = [];
-  List<Map<String, dynamic>> _colaboradores       = [];
-  List<Map<String, dynamic>> _horariosDisp        = [];
-  List<Map<String, dynamic>> _meusAgendamentos    = [];
-  List<Map<String, dynamic>> _historico           = [];
+  List<Map<String, dynamic>> _barbearias = [];
+  Map<String, dynamic>? _barbeariaSelecionada;
+  List<Map<String, dynamic>> _servicos = [];
+  List<Map<String, dynamic>> _colaboradores = [];
+  List<Map<String, dynamic>> _horariosDisp = [];
+  List<Map<String, dynamic>> _meusAgendamentos = [];
+  List<Map<String, dynamic>> _historico = [];
 
-  bool   _carregandoServicos      = false;
-  bool   _carregandoColaboradores = false;
-  bool   _carregandoHorarios      = false;
-  bool   _carregandoAgendamentos  = false;
-  bool   _salvando                = false;
-  String _erro                    = '';
-  String _sucesso                 = '';
+  bool _carregandoServicos = false;
+  bool _carregandoBarbearias = false;
+  bool _carregandoColaboradores = false;
+  bool _carregandoHorarios = false;
+  bool _carregandoAgendamentos = false;
+  bool _salvando = false;
+  String _erro = '';
 
-  List<Map<String, dynamic>> get servicos            => _servicos;
-  List<Map<String, dynamic>> get colaboradores       => _colaboradores;
-  List<Map<String, dynamic>> get horariosDisp        => _horariosDisp;
-  List<Map<String, dynamic>> get meusAgendamentos    => _meusAgendamentos;
-  List<Map<String, dynamic>> get historico           => _historico;
-  bool   get carregandoServicos      => _carregandoServicos;
-  bool   get carregandoColaboradores => _carregandoColaboradores;
-  bool   get carregandoHorarios      => _carregandoHorarios;
-  bool   get carregandoAgendamentos  => _carregandoAgendamentos;
-  bool   get salvando                => _salvando;
-  String get erro                    => _erro;
-  String get sucesso                 => _sucesso;
+  List<Map<String, dynamic>> get barbearias => _barbearias;
+  Map<String, dynamic>? get barbeariaSelecionada => _barbeariaSelecionada;
+
+  List<Map<String, dynamic>> get servicos => _servicos;
+  List<Map<String, dynamic>> get colaboradores => _colaboradores;
+  List<Map<String, dynamic>> get horariosDisp => _horariosDisp;
+  List<Map<String, dynamic>> get meusAgendamentos => _meusAgendamentos;
+  List<Map<String, dynamic>> get historico => _historico;
+  bool get carregandoServicos => _carregandoServicos;
+  bool get carregandoBarbearias => _carregandoBarbearias;
+  bool get carregandoColaboradores => _carregandoColaboradores;
+  bool get carregandoHorarios => _carregandoHorarios;
+  bool get carregandoAgendamentos => _carregandoAgendamentos;
+  bool get salvando => _salvando;
+  String get erro => _erro;
+
+  Future<void> carregarBarbearias({String busca = ''}) async {
+    _carregandoBarbearias = true;
+    notifyListeners();
+    final query = busca.trim().isEmpty
+        ? ''
+        : '?busca=${Uri.encodeQueryComponent(busca.trim())}';
+    final result = await ApiService.get('/barbearias$query', auth: false);
+    _carregandoBarbearias = false;
+    final raw = result['data'];
+    _barbearias = raw is List
+        ? raw.map((item) => Map<String, dynamic>.from(item)).toList()
+        : [];
+
+    if (_barbeariaSelecionada == null) {
+      final prefs = await SharedPreferences.getInstance();
+      final savedId = prefs.getInt(AppConstants.keyBarbeariaId);
+      if (savedId != null) {
+        final matches = _barbearias.where((item) => item['id'] == savedId);
+        if (matches.isNotEmpty) _barbeariaSelecionada = matches.first;
+      }
+    }
+    notifyListeners();
+    if (_barbeariaSelecionada != null &&
+        _servicos.isEmpty &&
+        _colaboradores.isEmpty) {
+      await Future.wait([
+        carregarServicos(barbeariaId: _barbeariaSelecionada!['id']),
+        carregarColaboradores(barbeariaId: _barbeariaSelecionada!['id']),
+      ]);
+    }
+  }
+
+  Future<void> selecionarBarbearia(Map<String, dynamic> barbearia) async {
+    _barbeariaSelecionada = barbearia;
+    _servicos = [];
+    _colaboradores = [];
+    _horariosDisp = [];
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(AppConstants.keyBarbeariaId, barbearia['id'] as int);
+    notifyListeners();
+    await Future.wait([
+      carregarServicos(barbeariaId: barbearia['id']),
+      carregarColaboradores(barbeariaId: barbearia['id']),
+    ]);
+  }
+
+  Future<void> trocarBarbearia() async {
+    _barbeariaSelecionada = null;
+    _servicos = [];
+    _colaboradores = [];
+    _horariosDisp = [];
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(AppConstants.keyBarbeariaId);
+    notifyListeners();
+  }
 
   // RF12: Carrega serviços (público)
-  Future<void> carregarServicos({int barbeariaId = 1}) async {
+  Future<void> carregarServicos({required int barbeariaId}) async {
     _carregandoServicos = true;
     notifyListeners();
     final result = await ApiService.get('/servicos/$barbeariaId', auth: false);
     _carregandoServicos = false;
     if (result['data'] != null) {
-      _servicos = (result['data'] as List).map((e) => Map<String, dynamic>.from(e)).toList();
+      _servicos = (result['data'] as List)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     } else {
       _servicos = [];
     }
@@ -48,13 +113,16 @@ class AgendamentoController extends ChangeNotifier {
   }
 
   // RF14: Carrega colaboradores (público)
-  Future<void> carregarColaboradores({int barbeariaId = 1}) async {
+  Future<void> carregarColaboradores({required int barbeariaId}) async {
     _carregandoColaboradores = true;
     notifyListeners();
-    final result = await ApiService.get('/colaboradores/$barbeariaId', auth: false);
+    final result =
+        await ApiService.get('/colaboradores/$barbeariaId', auth: false);
     _carregandoColaboradores = false;
     if (result['data'] != null) {
-      _colaboradores = (result['data'] as List).map((e) => Map<String, dynamic>.from(e)).toList();
+      _colaboradores = (result['data'] as List)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     } else {
       _colaboradores = [];
     }
@@ -68,18 +136,15 @@ class AgendamentoController extends ChangeNotifier {
   Future<void> carregarHorarios(
     int colaboradorId,
     String data, {
-    int? servicoId,
     int? duracaoTotal,
   }) async {
     _carregandoHorarios = true;
-    _horariosDisp       = [];
+    _horariosDisp = [];
     notifyListeners();
 
     String endpoint = '/agenda/disponiveis/$colaboradorId?data=$data';
     if (duracaoTotal != null) {
       endpoint += '&duracao_total=$duracaoTotal';
-    } else if (servicoId != null) {
-      endpoint += '&servico_id=$servicoId';
     }
 
     final result = await ApiService.get(endpoint);
@@ -98,27 +163,24 @@ class AgendamentoController extends ChangeNotifier {
   // Suporta múltiplos serviços sequenciais
   // ==========================================
   Future<bool> agendar({
-    required int    colaboradorId,
-    required int    servicoId,
+    required int colaboradorId,
+    required int servicoId,
+    List<int>? servicosIds,
     required String dataHora,
-    int?            duracaoTotal,
-    double?         valorTotal,
-    String?         observacao,
+    String? observacao,
   }) async {
     _salvando = true;
-    _erro     = '';
-    _sucesso  = '';
+    _erro = '';
     notifyListeners();
 
     final body = <String, dynamic>{
       'colaborador_id': colaboradorId,
-      'servico_id':     servicoId,
-      'data_hora':      dataHora,
+      'servico_id': servicoId,
+      'servicos_ids': servicosIds ?? [servicoId],
+      'data_hora': dataHora,
     };
 
-    if (duracaoTotal != null) body['duracao_override'] = duracaoTotal;
-    if (valorTotal   != null) body['valor_override']   = valorTotal;
-    if (observacao   != null) body['observacao']        = observacao;
+    if (observacao != null) body['observacao'] = observacao;
 
     final result = await ApiService.post('/agendamentos', body);
     _salvando = false;
@@ -129,7 +191,6 @@ class AgendamentoController extends ChangeNotifier {
       return false;
     }
 
-    _sucesso = 'Agendamento realizado!';
     notifyListeners();
     return true;
   }
@@ -170,7 +231,8 @@ class AgendamentoController extends ChangeNotifier {
   Future<bool> cancelar(int agendamentoId) async {
     _erro = '';
     notifyListeners();
-    final result = await ApiService.patch('/agendamentos/$agendamentoId/cancelar', {});
+    final result =
+        await ApiService.patch('/agendamentos/$agendamentoId/cancelar', {});
     if (result.containsKey('erro')) {
       _erro = result['erro'];
       notifyListeners();
@@ -178,11 +240,5 @@ class AgendamentoController extends ChangeNotifier {
     }
     await carregarMeusAgendamentos();
     return true;
-  }
-
-  void limpar() {
-    _erro    = '';
-    _sucesso = '';
-    notifyListeners();
   }
 }

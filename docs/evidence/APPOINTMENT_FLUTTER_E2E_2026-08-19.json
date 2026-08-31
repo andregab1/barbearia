@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-19T23:44:47.800Z",
+  "catalogIds": [
+    "QA-E2E-002",
+    "QA-E2E-003",
+    "QA-E2E-018",
+    "QA-E2E-021",
+    "QA-E2E-030",
+    "QA-E2E-031"
+  ],
+  "environment": {
+    "database": "barbearia_flutter_e2e_test",
+    "databaseHost": "127.0.0.1",
+    "production": false,
+    "browser": "Chrome via flutter drive",
+    "api": "127.0.0.1 ephemeral port"
+  },
+  "command": "node scripts/run-flutter-catalog-e2e.js --appointment-flow",
+  "preconditions": "Synthetic client/barber/admin users, two isolated tenants, active services and daily 08:00-20:00 schedule.",
+  "testData": "QA Barbearia A; QA Corte A (BRL 40/45 min); QA Barba A (BRL 25/20 min); future 10:00 slot.",
+  "expectedResult": "UI completes booking once, persists through app restart and relogin, appears for client/barber, cancels into history and releases the slot; API/DB agree.",
+  "status": "failed",
+  "flutter": {
+    "exitCode": 1,
+    "signal": null,
+    "lateExceptionPolicy": "nonzero flutter drive exit is failed",
+    "log": "C:\\barbearia\\docs\\evidence\\APPOINTMENT_FLUTTER_E2E_2026-08-19.log"
+  },
+  "apiDatabaseEvidence": {
+    "status": "failed",
+    "errors": [
+      "expected one appointment, found 0",
+      "expected canceled status, found undefined",
+      "expected duration 65, found undefined",
+      "expected amount 65.00, found undefined",
+      "expected two service snapshots, found 0",
+      "expected one cancellation notification, found 0",
+      "expected one confirmation notification, found 0",
+      "canceled appointment is missing from client history",
+      "canceled slot was not released in availability API"
+    ],
+    "database": {
+      "appointments": [],
+      "serviceSnapshots": [],
+      "notifications": [],
+      "financeEntries": 0
+    },
+    "api": {
+      "loginStatus": 200,
+      "clientAgenda": {
+        "status": 200,
+        "count": 0
+      },
+      "clientHistory": {
+        "status": 200,
+        "containsCanceledAppointment": false
+      },
+      "availability": {
+        "status": 0,
+        "releasedSlot": "",
+        "available": false
+      }
+    }
+  },
+  "cleanup": {
+    "chromeDriverStopped": true,
+    "serverClosed": true,
+    "poolClosed": true,
+    "databaseDropped": true
+  }
+}

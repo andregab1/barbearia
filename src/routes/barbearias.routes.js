@@ -6,7 +6,7 @@
 const router = require('express').Router();
 const multer = require('multer');
 const { autenticar, autorizar } = require('../middlewares/auth.middleware');
-const { cadastrar, buscar, personalizar, atualizar } = require('../controllers/barbearias.controller');
+const { listarPublicas, cadastrar, buscar, personalizar, atualizar } = require('../controllers/barbearias.controller');
 
 // Usa memoryStorage — imagem fica em buffer, não em disco
 const upload = multer({
@@ -19,6 +19,7 @@ const upload = multer({
 });
 
 router.post('/',                  autenticar, autorizar('admin'), cadastrar);
+router.get('/',                   listarPublicas);
 router.get('/:id',                buscar);
 router.put('/:id',                autenticar, autorizar('admin'), atualizar);
 router.patch('/:id/personalizar', autenticar, autorizar('admin'), upload.single('logo'), personalizar);
