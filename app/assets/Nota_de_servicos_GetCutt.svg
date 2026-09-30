@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 840 1188" role="img" aria-labelledby="title desc">
+<title id="title">GetCutt — Comprovante de serviços</title>
+<desc id="desc">Modelo demonstrativo editável em formato A4. Dados fictícios. Documento sem valor fiscal. Três serviços, subtotal de 100 reais, desconto de 10 reais e total pago de 90 reais.</desc>
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#202020}.muted{fill:#757570}.label{font-size:10px;letter-spacing:1.5px;font-weight:700}.small{font-size:12px}.body{font-size:14px}.bold{font-weight:700}.line{stroke:#e5e5df;stroke-width:1}.num{font-variant-numeric:tabular-nums}</style></defs>
+<!-- Formato A4. Textos e valores editáveis; dados demonstrativos. -->
+<rect width="840" height="1188" fill="#fff"/>
+<rect width="840" height="178" fill="#151513"/>
+<rect y="178" width="840" height="5" fill="#f4d000"/>
+<!-- Assinatura tipográfica GetCutt -->
+<g id="marca">
+<rect x="48" y="40" width="43" height="43" rx="12" fill="#f4d000"/>
+<g stroke="#151513" stroke-width="2.5" fill="none" stroke-linecap="round"><circle cx="60" cy="68" r="4"/><circle cx="79" cy="68" r="4"/><path d="M63 65 79 51M76 65 60 51"/></g>
+<text x="103" y="72" style="fill:#fff;font-size:35px;font-weight:700;letter-spacing:-1.8px">getcutt<tspan fill="#f4d000">.</tspan></text>
+<text x="792" y="54" text-anchor="end" class="label" style="fill:#b9b9b0">COMPROVANTE DE SERVIÇOS</text>
+<text x="792" y="82" text-anchor="end" class="num" style="fill:#fff;font-size:23px;font-weight:700">Nº 000128</text>
+<text x="48" y="132" style="fill:#fff;font-size:22px;font-weight:700">Barbearia Exemplo</text>
+<text x="48" y="155" class="small" style="fill:#b9b9b0">Rua Exemplo, 123 · Centro · Araucária / PR</text>
+<text x="792" y="132" text-anchor="end" class="small" style="fill:#b9b9b0">Emissão</text>
+<text x="792" y="155" text-anchor="end" class="body" style="fill:#fff">28/09/2026 · 10:45</text>
+</g>
+<g id="aviso"><rect x="48" y="209" width="744" height="38" rx="6" fill="#f7f7f2"/><circle cx="66" cy="228" r="3" fill="#c0a300"/><text x="80" y="232" class="label" style="fill:#64645b;font-size:10px;letter-spacing:1.1px">SEM VALOR FISCAL</text><text x="773" y="232" text-anchor="end" class="small muted">Modelo demonstrativo · Dados fictícios</text></g>
+<g id="cliente">
+<text x="48" y="287" class="label muted">CLIENTE</text><text x="48" y="316" font-size="21" class="bold">João da Silva</text><text x="48" y="339" class="small muted">Telefone: (00) 00000-0000</text>
+<text x="471" y="287" class="label muted">ATENDIMENTO</text><text x="471" y="315" class="body bold">28/09/2026 · 10:00</text><text x="471" y="339" class="small muted">Profissional: Lucas · Agendamento #00482</text>
+<line x1="48" x2="792" y1="367" y2="367" class="line"/>
+</g>
+<g id="servicos">
+<text x="48" y="408" font-size="21" class="bold">Serviços realizados</text><text x="792" y="408" text-anchor="end" class="small muted">3 serviços</text>
+<rect x="48" y="429" width="744" height="37" rx="5" fill="#f5f5f1"/>
+<text x="64" y="452" class="label muted">DESCRIÇÃO</text><text x="493" y="452" text-anchor="middle" class="label muted">QTD.</text><text x="638" y="452" text-anchor="end" class="label muted">UNITÁRIO</text><text x="776" y="452" text-anchor="end" class="label muted">TOTAL</text>
+<text x="64" y="497" class="body bold">Corte masculino</text><text x="64" y="518" class="small muted">Degradê + acabamento</text><text x="493" y="506" text-anchor="middle" class="body num">1</text><text x="638" y="506" text-anchor="end" class="body num">R$ 50,00</text><text x="776" y="506" text-anchor="end" class="body bold num">R$ 50,00</text>
+<line x1="48" x2="792" y1="538" y2="538" class="line"/>
+<text x="64" y="569" class="body bold">Barba completa</text><text x="64" y="590" class="small muted">Modelagem + finalização</text><text x="493" y="578" text-anchor="middle" class="body num">1</text><text x="638" y="578" text-anchor="end" class="body num">R$ 35,00</text><text x="776" y="578" text-anchor="end" class="body bold num">R$ 35,00</text>
+<line x1="48" x2="792" y1="610" y2="610" class="line"/>
+<text x="64" y="641" class="body bold">Sobrancelha</text><text x="64" y="662" class="small muted">Acabamento com navalha</text><text x="493" y="650" text-anchor="middle" class="body num">1</text><text x="638" y="650" text-anchor="end" class="body num">R$ 15,00</text><text x="776" y="650" text-anchor="end" class="body bold num">R$ 15,00</text>
+<line x1="48" x2="792" y1="682" y2="682" class="line"/>
+</g>
+<g id="pagamento">
+<text x="48" y="726" class="label muted">PAGAMENTO</text>
+<rect x="48" y="744" width="74" height="28" rx="14" fill="#edf4ed"/><path d="m61 758 4 4 7-8" stroke="#3a6a42" stroke-width="1.7" fill="none" stroke-linecap="round"/><text x="81" y="762" class="small bold" style="fill:#3a6a42">Pago</text>
+<text x="48" y="802" class="body bold">Pix · R$ 90,00</text><text x="48" y="824" class="small muted">Recebido em 28/09/2026 às 10:43</text><text x="48" y="849" class="small muted">Saldo pendente: R$ 0,00</text>
+<text x="470" y="729" class="body muted">Subtotal</text><text x="792" y="729" text-anchor="end" class="body num">R$ 100,00</text>
+<text x="470" y="761" class="body muted">Desconto (10%)</text><text x="792" y="761" text-anchor="end" class="body num">− R$ 10,00</text>
+<rect x="448" y="784" width="344" height="88" rx="9" fill="#f4d000"/>
+<text x="470" y="812" class="label">TOTAL DO ATENDIMENTO</text><text x="769" y="851" text-anchor="end" class="bold num" font-size="34" letter-spacing="-1">R$ 90,00</text>
+</g>
+<g id="observacoes"><line x1="48" x2="792" y1="908" y2="908" class="line"/><text x="48" y="944" class="label muted">OBSERVAÇÕES</text><text x="48" y="970" class="small">Serviços concluídos. Desconto aplicado sobre o subtotal do atendimento.</text><text x="48" y="991" class="small muted">Este comprovante registra os serviços e o pagamento informado pela barbearia.</text></g>
+<g id="rodape"><line x1="48" x2="792" y1="1056" y2="1056" class="line"/>
+<text x="48" y="1090" class="body bold">Obrigado pela preferência.</text><text x="48" y="1113" class="small muted">Documento não fiscal. Não substitui uma nota fiscal.</text>
+<text x="792" y="1090" text-anchor="end" class="small muted">Emitido pelo</text><text x="792" y="1117" text-anchor="end" font-size="24" class="bold" letter-spacing="-1">getcutt<tspan fill="#b39800">.</tspan></text>
+<text x="48" y="1155" class="label muted" style="font-size:9px">CONTROLE INTERNO · Nº 000128</text><text x="792" y="1155" text-anchor="end" class="small muted">1 / 1</text></g>
+</svg>
