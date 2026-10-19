@@ -71,62 +71,19 @@ class _SplashScreenState extends State<SplashScreen>
         child: Stack(
           children: [
             _BrilhoDourado(tema.corPrimaria),
-            if (tema.logoUrl != null)
-              Center(
-                child: Opacity(
-                  opacity: 0.05,
-                  child: LogoWidget(
-                    logoUrl: tema.logoUrl,
-                    size: double.infinity,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ScaleTransition(
                     scale: _scaleAnim,
-                    child: Container(
-                      width: 132,
-                      height: 132,
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceElev,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(
-                          color: tema.corPrimaria.withValues(alpha: 0.4),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: tema.corPrimaria.withValues(alpha: 0.15),
-                            blurRadius: 40,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: LogoWidget(
-                          logoUrl: tema.logoUrl,
-                          size: 132,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    child: const OfficialLogo(
+                      width: 250,
+                      height: 250,
+                      showMark: false,
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  Text(
-                    'GetCutt',
-                    style: GoogleFonts.playfairDisplay().copyWith(
-                      color: tema.corPrimaria,
-                      fontSize: 44,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                      height: 1.1,
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                   const SizedBox(height: 8),
                   Text(
                     'Gestão profissional para sua barbearia',

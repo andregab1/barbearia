@@ -8,10 +8,11 @@ async function obterColaboradorAcessivel(usuario, colaboradorId) {
   let filtro = '';
   if (usuario.role === 'admin') {
     filtro = ` AND c.barbearia_id IN (
-      SELECT administrador.barbearia_id FROM colaboradores administrador
-      WHERE administrador.usuario_id = ? AND administrador.ativo = 1
+      SELECT m.barbearia_id FROM memberships m
+      WHERE m.usuario_id = ? AND m.ativo = 1 AND m.papel IN ('owner', 'manager')
+      UNION SELECT b.id FROM barbearias b WHERE b.admin_id = ? AND b.ativa = 1
     )`;
-    params.push(usuario.id);
+    params.push(usuario.id, usuario.id);
   } else {
     filtro = ' AND c.usuario_id = ?';
     params.push(usuario.id);
@@ -21,7 +22,7 @@ async function obterColaboradorAcessivel(usuario, colaboradorId) {
     `SELECT c.id, c.usuario_id, c.barbearia_id
        FROM colaboradores c
        JOIN usuarios u ON u.id = c.usuario_id
-      WHERE c.id = ? AND c.ativo = 1 AND u.ativo = 1${filtro}
+      WHERE c.id = ?${usuario.role === 'admin' ? '' : ' AND c.ativo = 1 AND u.ativo = 1'}${filtro}
       LIMIT 1`,
     params,
   );
@@ -47,8 +48,9 @@ async function obterBarbeariaAdministrada(usuarioId, barbeariaId) {
        FROM barbearias b
       WHERE b.id = ? AND b.ativa = 1
         AND (b.admin_id = ? OR EXISTS (
-          SELECT 1 FROM colaboradores c
-           WHERE c.barbearia_id = b.id AND c.usuario_id = ? AND c.ativo = 1
+          SELECT 1 FROM memberships m
+           WHERE m.barbearia_id = b.id AND m.usuario_id = ? AND m.ativo = 1
+             AND m.papel IN ('owner', 'manager')
         ))
       LIMIT 1`,
     [id, usuarioId, usuarioId],
@@ -64,8 +66,9 @@ async function obterServicoAdministravel(usuarioId, servicoId) {
        FROM servicos s
        JOIN barbearias b ON b.id = s.barbearia_id
       WHERE s.id = ? AND (b.admin_id = ? OR EXISTS (
-        SELECT 1 FROM colaboradores c
-         WHERE c.barbearia_id = b.id AND c.usuario_id = ? AND c.ativo = 1
+        SELECT 1 FROM memberships m
+         WHERE m.barbearia_id = b.id AND m.usuario_id = ? AND m.ativo = 1
+           AND m.papel IN ('owner', 'manager')
       )) LIMIT 1`,
     [id, usuarioId, usuarioId],
   );

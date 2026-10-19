@@ -81,6 +81,34 @@ class AppModal extends StatelessWidget {
     );
   }
 
+  static Future<T?> showSidePanel<T>({
+    required BuildContext context,
+    required String title,
+    String? subtitle,
+    required Widget child,
+    List<Widget>? actions,
+    bool barrierDismissible = true,
+  }) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: 'Painel lateral',
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (_, __, ___) => AppSidePanel(
+        title: title,
+        subtitle: subtitle,
+        actions: actions,
+        child: child,
+      ),
+      transitionBuilder: (ctx, anim, secondaryAnim, child) => SlideTransition(
+        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+            .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final surf = Theme.of(context).colorScheme.surface;
@@ -120,8 +148,8 @@ class AppModal extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
+                child: SingleChildScrollView(
+                padding: EdgeInsets.all(size == AppModalSize.large ? 48 : 32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +175,7 @@ class AppModal extends StatelessWidget {
                           Text(title,
                               style: GoogleFonts.inter(
                                 color: onSurf,
-                                fontSize: 18,
+                                fontSize: size == AppModalSize.large ? 30 : 22,
                                 fontWeight: FontWeight.w700,
                               )),
                           if (subtitle != null) ...[
@@ -185,6 +213,13 @@ class AppModal extends StatelessWidget {
                     // Actions
                     if (actions != null && actions!.isNotEmpty) ...[
                       const SizedBox(height: 32),
+                      Container(
+                          height: 1,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: 0.1)),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: actions!,
@@ -193,6 +228,67 @@ class AppModal extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AppSidePanel extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final List<Widget>? actions;
+
+  const AppSidePanel({
+    super.key,
+    required this.title,
+    this.subtitle,
+    required this.child,
+    this.actions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Material(
+        color: scheme.surface,
+        child: SafeArea(
+          child: SizedBox(
+            width: 420,
+            height: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 28, 20, 24),
+                  child: Row(children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(title, style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 8),
+                            Text(subtitle!, style: GoogleFonts.inter(fontSize: 14, color: scheme.onSurfaceVariant)),
+                          ],
+                        ],
+                      ),
+                    ),
+                    IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
+                  ]),
+                ),
+                Divider(height: 1, color: scheme.outline.withValues(alpha: 0.16)),
+                Expanded(child: SingleChildScrollView(padding: const EdgeInsets.all(28), child: child)),
+                if (actions != null && actions!.isNotEmpty) ...[
+                  Divider(height: 1, color: scheme.outline.withValues(alpha: 0.16)),
+                  Padding(padding: const EdgeInsets.all(24), child: Row(mainAxisAlignment: MainAxisAlignment.end, children: actions!)),
+                ],
+              ],
             ),
           ),
         ),

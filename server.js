@@ -6,6 +6,7 @@ const app  = require('./app');
 const PORT = process.env.PORT || 3000;
 
 const { pool } = require('./src/config/database');
+const { startAppointmentAutomation } = require('./src/services/appointment-automation.service');
 
 function validarConfiguracao() {
   const obrigatorias = ['JWT_SECRET', 'JWT_REFRESH_SECRET'];
@@ -19,6 +20,7 @@ async function iniciar() {
   try {
     validarConfiguracao();
     const [rows] = await pool.query('SELECT 1');
+    startAppointmentAutomation();
     console.log('✅ Banco de dados conectado com sucesso!');
     console.log('🔑 JWT_SECRET configurado:', process.env.JWT_SECRET ? 'Sim' : 'NÃO CONFIGURADO!');
     app.listen(PORT, '0.0.0.0', () => {

@@ -14,7 +14,7 @@ async function listar(req, res) {
 
   try {
     const [rows] = await pool.query(
-      `SELECT c.id, u.nome, u.email, u.telefone, c.ativo
+      `SELECT c.id, u.nome, u.email, u.telefone, u.cpf, c.ativo
        FROM colaboradores c
        JOIN usuarios u ON u.id = c.usuario_id
        WHERE c.barbearia_id = ? AND c.ativo = 1 AND u.ativo = 1
@@ -34,7 +34,7 @@ async function listarGerenciamento(req, res) {
     const barbearia = await obterBarbeariaAdministrada(req.usuario.id, barbearia_id);
     if (!barbearia) return res.status(403).json({ code: 'TENANT_FORBIDDEN', erro: 'Sem permissão para gerenciar esta barbearia.' });
     const [rows] = await pool.query(
-      `SELECT c.id, c.usuario_id, u.nome, u.email, u.telefone, c.ativo
+      `SELECT c.id, c.usuario_id, u.nome, u.email, u.telefone, u.cpf, c.ativo
        FROM colaboradores c
        JOIN usuarios u ON u.id = c.usuario_id
        WHERE c.barbearia_id = ?
@@ -52,7 +52,7 @@ async function listarGerenciamento(req, res) {
 // ==========================================
 async function cadastrar(req, res) {
   const { barbearia_id }     = req.params;
-  const { nome, telefone, senha } = req.body;
+  const { nome, telefone, senha, cpf } = req.body;
 
   if (!nome || !telefone || !senha) {
     return res.status(400).json({ erro: 'Nome, telefone e senha são obrigatórios.' });
@@ -82,8 +82,7 @@ async function cadastrar(req, res) {
       if (u.colab_id) {
         const hash = await bcrypt.hash(senha, 10);
         await pool.query(
-          'UPDATE usuarios SET nome = ?, senha_hash = ?, ativo = 1 WHERE id = ?',
-          [nome, hash, u.id]
+          'UPDATE usuarios SET nome = ?, cpf = ?, senha_hash = ?, ativo = 1 WHERE id = ?', [nome, cpf || null, hash, u.id]
         );
         await pool.query(
           'UPDATE colaboradores SET ativo = 1 WHERE id = ?',
@@ -96,8 +95,7 @@ async function cadastrar(req, res) {
       // reutiliza o usuário e cria apenas o vínculo (evita erro de telefone duplicado)
       const hash = await bcrypt.hash(senha, 10);
       await pool.query(
-        'UPDATE usuarios SET nome = ?, senha_hash = ?, ativo = 1, role = ? WHERE id = ?',
-        [nome, hash, 'barbeiro', u.id]
+        'UPDATE usuarios SET nome = ?, cpf = ?, senha_hash = ?, ativo = 1, role = ? WHERE id = ?', [nome, cpf || null, hash, 'barbeiro', u.id]
       );
       await pool.query(
         'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
@@ -109,8 +107,7 @@ async function cadastrar(req, res) {
     // Novo colaborador — criar usuário e vínculo
     const hash = await bcrypt.hash(senha, 10);
     const [usuario] = await pool.query(
-      'INSERT INTO usuarios (nome, telefone, senha_hash, role) VALUES (?, ?, ?, ?)',
-      [nome, telefone, hash, 'barbeiro']
+      'INSERT INTO usuarios (nome, telefone, cpf, senha_hash, role) VALUES (?, ?, ?, ?, ?)', [nome, telefone, cpf || null, hash, 'barbeiro']
     );
     await pool.query(
       'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
@@ -153,6 +150,8 @@ async function atualizar(req, res) {
   const nome = String(req.body.nome || '').trim();
   const telefone = String(req.body.telefone || '').trim();
   const email = req.body.email == null ? null : String(req.body.email).trim().toLowerCase();
+  const cpf = req.body.cpf == null ? null : String(req.body.cpf).trim();
+  const ativo = req.body.ativo == null ? null : (req.body.ativo ? 1 : 0);
 
   if (nome.length < 2 || telefone.length < 8) {
     return res.status(400).json({ erro: 'Informe nome e telefone válidos.' });
@@ -164,9 +163,13 @@ async function atualizar(req, res) {
     const [rows] = await pool.query('SELECT usuario_id FROM colaboradores WHERE id = ?', [id]);
     if (rows.length === 0) return res.status(404).json({ erro: 'Colaborador não encontrado.' });
     await pool.query(
-      'UPDATE usuarios SET nome = ?, telefone = ?, email = ? WHERE id = ?',
-      [nome, telefone, email || null, rows[0].usuario_id]
+      'UPDATE usuarios SET nome = ?, telefone = ?, email = ?, cpf = ? WHERE id = ?',
+      [nome, telefone, email || null, cpf || null, rows[0].usuario_id]
     );
+    if (ativo !== null) {
+      await pool.query('UPDATE colaboradores SET ativo = ? WHERE id = ?', [ativo, id]);
+      await pool.query('UPDATE usuarios SET ativo = ? WHERE id = ?', [ativo, rows[0].usuario_id]);
+    }
     return res.json({ mensagem: 'Colaborador atualizado com sucesso.' });
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ erro: 'Telefone ou e-mail já utilizado por outra conta.' });

@@ -21,6 +21,9 @@ const webhooksRoutes      = require('./src/routes/webhooks.routes');
 const invitationsRoutes   = require('./src/routes/invitations.routes');
 const financeRoutes       = require('./src/routes/finance.routes');
 const billingRoutes       = require('./src/routes/billing.routes');
+const fiscalRoutes        = require('./src/routes/fiscal.routes');
+const accountingRoutes    = require('./src/routes/accounting.routes');
+const assistenteRoutes    = require('./src/routes/assistente.routes');
 
 const app = express();
 
@@ -61,8 +64,15 @@ app.use('/api/webhooks',      rateLimit({ windowMs: 60 * 1000, max: 180 }), webh
 app.use('/api/invitations',   rateLimit({ windowMs: 15 * 60 * 1000, max: 60 }), invitationsRoutes);
 app.use('/api/finance',       financeRoutes);
 app.use('/api/billing',       rateLimit({ windowMs: 60 * 1000, max: 30 }), billingRoutes);
+app.use('/api/fiscal',        fiscalRoutes);
+app.use('/api/accounting',    accountingRoutes);
+app.use('/api/assistente',    assistenteRoutes);
 
-app.get('/', (req, res) => res.json({ status: 'API Barbearia rodando!' }));
+// Serves the compiled Flutter client together with its API in production/local web.
+const webBuild = path.join(__dirname, 'app', 'build', 'web');
+app.use(express.static(webBuild));
+
+app.get('/', (req, res) => res.sendFile(path.join(webBuild, 'index.html')));
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use((req, res) => res.status(404).json({ code: 'NOT_FOUND', erro: 'Rota não encontrada.' }));

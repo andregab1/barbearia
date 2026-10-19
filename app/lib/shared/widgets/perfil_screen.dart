@@ -174,7 +174,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
     context.watch<BarbeariaThemeService>();
     return PremiumPage(
       title: 'Meu perfil',
-      subtitle: 'Gerencie seus dados pessoais e a segurança da conta.',
+      subtitle: 'Gerencie seus dados pessoais e a seguranÃ§a da conta.',
+      headingFontSize: 27,
+      horizontalPadding: 40,
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
       child: _carregando
           ? const PremiumLoadingState(label: 'Carregando perfil')
           : SingleChildScrollView(
@@ -207,20 +210,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   onSave: _salvar,
                 );
                 if (!desktop) {
-                  return Column(children: [
-                    identity,
-                    const SizedBox(height: 14),
-                    form,
-                  ]);
+                  return Column(
+                      children: [identity, const SizedBox(height: 14), form]);
                 }
                 return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(width: 300, child: identity),
-                    const SizedBox(width: 18),
-                    Expanded(child: form),
-                  ],
-                );
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 300, child: identity),
+                      const SizedBox(width: 18),
+                      Expanded(child: form),
+                    ]);
               }),
             ),
     );
@@ -277,7 +276,7 @@ class _ProfileIdentity extends StatelessWidget {
                     child: _imageProvider == null
                         ? Text(
                             name.isEmpty ? '?' : name[0].toUpperCase(),
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.inter(
                               color: PremiumColors.gold,
                               fontSize: 32,
                               fontWeight: FontWeight.w700,
@@ -447,7 +446,6 @@ class _ProfileForm extends StatelessWidget {
   final ValueChanged<bool> onChangePassword;
   final VoidCallback onBirthDatePressed;
   final VoidCallback onSave;
-
   const _ProfileForm({
     required this.nomeController,
     required this.emailController,

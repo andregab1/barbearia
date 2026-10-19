@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS commission_settlement_payments (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  barbearia_id INT UNSIGNED NOT NULL,
+  settlement_id BIGINT UNSIGNED NOT NULL,
+  financial_movement_id BIGINT UNSIGNED NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  paid_at DATETIME NOT NULL,
+  payment_method VARCHAR(30) NOT NULL,
+  financial_account_id INT UNSIGNED NOT NULL,
+  idempotency_key VARCHAR(120) NOT NULL,
+  status ENUM('confirmed','reversed') NOT NULL DEFAULT 'confirmed',
+  created_by INT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_commission_settlement_payment_key (barbearia_id, idempotency_key),
+  KEY idx_commission_settlement_payment_settlement (settlement_id, status),
+  CONSTRAINT fk_commission_settlement_payment_business FOREIGN KEY (barbearia_id) REFERENCES barbearias (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_commission_settlement_payment_settlement FOREIGN KEY (settlement_id) REFERENCES commission_settlements (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_commission_settlement_payment_account FOREIGN KEY (financial_account_id) REFERENCES financial_accounts (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_commission_settlement_payment_creator FOREIGN KEY (created_by) REFERENCES usuarios (id) ON DELETE SET NULL,
+  CONSTRAINT chk_commission_settlement_payment_amount CHECK (amount > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

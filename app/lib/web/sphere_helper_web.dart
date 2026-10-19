@@ -3,6 +3,9 @@ import 'dart:js' as js;
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
+Timer? _mountTimer;
+int _mountGeneration = 0;
+
 /// Web-only: registers the HTML view factory for the particle sphere container.
 void registerSphereView() {
   ui_web.platformViewRegistry.registerViewFactory(
@@ -19,9 +22,12 @@ void registerSphereView() {
 
 /// Initializes the Three.js sphere inside the registered container.
 void initSphere(int viewId) {
+  _mountTimer?.cancel();
+  final generation = ++_mountGeneration;
   var attempt = 0;
 
   void mount() {
+    if (generation != _mountGeneration) return;
     final views = html.document.querySelectorAll('.getcutt-scissor-view');
     final el = views.isEmpty ? null : views.last;
     final factory = js.context['createSphereParticles'];
@@ -29,7 +35,9 @@ void initSphere(int viewId) {
       js.context.callMethod('createSphereParticles', [el]);
       return;
     }
-    if (++attempt < 20) Timer(const Duration(milliseconds: 100), mount);
+    if (++attempt < 20) {
+      _mountTimer = Timer(const Duration(milliseconds: 100), mount);
+    }
   }
 
   mount();
@@ -37,5 +45,10 @@ void initSphere(int viewId) {
 
 /// Destroys the current sphere instance.
 void destroySphere() {
-  js.context.callMethod('destroySphereParticles', []);
+  _mountGeneration++;
+  _mountTimer?.cancel();
+  _mountTimer = null;
+  if (js.context['destroySphereParticles'] != null) {
+    js.context.callMethod('destroySphereParticles', []);
+  }
 }

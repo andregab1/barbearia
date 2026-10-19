@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 
 class BarbeariaThemeService extends ChangeNotifier {
   String? _logoUrl;
-  Color _corPrimaria = const Color(0xFFCA8A04);
+  Color _corPrimaria = const Color(0xFFFFD000);
   bool _modoClaro = false;
 
   String? get logoUrl => _logoUrl;

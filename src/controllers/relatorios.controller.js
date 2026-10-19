@@ -4,6 +4,7 @@
 // ==========================================
 const { pool } = require('../config/database');
 const { obterBarbeariaAdministrada } = require('../utils/access');
+const { calcularRelatorio } = require('../services/appointment-report.service');
 
 async function validarAcesso(req, res) {
   const barbearia = await obterBarbeariaAdministrada(req.usuario.id, req.params.barbearia_id);
@@ -121,38 +122,23 @@ async function faturamentoMensal(req, res) {
 // RF13: Relatório por período personalizado
 // ==========================================
 async function faturamentoPeriodo(req, res) {
-  const { barbearia_id }       = req.params;
-  const { data_ini, data_fim } = req.query;
-
-  if (!data_ini || !data_fim) {
-    return res.status(400).json({ erro: 'data_ini e data_fim são obrigatórias.' });
-  }
-
+  const { barbearia_id } = req.params;
+  const { data_ini, data_fim, profissional_id, servico_id, status } = req.query;
+  if (!data_ini || !data_fim) return res.status(400).json({ erro: 'data_ini e data_fim são obrigatórias.' });
+  const inicio = new Date(data_ini + "T00:00:00");
+  const fim = new Date(data_fim + "T00:00:00");
+  const dias = Math.round((fim - inicio) / 86400000) + 1;
+  if (Number.isNaN(inicio.getTime()) || Number.isNaN(fim.getTime()) || fim < inicio) return res.status(400).json({ erro: 'Período inválido.' });
+  if (dias > 90) return res.status(400).json({ erro: 'O período máximo permitido é de 90 dias.' });
   try {
     if (!await validarAcesso(req, res)) return;
-    const [rows] = await pool.query(
-      `SELECT DATE(a.data_hora) AS data,
-              COUNT(*) AS total_atendimentos,
-              SUM(a.valor_cobrado) AS total_faturado
-       FROM agendamentos a
-       JOIN colaboradores c ON c.id = a.colaborador_id
-       WHERE c.barbearia_id = ?
-         AND DATE(a.data_hora) BETWEEN ? AND ?
-         AND a.status = 'concluido'
-       GROUP BY DATE(a.data_hora)
-       ORDER BY data ASC`,
-      [barbearia_id, data_ini, data_fim]
-    );
-
-    const totalGeral = rows.reduce((acc, r) => acc + parseFloat(r.total_faturado || 0), 0);
-    return res.json({
-      periodo:     { de: data_ini, ate: data_fim },
-      total_geral: totalGeral.toFixed(2),
-      por_dia:     rows,
-    });
-  } catch (err) {
-    return res.status(500).json({ erro: 'Erro interno ao gerar relatório por período.' });
-  }
+    const where = ['c.barbearia_id = ?', 'a.data_hora >= ?', 'a.data_hora < DATE_ADD(?, INTERVAL 1 DAY)'];
+    const params = [barbearia_id, data_ini + " 00:00:00", data_fim + " 00:00:00"];
+    if (profissional_id) { where.push('a.colaborador_id = ?'); params.push(profissional_id); }
+    if (servico_id) { where.push('a.servico_id = ?'); params.push(servico_id); }
+    if (status) { where.push('LOWER(a.status) = LOWER(?)'); params.push(status); }
+    const [atendimentos] = await pool.query(`SELECT a.id, a.data_hora, a.duracao_min, a.valor_cobrado, a.status, a.colaborador_id AS profissional_id, a.servico_id, s.nome AS servico, u.nome AS barbeiro, uc.nome AS cliente, b.nome AS barbearia_nome FROM agendamentos a JOIN servicos s ON s.id = a.servico_id JOIN colaboradores c ON c.id = a.colaborador_id JOIN barbearias b ON b.id = c.barbearia_id JOIN usuarios u ON u.id = c.usuario_id JOIN usuarios uc ON uc.id = a.cliente_id WHERE ${where.join(' AND ')} ORDER BY a.data_hora ASC, a.id ASC`, params);
+    return res.json({ periodo: { de: data_ini, ate: data_fim }, barbearia_nome: atendimentos[0]?.barbearia_nome || null, ...calcularRelatorio(atendimentos) });
+  } catch (err) { console.error("Erro no relatório por período:", err); return res.status(500).json({ erro: "Erro interno ao gerar relatório por período." }); }
 }
-
 module.exports = { faturamentoDiario, faturamentoMensal, faturamentoPeriodo };

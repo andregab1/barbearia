@@ -9,10 +9,10 @@ function securityHeaders(req, res, next) {
   next();
 }
 
-function rateLimit({ windowMs = 60000, max = 60 } = {}) {
+function rateLimit({ windowMs = 60000, max = 60, byUser = false } = {}) {
   return (req, res, next) => {
     const now = Date.now();
-    const key = `${req.ip}:${req.baseUrl}:${req.path}`;
+    const key = `${byUser ? req.usuario?.id : req.ip}:${req.baseUrl}:${req.path}`;
     const current = buckets.get(key);
     if (!current || current.resetAt <= now) {
       buckets.set(key, { count: 1, resetAt: now + windowMs });
@@ -35,4 +35,3 @@ setInterval(() => {
 }, 60000).unref();
 
 module.exports = { securityHeaders, rateLimit };
-

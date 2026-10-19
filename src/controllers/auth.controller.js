@@ -143,11 +143,6 @@ async function login(req, res) {
       );
       if (administradas.length > 0) barbeariaId = administradas[0].id;
     }
-    if (!barbeariaId) {
-      const [ativas] = await pool.query('SELECT id FROM barbearias WHERE ativa = 1 ORDER BY id LIMIT 1');
-      if (ativas.length > 0) barbeariaId = ativas[0].id;
-    }
-
     // 4. Gera tokens
     const { access, refresh } = gerarTokens(usuario);
 

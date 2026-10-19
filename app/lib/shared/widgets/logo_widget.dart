@@ -1,9 +1,8 @@
 // ==========================================
-// WIDGET: Logo da barbearia
-// Suporta: /path/local, data:base64, https://url
+// WIDGET: Logo oficial da GetCutt
+// O endereço recebido continua na API do widget por compatibilidade, mas a
+// marca exibida no sistema é sempre o asset oficial versionado.
 // ==========================================
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 
 class LogoWidget extends StatelessWidget {
@@ -24,56 +23,82 @@ class LogoWidget extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: const Color(0xFFD39400).withValues(alpha: 0.12),
+          color: const Color(0xFFFFD000).withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(size * 0.22),
         ),
         child: Icon(
           Icons.content_cut_rounded,
           size: size * 0.45,
-          color: const Color(0xFFD39400),
+          color: const Color(0xFFFFD000),
         ),
       );
 
-  @override
-  Widget build(BuildContext context) {
-    if (logoUrl == null || logoUrl!.isEmpty) return _placeholder();
-
-    // Arquivo local (path absoluto)
-    if (logoUrl!.startsWith('/') || logoUrl!.startsWith('file://')) {
-      final path =
-          logoUrl!.startsWith('file://') ? logoUrl!.substring(7) : logoUrl!;
-      return Image.file(
-        File(path),
+  Widget _officialLogo(BuildContext context) => Image.asset(
+        'assets/logo_getcutt_mark.png',
         width: size,
         height: size,
-        fit: fit,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
         errorBuilder: (_, __, ___) => _placeholder(),
+      );
+
+  @override
+  Widget build(BuildContext context) => _officialLogo(context);
+}
+
+class OfficialLogo extends StatelessWidget {
+  final double width;
+  final double height;
+  final bool showMark;
+
+  const OfficialLogo({super.key, this.width = 132, this.height = 54, this.showMark = true});
+
+  @override
+  Widget build(BuildContext context) {
+    final wordmark = Theme.of(context).brightness == Brightness.dark
+        ? 'assets/logo_getcutt_wordmark_light.png'
+        : 'assets/logo_getcutt_wordmark.png';
+    if (!showMark) {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: Image.asset(
+          wordmark,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+        ),
       );
     }
 
-    // Base64 (data:image/...)
-    if (logoUrl!.startsWith('data:image')) {
-      try {
-        final bytes = base64Decode(logoUrl!.split(',').last);
-        return Image.memory(
-          bytes,
-          width: size,
-          height: size,
-          fit: fit,
-          errorBuilder: (_, __, ___) => _placeholder(),
-        );
-      } catch (_) {
-        return _placeholder();
-      }
-    }
-
-    // URL normal (https://...)
-    return Image.network(
-      logoUrl!,
-      width: size,
-      height: size,
-      fit: fit,
-      errorBuilder: (_, __, ___) => _placeholder(),
+    final markSize = (height * 0.82).clamp(24.0, width * 0.34);
+    final gap = (width * 0.055).clamp(6.0, 12.0);
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: markSize,
+            height: markSize,
+            child: Image.asset(
+              'assets/logo_getcutt_mark.png',
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
+          ),
+          SizedBox(width: gap),
+          Expanded(
+            child: Image.asset(
+              wordmark,
+              height: height * 0.62,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

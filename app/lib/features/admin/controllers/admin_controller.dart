@@ -8,8 +8,9 @@ import '../../../core/services/auth_service.dart';
 
 class AdminController extends ChangeNotifier {
   Future<int> _tenantId([int? informado]) async =>
-      informado ?? await AuthService.getBarbeariaId() ?? 1;
+      informado ?? await AuthService.getBarbeariaId() ?? 0;
   List<Map<String, dynamic>> _servicos = [];
+  List<Map<String, dynamic>> _categorias = [];
   List<Map<String, dynamic>> _colaboradores = [];
   Map<String, dynamic> _relatorio = {};
   Map<String, dynamic> _relatorioMensal = {};
@@ -19,8 +20,10 @@ class AdminController extends ChangeNotifier {
   bool _carregandoRelatorio = false;
   bool _salvando = false;
   String _erro = '';
+  String _erroColaboradores = '';
 
   List<Map<String, dynamic>> get servicos => _servicos;
+  List<Map<String, dynamic>> get categorias => _categorias;
   List<Map<String, dynamic>> get colaboradores => _colaboradores;
   Map<String, dynamic> get relatorio => _relatorio;
   Map<String, dynamic> get relatorioMensal => _relatorioMensal;
@@ -29,6 +32,7 @@ class AdminController extends ChangeNotifier {
   bool get carregandoRelatorio => _carregandoRelatorio;
   bool get salvando => _salvando;
   String get erro => _erro;
+  String get erroColaboradores => _erroColaboradores;
 
   // ==========================================
   // RF12: Listar serviços
@@ -49,6 +53,37 @@ class AdminController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> carregarCategorias({int? barbeariaId}) async {
+    final tenantId = await _tenantId(barbeariaId);
+    final result = await ApiService.get('/servicos/categorias/$tenantId');
+    if (result['data'] != null) {
+      _categorias = (result['data'] as List)
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    } else {
+      _categorias = [];
+    }
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>?> criarCategoria(
+      {required String nome, int? barbeariaId}) async {
+    final tenantId = await _tenantId(barbeariaId);
+    _salvando = true;
+    _erro = '';
+    notifyListeners();
+    final result =
+        await ApiService.post('/servicos/categorias/$tenantId', {'nome': nome});
+    _salvando = false;
+    if (result.containsKey('erro')) {
+      _erro = result['erro'];
+      notifyListeners();
+      return null;
+    }
+    await carregarCategorias(barbeariaId: tenantId);
+    return Map<String, dynamic>.from(result);
+  }
+
   // ==========================================
   // RF12: Criar serviço
   // ==========================================
@@ -57,6 +92,7 @@ class AdminController extends ChangeNotifier {
     required double preco,
     required int duracaoMin,
     String? descricao,
+    int? categoriaId,
     int? barbeariaId,
   }) async {
     final tenantId = await _tenantId(barbeariaId);
@@ -68,6 +104,7 @@ class AdminController extends ChangeNotifier {
       'preco': preco,
       'duracao_min': duracaoMin,
       'descricao': descricao,
+      'categoria_id': categoriaId,
     });
     _salvando = false;
     if (result.containsKey('erro')) {
@@ -88,6 +125,7 @@ class AdminController extends ChangeNotifier {
     required double preco,
     required int duracaoMin,
     String? descricao,
+    int? categoriaId,
   }) async {
     _salvando = true;
     _erro = '';
@@ -97,6 +135,7 @@ class AdminController extends ChangeNotifier {
       'preco': preco,
       'duracao_min': duracaoMin,
       'descricao': descricao,
+      'categoria_id': categoriaId,
     });
     _salvando = false;
     if (result.containsKey('erro')) {
@@ -122,10 +161,22 @@ class AdminController extends ChangeNotifier {
   Future<void> carregarColaboradores({int? barbeariaId}) async {
     final tenantId = await _tenantId(barbeariaId);
     _carregandoColaboradores = true;
+    _erroColaboradores = '';
     notifyListeners();
+    if (tenantId <= 0) {
+      _carregandoColaboradores = false;
+      _erroColaboradores =
+          'Barbearia da sessão não identificada. Saia e entre novamente.';
+      _colaboradores = [];
+      notifyListeners();
+      return;
+    }
     final result = await ApiService.get('/colaboradores/gerenciar/$tenantId');
     _carregandoColaboradores = false;
-    if (result['data'] != null) {
+    if (result['erro'] != null) {
+      _erroColaboradores = result['erro'].toString();
+      _colaboradores = [];
+    } else if (result['data'] is List) {
       _colaboradores = (result['data'] as List)
           .map((e) => Map<String, dynamic>.from(e))
           .toList();
@@ -142,6 +193,7 @@ class AdminController extends ChangeNotifier {
     required String nome,
     required String telefone,
     required String senha,
+    String? cpf,
     int? barbeariaId,
   }) async {
     final tenantId = await _tenantId(barbeariaId);
@@ -152,6 +204,7 @@ class AdminController extends ChangeNotifier {
       'nome': nome,
       'telefone': telefone,
       'senha': senha,
+      'cpf': cpf,
     });
     _salvando = false;
     if (result.containsKey('erro')) {
@@ -168,6 +221,8 @@ class AdminController extends ChangeNotifier {
     required String nome,
     required String telefone,
     String? email,
+    String? cpf,
+    bool? ativo,
   }) async {
     _salvando = true;
     _erro = '';
@@ -176,6 +231,8 @@ class AdminController extends ChangeNotifier {
       'nome': nome,
       'telefone': telefone,
       'email': email,
+      'cpf': cpf,
+      'ativo': ativo,
     });
     _salvando = false;
     if (result.containsKey('erro')) {
@@ -247,6 +304,43 @@ class AdminController extends ChangeNotifier {
     _carregandoRelatorio = false;
     if (!result.containsKey('erro')) _relatorioMensal = result;
     notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> carregarRelatorioPeriodo(
+      {required String dataIni,
+      required String dataFim,
+      int? barbeariaId,
+      int? profissionalId,
+      int? servicoId,
+      String? status}) async {
+    final tenantId = await _tenantId(barbeariaId);
+    _carregandoRelatorio = true;
+    _erro = '';
+    notifyListeners();
+    final params = <String, String>{'data_ini': dataIni, 'data_fim': dataFim};
+    if (profissionalId != null)
+      params['profissional_id'] = profissionalId.toString();
+    if (servicoId != null) params['servico_id'] = servicoId.toString();
+    if (status != null && status.isNotEmpty) params['status'] = status;
+    final query = params.entries
+        .map((entry) => '${entry.key}=${Uri.encodeQueryComponent(entry.value)}')
+        .join('&');
+    final result = await ApiService.get('/relatorios/$tenantId/periodo?$query');
+    _carregandoRelatorio = false;
+    if (result.containsKey('erro')) {
+      _erro = result['erro'].toString();
+      notifyListeners();
+      return result;
+    }
+    if (result['atendimentos'] is! List) {
+      _erro =
+          'A API de relatórios não retornou os agendamentos do período. Reinicie o servidor para aplicar a versão atual.';
+      notifyListeners();
+      return {'erro': _erro};
+    }
+    _relatorio = result;
+    notifyListeners();
+    return result;
   }
 
   void limpar() {

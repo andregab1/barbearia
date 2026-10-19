@@ -95,14 +95,6 @@ class _AgendarScreenState extends State<AgendarScreen> {
     setState(() => _etapaAtual = etapa);
   }
 
-  void _voltar() {
-    if (_etapaAtual > 1) {
-      setState(() => _etapaAtual--);
-      return;
-    }
-    Navigator.maybePop(context);
-  }
-
   void _toggleServico(Map<String, dynamic> servico) {
     setState(() {
       final index = _servicosSel.indexWhere((s) => s['id'] == servico['id']);
@@ -174,125 +166,116 @@ class _AgendarScreenState extends State<AgendarScreen> {
     if (ctrl.barbeariaSelecionada == null) {
       return ColoredBox(
         color: _BookingColors.background,
-        child: Column(children: [
-          _BookingHeader(onBack: _voltar),
-          Expanded(
-              child: _BarbershopPicker(
-                  controller: ctrl, onSelected: ctrl.selecionarBarbearia)),
-        ]),
+        child: _BarbershopPicker(
+          controller: ctrl,
+          onSelected: ctrl.selecionarBarbearia,
+        ),
       );
     }
 
     return ColoredBox(
       color: _BookingColors.background,
-      child: Column(
-        children: [
-          _BookingHeader(onBack: _voltar),
-          _SelectedBarbershop(
-            barbershop: ctrl.barbeariaSelecionada!,
-            onChange: () async {
-              await ctrl.trocarBarbearia();
-              if (mounted) {
-                setState(() {
-                  _servicosSel = [];
-                  _colaboradorSel = null;
-                  _dataSel = null;
-                  _horaSel = null;
-                  _etapaAtual = 1;
-                });
-              }
-            },
-          ),
-          Expanded(
-            child: LayoutBuilder(builder: (context, constraints) {
-              final desktop = constraints.maxWidth >= 768;
-              final horizontalPadding =
-                  constraints.maxWidth >= 1200 ? 32.0 : 20.0;
-              final summaryWidth = constraints.maxWidth >= 1200 ? 360.0 : 320.0;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final desktop = constraints.maxWidth >= 768;
+          final horizontalPadding = constraints.maxWidth >= 1200 ? 32.0 : 20.0;
+          final summaryWidth = constraints.maxWidth >= 1200 ? 360.0 : 320.0;
 
-              final form = _BookingForm(
-                currentStep: _etapaAtual,
-                controller: ctrl,
-                selectedServices: _servicosSel,
-                selectedProfessional: _colaboradorSel,
-                selectedDate: _dataSel,
-                selectedTime: _horaSel,
-                weekOffset: _semanaOffset,
-                formatPrice: _formatarPreco,
-                initials: _iniciais,
-                onStepPressed: _irParaEtapa,
-                onServicePressed: (service) => _toggleServico(service),
-                onProfessionalPressed: _selecionarColaborador,
-                onDatePressed: _selecionarData,
-                onPreviousWeek: _semanaOffset == 0
-                    ? null
-                    : () => setState(() => _semanaOffset -= 7),
-                onNextWeek: () => setState(() => _semanaOffset += 7),
-                onTimePressed: (time) => setState(() => _horaSel = time),
-              );
+          Future<void> changeBarbershop() async {
+            await ctrl.trocarBarbearia();
+            if (!mounted) return;
+            setState(() {
+              _servicosSel = [];
+              _colaboradorSel = null;
+              _dataSel = null;
+              _horaSel = null;
+              _etapaAtual = 1;
+            });
+          }
 
-              final summary = _BookingSummary(
-                services: _servicosSel,
-                professional: _colaboradorSel,
-                date: _dataSel,
-                time: _horaSel,
-                totalDuration: _duracaoTotal,
-                totalPrice: _formatarPreco(_valorTotal),
-                saving: ctrl.salvando,
-                enabled: _podeConfirmar,
-                formatPrice: _formatarPreco,
-                initials: _iniciais,
-                onConfirm: _confirmar,
-                onAddService: () => _irParaEtapa(1),
-                onRemoveService: _toggleServico,
-              );
+          final form = _BookingForm(
+            currentStep: _etapaAtual,
+            controller: ctrl,
+            selectedServices: _servicosSel,
+            selectedProfessional: _colaboradorSel,
+            selectedDate: _dataSel,
+            selectedTime: _horaSel,
+            weekOffset: _semanaOffset,
+            formatPrice: _formatarPreco,
+            initials: _iniciais,
+            onStepPressed: _irParaEtapa,
+            onServicePressed: _toggleServico,
+            onProfessionalPressed: _selecionarColaborador,
+            onDatePressed: _selecionarData,
+            onPreviousWeek: _semanaOffset == 0
+                ? null
+                : () => setState(() => _semanaOffset -= 7),
+            onNextWeek: () => setState(() => _semanaOffset += 7),
+            onTimePressed: (time) => setState(() => _horaSel = time),
+          );
 
-              if (!desktop) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  child: Column(
-                    children: [
-                      form,
-                      const SizedBox(height: 16),
-                      summary,
-                    ],
-                  ),
+          final summary = _BookingSummary(
+            services: _servicosSel,
+            professional: _colaboradorSel,
+            date: _dataSel,
+            time: _horaSel,
+            totalDuration: _duracaoTotal,
+            totalPrice: _formatarPreco(_valorTotal),
+            saving: ctrl.salvando,
+            enabled: _podeConfirmar,
+            formatPrice: _formatarPreco,
+            initials: _iniciais,
+            onConfirm: _confirmar,
+            onAddService: () => _irParaEtapa(1),
+            onRemoveService: _toggleServico,
+          );
+
+          final panels = desktop
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: form),
+                    const SizedBox(width: 24),
+                    SizedBox(width: summaryWidth, child: summary),
+                  ],
+                )
+              : Column(
+                  children: [
+                    form,
+                    const SizedBox(height: 16),
+                    summary,
+                  ],
                 );
-              }
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1440),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontalPadding,
-                      8,
-                      horizontalPadding,
-                      24,
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              desktop ? horizontalPadding : 16,
+              20,
+              desktop ? horizontalPadding : 16,
+              32,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1280),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _SelectedBarbershop(
+                      barbershop: ctrl.barbeariaSelecionada!,
+                      onChange: changeBarbershop,
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: form),
-                        const SizedBox(width: 24),
-                        SizedBox(
-                          width: summaryWidth,
-                          height: constraints.maxHeight - 32,
-                          child: SingleChildScrollView(child: summary),
-                        ),
-                      ],
-                    ),
-                  ),
+                    const SizedBox(height: 14),
+                    panels,
+                  ],
                 ),
-              );
-            }),
-          ),
-        ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
-
 class _BarbershopPicker extends StatefulWidget {
   final AgendamentoController controller;
   final ValueChanged<Map<String, dynamic>> onSelected;
@@ -489,46 +472,6 @@ class _SelectedBarbershop extends StatelessWidget {
       );
 }
 
-class _BookingHeader extends StatelessWidget {
-  final VoidCallback onBack;
-  const _BookingHeader({required this.onBack});
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 72,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              left: 16,
-              child: IconButton(
-                onPressed: onBack,
-                tooltip: 'Voltar',
-                icon: const Icon(Icons.arrow_back_rounded, size: 20),
-                color: _BookingColors.textPrimary,
-                hoverColor: const Color(0x0FFFFFFF),
-                style: IconButton.styleFrom(
-                  minimumSize: const Size.square(44),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            Text(
-              'Agendar',
-              style: GoogleFonts.playfairDisplay(
-                color: _BookingColors.textPrimary,
-                fontSize: 24,
-                height: 1.25,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      );
-}
-
 class _BookingForm extends StatelessWidget {
   final int currentStep;
   final AgendamentoController controller;
@@ -568,7 +511,6 @@ class _BookingForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final desktop = MediaQuery.sizeOf(context).width >= 768;
     final stepContent = AnimatedSwitcher(
       duration: const Duration(milliseconds: 180),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -612,7 +554,6 @@ class _BookingForm extends StatelessWidget {
     );
 
     return Container(
-      height: desktop ? MediaQuery.sizeOf(context).height - 104 : null,
       padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 480 ? 16 : 24),
       decoration: BoxDecoration(
         color: _BookingColors.surface,
@@ -634,10 +575,7 @@ class _BookingForm extends StatelessWidget {
             onStepPressed: onStepPressed,
           ),
           const SizedBox(height: 24),
-          if (desktop)
-            Expanded(child: SingleChildScrollView(child: stepContent))
-          else
-            stepContent,
+          stepContent,
           if (currentStep > 1) ...[
             const SizedBox(height: 16),
             TextButton.icon(
@@ -897,7 +835,7 @@ class _ServiceTile extends StatelessWidget {
       onPressed: onPressed,
       semanticLabel: 'Serviço $name, ${service['duracao_min']} minutos, $price',
       child: SizedBox(
-        height: description.isEmpty ? 128 : 164,
+        height: 164,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -919,31 +857,36 @@ class _ServiceTile extends StatelessWidget {
                     ),
                 ],
               ),
-              const Spacer(),
-              Text(
-                name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  color: _BookingColors.textPrimary,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (description.isNotEmpty) ...[
-                const SizedBox(height: 5),
-                Text(
-                  description,
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 38,
+                child: Text(
+                  name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
-                    color: _BookingColors.textMuted,
-                    fontSize: 11,
-                    height: 1.35,
+                    color: _BookingColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-              const SizedBox(height: 4),
+              ),
+              SizedBox(
+                height: 30,
+                child: description.isEmpty
+                    ? null
+                    : Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: _BookingColors.textMuted,
+                          fontSize: 11,
+                          height: 1.35,
+                        ),
+                      ),
+              ),
+              const Spacer(),
               Row(
                 children: [
                   Expanded(
@@ -1514,7 +1457,7 @@ class _BookingSummary extends StatelessWidget {
           children: [
             Text(
               'Seu agendamento',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.inter(
                 color: _BookingColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,

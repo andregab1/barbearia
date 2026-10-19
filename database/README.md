@@ -7,10 +7,14 @@ arquivo SQL.
 
 - `../migrations/`: historico incremental usado pela aplicacao. Nao altere uma
   migracao que ja foi aplicada; crie a proxima migracao numerada.
-- `schema.sql`: fotografia consolidada e legivel do estado apos a migracao 007.
+- `schema.sql`: fotografia consolidada e legivel do estado apos a migracao 010.
   Serve para modelagem e para provisionar apenas bancos vazios.
 - `seeds/development.sql`: usuarios, barbearia, servicos e horarios locais. Pode
   ser executado novamente sem duplicar os registros que ele gerencia.
+- `../scripts/seed-commission-demo.js`: cria, somente no tenant local, regras de
+  comissão, profissionais e atendimentos concluídos com recebimento confirmado.
+  É idempotente, usa os serviços reais de conclusão/recebimento e nunca deve ser
+  executado em produção.
 - `maintenance/diagnostics.sql`: consultas de verificacao, sem escrita.
 - `maintenance/cleanup_midnight_blocks.sql`: limpeza manual protegida por
   pre-visualizacao e transacao.

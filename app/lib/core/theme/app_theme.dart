@@ -8,14 +8,14 @@ class AppTheme {
   // ==========================================
   // TOKENS — Dark + Gold Premium
   // ==========================================
-  static const Color gold = Color(0xFFD39400);
-  static const Color goldLight = Color(0xFFE0A000);
+  static const Color gold = Color(0xFFFFD000);
+  static const Color goldLight = Color(0xFFFFDE4D);
 
-  static const Color black = Color(0xFF120C0C);
-  static const Color blackPure = Color(0xFF0E0808);
-  static const Color surface = Color(0xFF1A1413);
-  static const Color surfaceElev = Color(0xFF211C1A);
-  static const Color border = Color(0xFF342C29);
+  static const Color black = Color(0xFF100B0B);
+  static const Color blackPure = Color(0xFF0C0808);
+  static const Color surface = Color(0xFF181514);
+  static const Color surfaceElev = Color(0xFF231E1C);
+  static const Color border = Color(0xFF39312E);
 
   static const Color text = Color(0xFFF4EFEB);
   static const Color textMuted = Color(0xFFAAA29E);
@@ -55,28 +55,27 @@ class AppTheme {
   }
 
   // ==========================================
-  // TIPOGRAFIA — Playfair Display + Inter
+  // TIPOGRAFIA — Inter
   // ==========================================
   static TextTheme _textTheme(Color corTexto, Color corMuted) {
-    final playfair = GoogleFonts.playfairDisplay();
     final inter = GoogleFonts.inter();
     return TextTheme(
       // Display — títulos monumentais (hero, splash)
-      displayLarge: playfair.copyWith(
+      displayLarge: inter.copyWith(
         color: corTexto,
         fontSize: 48,
         fontWeight: FontWeight.w700,
         letterSpacing: -1.5,
         height: 1.1,
       ),
-      displayMedium: playfair.copyWith(
+      displayMedium: inter.copyWith(
         color: corTexto,
         fontSize: 40,
         fontWeight: FontWeight.w700,
         letterSpacing: -1.0,
         height: 1.15,
       ),
-      displaySmall: playfair.copyWith(
+      displaySmall: inter.copyWith(
         color: corTexto,
         fontSize: 32,
         fontWeight: FontWeight.w700,
@@ -84,21 +83,21 @@ class AppTheme {
         height: 1.2,
       ),
       // Headline — títulos de tela
-      headlineLarge: playfair.copyWith(
+      headlineLarge: inter.copyWith(
         color: corTexto,
         fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.6,
         height: 1.25,
       ),
-      headlineMedium: playfair.copyWith(
+      headlineMedium: inter.copyWith(
         color: corTexto,
         fontSize: 24,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.4,
         height: 1.3,
       ),
-      headlineSmall: playfair.copyWith(
+      headlineSmall: inter.copyWith(
         color: corTexto,
         fontSize: 20,
         fontWeight: FontWeight.w600,
@@ -185,7 +184,7 @@ class AppTheme {
         backgroundColor: black,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.playfairDisplay().copyWith(
+        titleTextStyle: GoogleFonts.inter().copyWith(
           color: text,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -338,9 +337,21 @@ class AppTheme {
       // ==========================================
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceElev,
+        surfaceTintColor: Colors.transparent,
+        elevation: 30,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        titleTextStyle: GoogleFonts.inter(color: text, fontSize: 24, fontWeight: FontWeight.w700),
+        contentTextStyle: GoogleFonts.inter(color: textMuted, fontSize: 14),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surfaceElev,
+        modalBackgroundColor: surfaceElev,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
       // ==========================================
       // Progress indicator
@@ -398,7 +409,7 @@ class AppTheme {
         backgroundColor: canvasLight,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.playfairDisplay().copyWith(
+        titleTextStyle: GoogleFonts.inter().copyWith(
           color: textLight,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -518,11 +529,23 @@ class AppTheme {
         thickness: 1,
         space: 1,
       ),
-      dialogTheme: const DialogThemeData(
+      dialogTheme: DialogThemeData(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        elevation: 30,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        titleTextStyle: GoogleFonts.inter(color: textLight, fontSize: 24, fontWeight: FontWeight.w700),
+        contentTextStyle: GoogleFonts.inter(color: mutedLight, fontSize: 14),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.white,
+        modalBackgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: cor,

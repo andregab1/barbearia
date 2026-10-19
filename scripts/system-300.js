@@ -222,8 +222,8 @@ function buildScenarios(ctx) {
   // 106-165: matriz de autorização entre os três perfis.
   const adminOnly = [
     ['GET', `/api/relatorios/${ctx.shopId}/diario`], ['GET', `/api/relatorios/${ctx.shopId}/mensal`],
-    ['GET', `/api/finance/${ctx.shopId}/summary`], ['GET', `/api/finance/${ctx.shopId}/entries`],
-    ['POST', `/api/finance/${ctx.shopId}/expenses`, {}], ['GET', `/api/colaboradores/gerenciar/${ctx.shopId}`],
+    ['GET', '/api/finance/dashboard'], ['GET', '/api/finance/movements'],
+    ['POST', '/api/finance/expenses', {}], ['GET', `/api/colaboradores/gerenciar/${ctx.shopId}`],
     ['POST', `/api/colaboradores/${ctx.shopId}`, {}], ['PUT', `/api/colaboradores/${ctx.collaboratorId}`, {}],
     ['PATCH', `/api/colaboradores/${ctx.collaboratorId}/status`, {}], ['DELETE', `/api/colaboradores/${ctx.collaboratorId}`],
     ['POST', `/api/servicos/${ctx.shopId}`, {}], ['PUT', `/api/servicos/${ctx.serviceId}`, {}],
@@ -257,7 +257,8 @@ function buildScenarios(ctx) {
   // 166-205: isolamento de tenant e acessos válidos.
   for (let i = 0; i < 10; i += 1) {
     add(`admin externo isolado relatório ${i + 1}`, () => call('GET', `/api/relatorios/${ctx.shopId}/diario?x=${i}`, O), [403]);
-    add(`admin externo isolado financeiro ${i + 1}`, () => call('GET', `/api/finance/${ctx.shopId}/summary?x=${i}`, O), [403]);
+    add(`admin externo isolado financeiro ${i + 1}`, () => call('GET', `/api/finance/dashboard?x=${i}`, O),
+      (r) => r.status === 200 && Number(r.body.data.received) === 0);
   }
   const validReads = [
     ['GET', `/api/usuarios/${ctx.adminId}`, A, 200],
@@ -271,8 +272,8 @@ function buildScenarios(ctx) {
     ['GET', `/api/horarios/${ctx.collaboratorId}`, B, 200],
     ['GET', `/api/relatorios/${ctx.shopId}/diario`, A, 200],
     ['GET', `/api/relatorios/${ctx.shopId}/mensal`, A, 200],
-    ['GET', `/api/finance/${ctx.shopId}/summary`, A, 200],
-    ['GET', `/api/finance/${ctx.shopId}/entries`, A, 200],
+    ['GET', '/api/finance/dashboard', A, 200],
+    ['GET', '/api/finance/movements', A, 200],
     ['GET', '/api/notificacoes', A, 200],
     ['GET', `/api/agenda/dashboard/${ctx.collaboratorId}`, B, 200],
     ['GET', `/api/agenda/historico/${ctx.clientId}`, C, 200],
@@ -321,8 +322,12 @@ function buildScenarios(ctx) {
   add('horários salvar vazio', () => call('POST', `/api/horarios/${ctx.collaboratorId}`, B, {}), [400]);
   add('relatório período sem datas', () => call('GET', `/api/relatorios/${ctx.shopId}/periodo`, A), [400]);
   add('relatório período válido', () => call('GET', `/api/relatorios/${ctx.shopId}/periodo?data_ini=2026-01-01&data_fim=2031-01-01`, A), [200]);
-  add('finance pagina negativa normalizada', () => call('GET', `/api/finance/${ctx.shopId}/entries?page=-5&limit=500`, A), [200]);
-  add('despesa válida', () => call('POST', `/api/finance/${ctx.shopId}/expenses`, A, { category: 'Teste', amount: 10, occurred_at: '2026-08-17' }), [201]);
+  add('finance pagina negativa normalizada', () => call('GET', '/api/finance/movements?page=-5&limit=500', A), [200]);
+  add('despesa válida', async () => {
+    await call('GET', '/api/finance/metadata', A);
+    const [[category]] = await pool.query("SELECT id FROM financial_categories WHERE barbearia_id=? AND tipo='expense' LIMIT 1", [ctx.shopId]);
+    return call('POST', '/api/finance/expenses', A, { description: 'Despesa teste', category_id: category.id, responsible_user_id: ctx.adminId, amount: '10.00', competence_date: '2026-08-17', due_date: '2026-08-20' });
+  }, [201]);
   add('convite sem dados', () => call('POST', `/api/invitations/${ctx.shopId}`, A, {}), [400, 422]);
   add('billing sem credencial/dados', () => call('POST', `/api/billing/${ctx.shopId}/subscriptions`, A, {}), [400, 422, 503]);
   add('webhook sem assinatura', () => call('POST', '/api/webhooks/mercado-pago', null, {}), [401]);
@@ -334,12 +339,59 @@ function buildScenarios(ctx) {
   add('cancelar agendamento de outro cliente', () => call('PATCH', `/api/agendamentos/${ctx.appointmentId}/cancelar`, token({ id: 99998, role: 'cliente' }), {}), [403]);
   add('concluir como cliente proibido', () => call('PATCH', `/api/agendamentos/${ctx.appointmentId}/concluir`, C, {}), [403]);
   add('concluir atendimento válido', () => call('PATCH', `/api/agendamentos/${ctx.appointmentId}/concluir`, B, {}), [200]);
-  add('concluir atendimento duas vezes', () => call('PATCH', `/api/agendamentos/${ctx.appointmentId}/concluir`, B, {}), [400]);
-  add('caixa contém receita concluída', async () => {
-    const response = await call('GET', `/api/finance/${ctx.shopId}/entries`, A);
-    response.hasIncome = Array.isArray(response.body.data) && response.body.data.some((item) => item.tipo === 'income');
+  add('concluir atendimento duas vezes', () => call('PATCH', `/api/agendamentos/${ctx.appointmentId}/concluir`, B, {}),
+    (r) => r.status === 200 && r.body.idempotent === true);
+  add('a receber contém atendimento concluído', async () => {
+    const response = await call('GET', '/api/finance/receivables?from=2020-01-01&to=2030-12-31', A);
+    response.hasIncome = Array.isArray(response.body.data) && response.body.data.some((item) => Number(item.appointment_id) === Number(ctx.appointmentId));
     return response;
   }, (r) => r.status === 200 && r.hasIncome);
+  add('barbeiro não acessa financeiro administrativo novo', () => call('GET', '/api/finance/dashboard', B), [403]);
+  add('admin externo não acessa tenant financeiro novo', () => call('GET', '/api/finance/dashboard', O),
+    (r) => r.status === 200 && Number(r.body.data.realized) === 0);
+  add('pagamento integral cria caixa uma vez', async () => {
+    const [[account]] = await pool.query('SELECT id FROM financial_accounts WHERE barbearia_id=? LIMIT 1', [ctx.shopId]); ctx.accountId = account.id;
+    return call('POST', `/api/finance/receivables/${ctx.appointmentId}/payments`, A,
+      { method: 'pix', amount: '50.00', account_id: account.id, paid_at: '2026-08-17' }, { 'x-idempotency-key': 'system300-payment-1' });
+  }, [201]);
+  add('pagamento repetido é idempotente', () => call('POST', `/api/finance/receivables/${ctx.appointmentId}/payments`, A,
+    { method: 'pix', amount: '50.00', account_id: ctx.accountId, paid_at: '2026-08-17' }, { 'x-idempotency-key': 'system300-payment-1' }),
+    (r) => r.status === 200 && r.body.data.idempotent === true);
+  add('dashboard registra entrada recebida', () => call('GET', '/api/finance/dashboard?from=2020-01-01&to=2030-12-31', A),
+    (r) => r.status === 200 && Number(r.body.data.received) === 50);
+  add('movimentação rastreia pagamento', async () => {
+    const response = await call('GET', '/api/finance/movements?from=2020-01-01&to=2030-12-31', A);
+    response.traced = response.body.data?.some((item) => item.origin_type === 'payment' && Number(item.appointment_id) === Number(ctx.appointmentId));
+    return response;
+  }, (r) => r.status === 200 && r.traced);
+  add('pagamento acima do disponível é rejeitado', () => call('POST', `/api/finance/receivables/${ctx.appointmentId}/payments`, A,
+    { method: 'pix', amount: '1.00', account_id: ctx.accountId, paid_at: '2026-08-17' }, { 'x-idempotency-key': 'system300-payment-over' }), [422]);
+  add('nota fiscal exige configuração real', () => call('POST', '/api/fiscal/documents', A,
+    { appointment_id: ctx.appointmentId }, { 'x-idempotency-key': 'system300-fiscal-1' }), [409]);
+  add('conclusão concorrente gera uma receita', async () => {
+    const [created] = await pool.query(
+      `INSERT INTO agendamentos (cliente_id,colaborador_id,servico_id,data_hora,duracao_min,status,valor_cobrado)
+       VALUES (?,?,?,DATE_ADD(NOW(), INTERVAL 2 DAY),30,'confirmado',50.00)`,
+      [ctx.clientId, ctx.collaboratorId, ctx.serviceId],
+    );
+    ctx.concurrentAppointmentId = created.insertId;
+    const responses = await Promise.all([
+      call('PATCH', `/api/agendamentos/${created.insertId}/concluir`, B, {}),
+      call('PATCH', `/api/agendamentos/${created.insertId}/concluir`, B, {}),
+    ]);
+    const [[count]] = await pool.query(
+      "SELECT COUNT(*) total FROM financial_transactions WHERE agendamento_id = ? AND tipo = 'income'", [created.insertId],
+    );
+    return { status: responses.every((item) => item.status === 200) && Number(count.total) === 1 ? 200 : 500 };
+  }, [200]);
+  add('pagamento concorrente efetiva uma operação', async () => {
+    const responses = await Promise.all([
+      call('POST', `/api/finance/receivables/${ctx.concurrentAppointmentId}/payments`, A, { method: 'cash', amount: '50.00', account_id: ctx.accountId, paid_at: '2026-08-17' }, { 'x-idempotency-key': 'system300-concurrent-a' }),
+      call('POST', `/api/finance/receivables/${ctx.concurrentAppointmentId}/payments`, A, { method: 'cash', amount: '50.00', account_id: ctx.accountId, paid_at: '2026-08-17' }, { 'x-idempotency-key': 'system300-concurrent-b' }),
+    ]);
+    const [[count]] = await pool.query('SELECT COUNT(*) total FROM payments WHERE agendamento_id = ? AND status = \'paid\'', [ctx.concurrentAppointmentId]);
+    return { status: responses.filter((item) => item.status === 201).length === 1 && Number(count.total) === 1 ? 200 : 500 };
+  }, [200]);
   add('perfil cliente não acessa outro usuário', () => call('GET', `/api/usuarios/${ctx.adminId}`, C), [403]);
   add('barbeiro não acessa outro usuário', () => call('GET', `/api/usuarios/${ctx.clientId}`, B), [403]);
   add('admin não lê perfil privado do funcionário', () => call('GET', `/api/usuarios/${ctx.barberId}`, A), [403]);
@@ -347,7 +399,20 @@ function buildScenarios(ctx) {
   add('agenda profissional externa negada', () => call('GET', `/api/agendamentos/barbeiro/${ctx.collaboratorId}`, O), [403]);
   add('horário profissional externo negado', () => call('GET', `/api/horarios/${ctx.collaboratorId}`, O), [403]);
   add('dashboard profissional externo negado', () => call('GET', `/api/agenda/dashboard/${ctx.collaboratorId}`, O), [403]);
-  add('finance tenant externo negado', () => call('GET', `/api/finance/${ctx.shopId}/entries`, O), [403]);
+  add('finance tenant externo isolado', () => call('GET', '/api/finance/dashboard?from=2020-01-01&to=2030-12-31', O),
+    (r) => r.status === 200 && Number(r.body.data.received) === 0);
+  add('agendamento pendente vencido e confirmado automaticamente', async () => {
+    const [created] = await pool.query(
+      `INSERT INTO agendamentos (cliente_id,colaborador_id,servico_id,data_hora,duracao_min,status,valor_cobrado)
+       VALUES (?,?,?,DATE_SUB(NOW(), INTERVAL 1 DAY),30,'pendente',35.00)`,
+      [ctx.clientId,ctx.collaboratorId,ctx.serviceId],
+    );
+    const { confirmPastPendingAppointments } = require('../src/services/appointment-automation.service');
+    await confirmPastPendingAppointments();
+    const [[appointment]] = await pool.query('SELECT status FROM agendamentos WHERE id=?',[created.insertId]);
+    const [[audit]] = await pool.query("SELECT COUNT(*) total FROM audit_logs WHERE recurso='appointment' AND recurso_id=? AND acao='appointment.auto_confirmed'",[String(created.insertId)]);
+    return { status: appointment.status === 'confirmado' && Number(audit.total) === 1 ? 200 : 500 };
+  }, [200]);
 
   // Completa exatamente 300 com verificações independentes de 404 e segurança.
   while (scenarios.length < 300) {

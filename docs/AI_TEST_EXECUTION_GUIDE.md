@@ -1,4 +1,4 @@
-# Plano de testes para agente de IA — GetCutt
+veja # Plano de testes para agente de IA — GetCutt
 
 Este catálogo contém **630 casos executáveis**, derivados diretamente das rotas, controladores, telas Flutter, migrações e regras de acesso do projeto. Os **54 primeiros casos** têm `perspective: E2E_REAL` e devem ser executados navegando e operando o produto como um QA. Os demais aprofundam validação, segurança, concorrência e resiliência.
 

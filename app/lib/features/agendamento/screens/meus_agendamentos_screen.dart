@@ -30,7 +30,7 @@ class _MeusAgendamentosScreenState extends State<MeusAgendamentosScreen> {
         backgroundColor: PremiumColors.surface,
         title: Text(
           'Cancelar agendamento?',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.inter(
             color: PremiumColors.textPrimary,
             fontWeight: FontWeight.w600,
           ),

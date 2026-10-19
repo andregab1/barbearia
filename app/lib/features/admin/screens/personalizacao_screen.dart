@@ -457,6 +457,9 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
       title: 'Personalizar barbearia',
       subtitle:
           'Ajuste a identidade visual e visualize o resultado em tempo real.',
+      headingFontSize: 27,
+      horizontalPadding: 40,
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
       child: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 32),
         child: Center(

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 
 class ApiService {
+  static Future<bool>? _refreshEmAndamento;
   static Future<Map<String, String>> _headers({bool auth = true}) async {
     final headers = {'Content-Type': 'application/json'};
     if (auth) {
@@ -22,6 +23,21 @@ class ApiService {
   // Refresh automático quando token expira
   // ==========================================
   static Future<bool> _refreshToken() async {
+    final refreshEmAndamento = _refreshEmAndamento;
+    if (refreshEmAndamento != null) return refreshEmAndamento;
+
+    final refresh = _refreshTokenUnico();
+    _refreshEmAndamento = refresh;
+    try {
+      return await refresh;
+    } finally {
+      if (identical(_refreshEmAndamento, refresh)) {
+        _refreshEmAndamento = null;
+      }
+    }
+  }
+
+  static Future<bool> _refreshTokenUnico() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final refreshToken = prefs.getString(AppConstants.keyRefreshToken);
@@ -58,9 +74,9 @@ class ApiService {
   // Processa resposta — se 401, tenta refresh e reenvia
   static Future<Map<String, dynamic>> _processarComRefresh(
     Future<http.Response> Function() requisicao,
-    Future<http.Response> Function() requisicaoRetry,
-    {required bool permiteRefresh,}
-  ) async {
+    Future<http.Response> Function() requisicaoRetry, {
+    required bool permiteRefresh,
+  }) async {
     try {
       final response = await requisicao();
       if (response.statusCode == 401) {
@@ -103,22 +119,24 @@ class ApiService {
 
   static Future<Map<String, dynamic>> post(
       String endpoint, Map<String, dynamic> body,
-      {bool auth = true}) async {
+      {bool auth = true,
+      Map<String, String>? extraHeaders,
+      Duration timeout = const Duration(seconds: 15)}) async {
     return _processarComRefresh(
       () async => http
           .post(
             Uri.parse('${AppConstants.baseUrl}$endpoint'),
-            headers: await _headers(auth: auth),
+            headers: {...await _headers(auth: auth), ...?extraHeaders},
             body: jsonEncode(body),
           )
-          .timeout(const Duration(seconds: 15)),
+          .timeout(timeout),
       () async => http
           .post(
             Uri.parse('${AppConstants.baseUrl}$endpoint'),
-            headers: await _headers(auth: auth),
+            headers: {...await _headers(auth: auth), ...?extraHeaders},
             body: jsonEncode(body),
           )
-          .timeout(const Duration(seconds: 15)),
+          .timeout(timeout),
       permiteRefresh: auth,
     );
   }

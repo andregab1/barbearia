@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../layout/responsive.dart';
 
 class PremiumColors {
-  static const background = Color(0xFF0D0F10);
-  static const surface = Color(0xFF151718);
-  static const surfaceSecondary = Color(0xFF1A1D1F);
-  static const card = Color(0xFF1A1D1F);
-  static const cardHover = Color(0xFF202325);
-  static const gold = Color(0xFFD59B32);
-  static const goldBright = Color(0xFFE2AD4D);
-  static const textPrimary = Color(0xFFF2F2F0);
-  static const textSecondary = Color(0xFFA7A7A3);
-  static const textMuted = Color(0xFF737572);
-  static const border = Color(0x14FFFFFF);
+  static const background = Color(0xFF100B0B);
+  static const surface = Color(0xFF181514);
+  static const surfaceSecondary = Color(0xFF231E1C);
+  static const card = Color(0xFF231E1C);
+  static const cardHover = Color(0xFF2C2522);
+  static const gold = Color(0xFFFFD000);
+  static const goldBright = Color(0xFFFFDE4D);
+  static const textPrimary = Color(0xFFF4EFEB);
+  static const textSecondary = Color(0xFFA8A19D);
+  static const textMuted = Color(0xFF77706C);
+  static const border = Color(0x2639312E);
   static const success = Color(0xFF70B77E);
   static const error = Color(0xFFD76565);
 }
@@ -23,6 +24,8 @@ class PremiumPage extends StatelessWidget {
   final Widget child;
   final List<Widget> actions;
   final EdgeInsetsGeometry? padding;
+  final double? headingFontSize;
+  final double? horizontalPadding;
 
   const PremiumPage({
     super.key,
@@ -31,78 +34,111 @@ class PremiumPage extends StatelessWidget {
     required this.child,
     this.actions = const [],
     this.padding,
+    this.headingFontSize,
+    this.horizontalPadding,
   });
 
   @override
   Widget build(BuildContext context) {
-    final compact = MediaQuery.sizeOf(context).width < 600;
-    return ColoredBox(
-      color: PremiumColors.background,
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                compact ? 16 : 32,
-                compact ? 20 : 28,
-                compact ? 16 : 32,
-                20,
-              ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1440),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: GoogleFonts.playfairDisplay(
-                              color: PremiumColors.textPrimary,
-                              fontSize: compact ? 28 : 36,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            subtitle,
-                            style: GoogleFonts.inter(
-                              color: PremiumColors.textSecondary,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ...actions,
-                  ],
+    final compact = ResponsiveBreakpoints.isCompact(context);
+    return DefaultTextStyle.merge(
+      style: const TextStyle(decoration: TextDecoration.none),
+      child: ColoredBox(
+        color: PremiumColors.background,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  0,
+                  compact ? 20 : 28,
+                  0,
+                  20,
+                ),
+                child: ResponsivePagePadding(
+                  horizontalPadding: horizontalPadding,
+                  child: compact
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _pageHeading(context),
+                            if (actions.isNotEmpty) ...[
+                              const SizedBox(height: 16),
+                              _pageActions(),
+                            ],
+                          ],
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _pageHeading(context)),
+                            if (actions.isNotEmpty) ...[
+                              const SizedBox(width: 16),
+                              Expanded(child: _pageActions()),
+                            ],
+                          ],
+                        ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: padding ??
-                    EdgeInsets.fromLTRB(
-                      compact ? 16 : 32,
-                      0,
-                      compact ? 16 : 32,
-                      compact ? 20 : 32,
-                    ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1440),
+              Expanded(
+                child: Padding(
+                  padding: padding ??
+                      EdgeInsets.fromLTRB(
+                        0,
+                        0,
+                        0,
+                        compact ? 20 : 32,
+                      ),
+                  child: ResponsivePagePadding(
+                    horizontalPadding: horizontalPadding,
                     child: child,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _pageHeading(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              color: PremiumColors.textPrimary,
+              fontSize: headingFontSize ??
+                  (ResponsiveBreakpoints.isCompact(context) ? 28 : 36),
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            subtitle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              color: PremiumColors.textSecondary,
+              fontSize: 13,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ],
+      );
+
+  Widget _pageActions() => Align(
+        alignment: Alignment.topRight,
+        child: Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
+          children: actions,
+        ),
+      );
 }
 
 class PremiumSurface extends StatelessWidget {

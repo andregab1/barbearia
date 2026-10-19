@@ -6,7 +6,7 @@ const router = require('express').Router();
 const { autenticar, autorizar } = require('../middlewares/auth.middleware');
 const {
   criar, listarCliente, listarBarbeiro,
-  cancelar, concluir, bloquearHorario, preverBloqueio, bloquearRecorrente, removerBloqueio, listarBloqueios, clientesAtivos, listarClientesProfissional
+  cancelar, concluir, atualizarStatusOperacional, bloquearHorario, preverBloqueio, bloquearRecorrente, removerBloqueio, listarBloqueios, clientesAtivos, listarClientesProfissional
 } = require('../controllers/agendamentos.controller');
 
 router.post('/',                          autenticar, autorizar('cliente'), criar);
@@ -16,6 +16,7 @@ router.get('/clientes-ativos',            autenticar, autorizar('admin', 'barbei
 router.get('/clientes',                   autenticar, autorizar('admin', 'barbeiro'), listarClientesProfissional);
 router.patch('/:id/cancelar',             autenticar, cancelar);
 router.patch('/:id/concluir',             autenticar, autorizar('admin', 'barbeiro'), concluir);
+router.patch('/:id/status-operacional',   autenticar, autorizar('admin', 'barbeiro'), atualizarStatusOperacional);
 router.get('/bloqueios/:colaborador_id',  autenticar, autorizar('admin', 'barbeiro'), listarBloqueios);
 router.post('/bloquear',                  autenticar, autorizar('admin', 'barbeiro'), bloquearHorario);
 router.post('/bloquear/preview',          autenticar, autorizar('admin', 'barbeiro'), preverBloqueio);

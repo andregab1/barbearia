@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/barbearia_theme_service.dart';
+import '../../../shared/widgets/logo_widget.dart';
 import '../../../web/sphere_helper_stub.dart'
     if (dart.library.js_interop) '../../../web/sphere_helper_web.dart';
 
@@ -110,16 +111,7 @@ class _LandingScreenState extends State<LandingScreen> {
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.content_cut_rounded, size: 22, color: cor),
-                const SizedBox(width: 10),
-                Text('GetCutt',
-                    style: GoogleFonts.inter(
-                      color: cor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                    )),
-              ]),
+              child: const OfficialLogo(width: 132, height: 52),
             ),
           ),
 

@@ -37,6 +37,11 @@ class FinancialController extends ChangeNotifier {
   List<Map<String, dynamic>> commissionSettlements = [];
   List<Map<String, dynamic>> commissionAdvances = [];
   List<Map<String, dynamic>> commissionPayments = [];
+  List<Map<String, dynamic>> commissionProfessionals = [];
+  Map<String, dynamic> commissionBoardTotals = {};
+  Map<String, dynamic> commissionPagination = {};
+  Map<String, dynamic> commissionApprovalSettings = {};
+  List<Map<String, dynamic>> commissionHistory = [];
 
   String _date(DateTime value) =>
       '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
@@ -79,6 +84,12 @@ class FinancialController extends ChangeNotifier {
     loading = true;
     error = null;
     notifyListeners();
+    if (area == FinancialArea.commissions) {
+      await loadCommissionBoard();
+      loading = false;
+      notifyListeners();
+      return;
+    }
     final endpoint = switch (area) {
       FinancialArea.serviceReceipts => '/finance/receivables?$query&limit=50',
       FinancialArea.overview => '/finance/dashboard?$query',
@@ -176,6 +187,126 @@ class FinancialController extends ChangeNotifier {
       categories = data.map((e) => Map<String, dynamic>.from(e)).toList();
     loading = false;
     notifyListeners();
+  }
+
+  Future<void> loadCommissionBoard({
+    String search = '',
+    String? status,
+    int page = 1,
+    int pageSize = 25,
+  }) async {
+    final params = <String>[
+      'from=${_date(from)}',
+      'to=${_date(to)}',
+      'page=$page',
+      'pageSize=$pageSize',
+      if (professionalId != null) 'professionalId=$professionalId',
+      if (serviceId != null) 'serviceId=$serviceId',
+      if (search.trim().isNotEmpty)
+        'search=${Uri.encodeQueryComponent(search.trim())}',
+      if (status != null && status.isNotEmpty) 'status=$status',
+    ];
+    final response = await ApiService.get(
+        '/finance/commissions/professionals?${params.join('&')}');
+    if (response['erro'] != null) {
+      error = response['erro'].toString();
+      return;
+    }
+    commissionProfessionals = response['data'] is List
+        ? response['data'].map((e) => Map<String, dynamic>.from(e)).toList()
+        : [];
+    commissionBoardTotals = response['totals'] is Map
+        ? Map<String, dynamic>.from(response['totals'])
+        : {};
+    commissionPagination = response['pagination'] is Map
+        ? Map<String, dynamic>.from(response['pagination'])
+        : {};
+    final settings = await ApiService.get('/finance/commissions/settings');
+    if (settings['data'] is Map) {
+      commissionApprovalSettings = Map<String, dynamic>.from(settings['data']);
+    }
+  }
+
+  Future<Map<String, dynamic>?> loadCommissionProfessionalDetails(
+      int professionalId) async {
+    final response = await ApiService.get(
+        '/finance/commissions/professionals/$professionalId/items?$query');
+    if (response['erro'] != null) {
+      error = response['erro'].toString();
+      notifyListeners();
+      return null;
+    }
+    return response['data'] is Map
+        ? Map<String, dynamic>.from(response['data'])
+        : null;
+  }
+
+  Future<Map<String, dynamic>?> createCommissionPaymentPreview(
+      Map<String, dynamic> body) async {
+    final response =
+        await ApiService.post('/finance/commissions/payment-previews', body);
+    if (response['erro'] != null) {
+      error = response['erro'].toString();
+      notifyListeners();
+      return null;
+    }
+    return response['data'] is Map
+        ? Map<String, dynamic>.from(response['data'])
+        : null;
+  }
+
+  Future<Map<String, dynamic>?> payCommissionBatch(Map<String, dynamic> body,
+      {String? idempotencyKey}) async {
+    final response = await ApiService.post(
+        '/finance/commissions/payments', body, extraHeaders: {
+      'Idempotency-Key': idempotencyKey ?? _key('commission-batch')
+    });
+    if (response['erro'] != null) {
+      error = response['erro'].toString();
+      notifyListeners();
+      return null;
+    }
+    await loadCommissionBoard();
+    return response['data'] is Map
+        ? Map<String, dynamic>.from(response['data'])
+        : {};
+  }
+
+  Future<String?> approveCommissions(List<int> ids) async {
+    final response = await ApiService.post(
+        '/finance/commissions/approvals', {'commissionIds': ids},
+        extraHeaders: {'Idempotency-Key': _key('commission-approval')});
+    if (response['erro'] != null) return response['erro'].toString();
+    await loadCommissionBoard();
+    return null;
+  }
+
+  Future<String?> saveCommissionApprovalSettings(String mode) async {
+    final version =
+        int.tryParse(commissionApprovalSettings['version']?.toString() ?? '') ??
+            1;
+    final response = await ApiService.patch('/finance/commissions/settings', {
+      'approvalMode': mode,
+      'expectedVersion': version,
+    });
+    if (response['erro'] != null) return response['erro'].toString();
+    if (response['data'] is Map) {
+      commissionApprovalSettings = Map<String, dynamic>.from(response['data']);
+    }
+    notifyListeners();
+    return null;
+  }
+
+  Future<void> loadCommissionHistory() async {
+    final response = await ApiService.get(
+        '/finance/commissions/history?from=${_date(from)}&to=${_date(to)}');
+    if (response['erro'] != null) {
+      error = response['erro'].toString();
+      return;
+    }
+    commissionHistory = response['data'] is List
+        ? response['data'].map((e) => Map<String, dynamic>.from(e)).toList()
+        : [];
   }
 
   // nextInt precisa receber um limite positivo de 32 bits também no Dart2JS.

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/financial_controller.dart';
+import 'commission_dashboard_screen.dart';
 import 'commission_rule_wizard_screen.dart';
 import 'report_download_stub.dart'
     if (dart.library.html) 'report_download_web.dart';
@@ -44,6 +45,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     return PremiumPage(
       title: 'Financeiro',
       subtitle: 'Acompanhe o desempenho financeiro da sua barbearia.',
+      headingFontSize: 27,
+      horizontalPadding: 40,
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
       actions: [
         IconButton(
             tooltip: 'Atualizar',
@@ -60,41 +64,115 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         ],
       ],
       child: Column(children: [
-        Expanded(
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          SizedBox(width: 220, child: _navigation(state)),
-          const SizedBox(width: 16),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                _filters(state),
-                const SizedBox(height: 14),
-                Expanded(
-                    child: state.loading
-                        ? const PremiumLoadingState(
-                            label: 'Carregando financeiro')
-                        : state.error != null
-                            ? PremiumEmptyState(
-                                icon: Icons.cloud_off_outlined,
-                                title: 'Nao foi possivel carregar',
-                                subtitle: state.error!)
-                            : switch (state.area) {
-                                FinancialArea.serviceReceipts =>
-                                  _serviceReceipts(state),
-                                FinancialArea.overview => _overview(state),
-                                FinancialArea.movements => _movements(state),
-                                FinancialArea.expenses => _expenses(state),
-                                FinancialArea.receivables =>
-                                  _receivables(state),
-                                FinancialArea.commissions =>
-                                  _commissions(state),
-                                FinancialArea.categories => _categories(state),
-                              }),
-              ])),
-        ])),
+        Expanded(child: LayoutBuilder(builder: (context, constraints) {
+          final compact = constraints.maxWidth < 760;
+          final content =
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            _filters(state),
+            const SizedBox(height: 14),
+            Expanded(
+                child: state.loading
+                    ? const PremiumLoadingState(label: 'Carregando financeiro')
+                    : state.error != null
+                        ? PremiumEmptyState(
+                            icon: Icons.cloud_off_outlined,
+                            title: 'Nao foi possivel carregar',
+                            subtitle: state.error!)
+                        : switch (state.area) {
+                            FinancialArea.serviceReceipts =>
+                              _serviceReceipts(state),
+                            FinancialArea.overview => _overview(state),
+                            FinancialArea.movements => _movements(state),
+                            FinancialArea.expenses => _expenses(state),
+                            FinancialArea.receivables => _receivables(state),
+                            FinancialArea.commissions => _commissions(state),
+                            FinancialArea.categories => _categories(state),
+                          }),
+          ]);
+          if (compact) {
+            return Column(children: [
+              _compactNavigation(state),
+              const SizedBox(height: 12),
+              Expanded(child: content),
+            ]);
+          }
+          return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            SizedBox(width: 220, child: _navigation(state)),
+            const SizedBox(width: 16),
+            Expanded(child: content),
+          ]);
+        })),
       ]),
+    );
+  }
+
+  Widget _compactNavigation(FinancialController state) {
+    const items = [
+      (FinancialArea.serviceReceipts, Icons.receipt_long_outlined, 'Notas'),
+      (FinancialArea.overview, Icons.dashboard_outlined, 'Visão geral'),
+      (FinancialArea.movements, Icons.swap_vert_rounded, 'Movimentos'),
+      (FinancialArea.receivables, Icons.pending_actions_outlined, 'A receber'),
+      (FinancialArea.expenses, Icons.receipt_long_outlined, 'A pagar'),
+      (FinancialArea.commissions, Icons.groups_2_outlined, 'Comissões'),
+      (FinancialArea.categories, Icons.sell_outlined, 'Categorias'),
+    ];
+    return PremiumSurface(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (final item in items)
+              _compactNavigationItem(state, item.$1, item.$2, item.$3),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _compactNavigationItem(FinancialController state, FinancialArea area,
+      IconData icon, String label) {
+    final selected = state.area == area;
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: state.loading
+            ? null
+            : () {
+                if (area != FinancialArea.expenses) _clearExpenseSelection();
+                state.setArea(area);
+              },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: selected
+                ? PremiumColors.gold.withValues(alpha: .12)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: selected
+                    ? PremiumColors.gold.withValues(alpha: .32)
+                    : PremiumColors.border),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(icon,
+                size: 17,
+                color: selected
+                    ? PremiumColors.gold
+                    : PremiumColors.textSecondary),
+            const SizedBox(width: 7),
+            Text(label,
+                style: TextStyle(
+                    color: selected
+                        ? PremiumColors.gold
+                        : PremiumColors.textPrimary,
+                    fontSize: 12,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+          ]),
+        ),
+      ),
     );
   }
 
@@ -218,26 +296,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             )));
   }
 
-  Widget _commissions(FinancialController state) => PremiumSurface(
-        padding: const EdgeInsets.all(16),
-        child: CustomScrollView(
-          controller: _commissionScrollController,
-          slivers: [
-            SliverToBoxAdapter(child: _commissionHeader(state)),
-            const SliverToBoxAdapter(child: SizedBox(height: 14)),
-            SliverToBoxAdapter(child: _commissionTabs()),
-            const SliverToBoxAdapter(child: SizedBox(height: 14)),
-            SliverToBoxAdapter(child: _commissionKpis(state)),
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            SliverPadding(
-              padding: const EdgeInsets.only(bottom: 8),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(_commissionSections(state)),
-              ),
-            ),
-          ],
-        ),
-      );
+  Widget _commissions(FinancialController state) =>
+      const CommissionDashboardScreen();
 
   Widget _commissionHeader(FinancialController state) => LayoutBuilder(
         builder: (context, constraints) {
@@ -1822,7 +1882,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       LayoutBuilder(builder: (_, c) {
         if (c.maxWidth < 1050)
           return Column(children: [
-            _FinancialChart(rows: evolution, money: money),
+            FinancialChart(rows: evolution, money: money),
             const SizedBox(height: 12),
             _latest(latest),
             const SizedBox(height: 12),
@@ -1834,7 +1894,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           Expanded(
               flex: 9,
               child: Column(children: [
-                _FinancialChart(rows: evolution, money: money),
+                FinancialChart(rows: evolution, money: money),
                 const SizedBox(height: 12),
                 _professionals(professionals)
               ])),
@@ -3639,10 +3699,10 @@ class _PeriodButton extends StatelessWidget {
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500)));
 }
 
-class _FinancialChart extends StatelessWidget {
+class FinancialChart extends StatelessWidget {
   final List<Map<String, dynamic>> rows;
   final NumberFormat money;
-  const _FinancialChart({required this.rows, required this.money});
+  const FinancialChart({required this.rows, required this.money});
   double _value(dynamic value) => double.tryParse('$value') ?? 0;
   @override
   Widget build(BuildContext context) {

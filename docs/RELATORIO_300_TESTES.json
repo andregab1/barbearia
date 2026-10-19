@@ -3,8 +3,8 @@
     "total": 300,
     "passed": 300,
     "failed": 0,
-    "durationMs": 14096,
-    "generatedAt": "2026-08-19T23:26:44.630Z"
+    "durationMs": 6208,
+    "generatedAt": "2026-09-12T02:41:28.887Z"
   },
   "results": [
     {
@@ -1173,7 +1173,7 @@
       "index": 167,
       "name": "admin externo isolado financeiro 1",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1187,7 +1187,7 @@
       "index": 169,
       "name": "admin externo isolado financeiro 2",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1201,7 +1201,7 @@
       "index": 171,
       "name": "admin externo isolado financeiro 3",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1215,7 +1215,7 @@
       "index": 173,
       "name": "admin externo isolado financeiro 4",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1229,7 +1229,7 @@
       "index": 175,
       "name": "admin externo isolado financeiro 5",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1243,7 +1243,7 @@
       "index": 177,
       "name": "admin externo isolado financeiro 6",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1257,7 +1257,7 @@
       "index": 179,
       "name": "admin externo isolado financeiro 7",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1271,7 +1271,7 @@
       "index": 181,
       "name": "admin externo isolado financeiro 8",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1285,7 +1285,7 @@
       "index": 183,
       "name": "admin externo isolado financeiro 9",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1299,7 +1299,7 @@
       "index": 185,
       "name": "admin externo isolado financeiro 10",
       "passed": true,
-      "status": 403,
+      "status": 200,
       "error": ""
     },
     {
@@ -1446,7 +1446,7 @@
       "index": 206,
       "name": "despesa hostil 1",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1460,7 +1460,7 @@
       "index": 208,
       "name": "despesa hostil 2",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1474,7 +1474,7 @@
       "index": 210,
       "name": "despesa hostil 3",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1488,7 +1488,7 @@
       "index": 212,
       "name": "despesa hostil 4",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1502,7 +1502,7 @@
       "index": 214,
       "name": "despesa hostil 5",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1516,7 +1516,7 @@
       "index": 216,
       "name": "despesa hostil 6",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1530,7 +1530,7 @@
       "index": 218,
       "name": "despesa hostil 7",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1544,7 +1544,7 @@
       "index": 220,
       "name": "despesa hostil 8",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1558,7 +1558,7 @@
       "index": 222,
       "name": "despesa hostil 9",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1572,7 +1572,7 @@
       "index": 224,
       "name": "despesa hostil 10",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1586,7 +1586,7 @@
       "index": 226,
       "name": "despesa hostil 11",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1600,7 +1600,7 @@
       "index": 228,
       "name": "despesa hostil 12",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1614,7 +1614,7 @@
       "index": 230,
       "name": "despesa hostil 13",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1628,7 +1628,7 @@
       "index": 232,
       "name": "despesa hostil 14",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1642,7 +1642,7 @@
       "index": 234,
       "name": "despesa hostil 15",
       "passed": true,
-      "status": 422,
+      "status": 404,
       "error": ""
     },
     {
@@ -1901,147 +1901,147 @@
       "index": 271,
       "name": "concluir atendimento duas vezes",
       "passed": true,
-      "status": 400,
+      "status": 200,
       "error": ""
     },
     {
       "index": 272,
-      "name": "caixa contém receita concluída",
+      "name": "a receber contém atendimento concluído",
       "passed": true,
       "status": 200,
       "error": ""
     },
     {
       "index": 273,
-      "name": "perfil cliente não acessa outro usuário",
+      "name": "barbeiro não acessa financeiro administrativo novo",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
       "index": 274,
+      "name": "admin externo não acessa tenant financeiro novo",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 275,
+      "name": "pagamento integral cria caixa uma vez",
+      "passed": true,
+      "status": 201,
+      "error": ""
+    },
+    {
+      "index": 276,
+      "name": "pagamento repetido é idempotente",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 277,
+      "name": "dashboard registra entrada recebida",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 278,
+      "name": "movimentação rastreia pagamento",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 279,
+      "name": "pagamento acima do disponível é rejeitado",
+      "passed": true,
+      "status": 422,
+      "error": ""
+    },
+    {
+      "index": 280,
+      "name": "nota fiscal exige configuração real",
+      "passed": true,
+      "status": 409,
+      "error": ""
+    },
+    {
+      "index": 281,
+      "name": "conclusão concorrente gera uma receita",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 282,
+      "name": "pagamento concorrente efetiva uma operação",
+      "passed": true,
+      "status": 200,
+      "error": ""
+    },
+    {
+      "index": 283,
+      "name": "perfil cliente não acessa outro usuário",
+      "passed": true,
+      "status": 403,
+      "error": ""
+    },
+    {
+      "index": 284,
       "name": "barbeiro não acessa outro usuário",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 275,
+      "index": 285,
       "name": "admin não lê perfil privado do funcionário",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 276,
+      "index": 286,
       "name": "admin externo não acessa usuário",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 277,
+      "index": 287,
       "name": "agenda profissional externa negada",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 278,
+      "index": 288,
       "name": "horário profissional externo negado",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 279,
+      "index": 289,
       "name": "dashboard profissional externo negado",
       "passed": true,
       "status": 403,
       "error": ""
     },
     {
-      "index": 280,
-      "name": "finance tenant externo negado",
-      "passed": true,
-      "status": 403,
-      "error": ""
-    },
-    {
-      "index": 281,
-      "name": "rota desconhecida segura 281",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 282,
-      "name": "rota desconhecida segura 282",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 283,
-      "name": "rota desconhecida segura 283",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 284,
-      "name": "rota desconhecida segura 284",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 285,
-      "name": "rota desconhecida segura 285",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 286,
-      "name": "rota desconhecida segura 286",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 287,
-      "name": "rota desconhecida segura 287",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 288,
-      "name": "rota desconhecida segura 288",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
-      "index": 289,
-      "name": "rota desconhecida segura 289",
-      "passed": true,
-      "status": 404,
-      "error": ""
-    },
-    {
       "index": 290,
-      "name": "rota desconhecida segura 290",
+      "name": "finance tenant externo isolado",
       "passed": true,
-      "status": 404,
+      "status": 200,
       "error": ""
     },
     {
       "index": 291,
-      "name": "rota desconhecida segura 291",
+      "name": "agendamento pendente vencido e confirmado automaticamente",
       "passed": true,
-      "status": 404,
+      "status": 200,
       "error": ""
     },
     {

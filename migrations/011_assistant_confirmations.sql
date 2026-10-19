@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS assistant_confirmations (
+  proposal_id VARCHAR(36) NOT NULL PRIMARY KEY,
+  cliente_id INT UNSIGNED NOT NULL,
+  agendamento_id INT UNSIGNED NOT NULL,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

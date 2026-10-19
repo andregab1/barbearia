@@ -13,8 +13,7 @@ import '../../../features/barbeiro/controllers/barbeiro_controller.dart';
 import '../../../features/admin/controllers/admin_controller.dart';
 import '../../../features/admin/widgets/kpi_card.dart';
 import '../../../features/admin/widgets/chart_card.dart';
-import '../../../features/barbeiro/screens/bloquear_horario_screen.dart';
-import '../../../features/barbeiro/screens/horarios_screen.dart';
+import '../../../features/barbeiro/screens/horarios_schedule_screen.dart';
 import '../../../features/barbeiro/screens/contatos_screen.dart';
 import '../../../features/barbeiro/widgets/agenda_dashboard.dart';
 import '../../../features/admin/screens/personalizacao_screen.dart';
@@ -59,9 +58,9 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
 
   List<Widget> get _paginasBarbeiro => [
         _AgendaTab(onCarregarAgenda: _carregarAgenda),
-        const BloquearHorarioScreen(),
         const HorariosScreen(),
         const ContatosScreen(),
+        const _ComissoesPropriasTab(),
         const PerfilScreen(),
       ];
 
@@ -100,8 +99,6 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
         activeIcon: Icons.calendar_month,
         label: 'Agenda'),
     NavShellItem(
-        icon: Icons.block_outlined, activeIcon: Icons.block, label: 'Bloquear'),
-    NavShellItem(
         icon: Icons.schedule_outlined,
         activeIcon: Icons.schedule,
         label: 'Horários'),
@@ -109,6 +106,10 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
         icon: Icons.contacts_outlined,
         activeIcon: Icons.contacts,
         label: 'Contatos'),
+    NavShellItem(
+        icon: Icons.payments_outlined,
+        activeIcon: Icons.payments,
+        label: 'Comissões'),
     NavShellItem(
         icon: Icons.person_outline, activeIcon: Icons.person, label: 'Perfil'),
   ];
@@ -128,9 +129,138 @@ class _ProfissionalHomeScreenState extends State<ProfissionalHomeScreen> {
       userName: context.watch<AuthController>().nomeUsuario,
       userRole: isAdmin ? 'Administrador' : 'Barbeiro',
       onLogout: () => context.read<AuthController>().logout(),
+      onProfile: () => setState(() =>
+          _paginaAtual = (isAdmin ? _itensAdmin : _itensBarbeiro).length - 1),
       body: paginas[paginaSegura],
     );
   }
+}
+
+class _ComissoesPropriasTab extends StatefulWidget {
+  const _ComissoesPropriasTab();
+  @override
+  State<_ComissoesPropriasTab> createState() => _ComissoesPropriasTabState();
+}
+
+class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
+  late Future<Map<String, dynamic>> _future;
+  @override
+  void initState() {
+    super.initState();
+    _future = _load();
+  }
+
+  Future<Map<String, dynamic>> _load() async {
+    final overviewResponse =
+        await ApiService.get('/finance/commissions/me/overview');
+    final statementResponse =
+        await ApiService.get('/finance/commissions/me/statement');
+    final overview = overviewResponse['data'] is Map
+        ? Map<String, dynamic>.from(overviewResponse['data'])
+        : <String, dynamic>{};
+    final statement = statementResponse['data'] is Map
+        ? Map<String, dynamic>.from(statementResponse['data'])
+        : <String, dynamic>{};
+    return {
+      'overview': overview,
+      'items': statement['items'] is List ? statement['items'] : <dynamic>[],
+      'ledger': statement['ledger'] is List ? statement['ledger'] : <dynamic>[],
+    };
+  }
+
+  String _money(dynamic value) =>
+      NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(double.tryParse('$value') ?? 0);
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<Map<String, dynamic>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done)
+            return const Center(child: CircularProgressIndicator());
+          if (snapshot.hasError)
+            return const Center(
+                child: Text('Não foi possível carregar suas comissões.'));
+          final data = snapshot.data ?? <String, dynamic>{};
+          final overview = Map<String, dynamic>.from(
+              data['overview'] is Map ? data['overview'] : <String, dynamic>{});
+          final items = (data['items'] is List ? data['items'] : <dynamic>[])
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+          return RefreshIndicator(
+              onRefresh: () async {
+                setState(() => _future = _load());
+                await _future;
+              },
+              child: ListView(padding: const EdgeInsets.all(20), children: [
+                Text('Minhas comissões',
+                    style: GoogleFonts.inter(
+                        fontSize: 22, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                Text(
+                    'Acompanhe o que foi calculado, liberado, pago e ainda será compensado.',
+                    style:
+                        GoogleFonts.inter(color: AppTheme.corTextoSecundario)),
+                const SizedBox(height: 18),
+                Wrap(spacing: 12, runSpacing: 12, children: [
+                  _ownCard('A liberar', _money(overview['to_release']),
+                      AppTheme.gold),
+                  _ownCard('Disponível', _money(overview['available']),
+                      AppTheme.sucesso),
+                  _ownCard('Pago no período', _money(overview['paid_period']),
+                      AppTheme.sucesso),
+                  _ownCard(
+                      'Adiantamentos',
+                      _money(overview['advances_to_compensate']),
+                      AppTheme.erro),
+                ]),
+                const SizedBox(height: 18),
+                if (items.isEmpty)
+                  const Card(
+                      child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child:
+                              Text('Nenhuma comissão calculada no período.')))
+                else
+                  ...items.map((item) => ListTile(
+                        leading: const Icon(Icons.receipt_long_outlined),
+                        title: Text(
+                            '${item['service_name'] ?? 'Serviço'} · Atendimento #${item['appointment_id'] ?? ''}'),
+                        subtitle: Text(
+                            '${item['professional_name'] ?? 'Você'} · Base ${_money(item['base_amount'])} · ${item['rule'] is Map && item['rule']['type'] == 'fixed' ? 'valor fixo' : '${item['rule'] is Map ? item['rule']['value'] : '-'}%'}'),
+                        trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(_money(item['total_commission']),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w700)),
+                              Text('Pendente ${_money(item['pending_amount'])}',
+                                  style: const TextStyle(fontSize: 11))
+                            ]),
+                      )),
+              ]));
+        },
+      );
+
+  Widget _ownCard(String label, String value, Color color) => SizedBox(
+      width: 190,
+      child: Card(
+          child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label,
+                        style: GoogleFonts.inter(
+                            color: AppTheme.corTextoSecundario)),
+                    const SizedBox(height: 8),
+                    Text(value,
+                        style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: color))
+                  ]))));
 }
 
 // ==========================================
@@ -216,6 +346,24 @@ class _AgendaTab extends StatelessWidget {
                     final ok = await context
                         .read<BarbeiroController>()
                         .cancelar(item['id']);
+                    if (ok) onCarregarAgenda();
+                  },
+                  onArrive: (item) async {
+                    final ok = await context
+                        .read<BarbeiroController>()
+                        .marcarChegou(item['id']);
+                    if (ok) onCarregarAgenda();
+                  },
+                  onStart: (item) async {
+                    final ok = await context
+                        .read<BarbeiroController>()
+                        .iniciarAtendimento(item['id']);
+                    if (ok) onCarregarAgenda();
+                  },
+                  onNoShow: (item) async {
+                    final ok = await context
+                        .read<BarbeiroController>()
+                        .marcarNaoCompareceu(item['id']);
                     if (ok) onCarregarAgenda();
                   },
                 ),
@@ -912,8 +1060,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                 builder: (_) => AlertDialog(
                   backgroundColor: AppTheme.surfaceElev,
                   title: Text('Excluir colaborador?',
-                      style: GoogleFonts.playfairDisplay(
-                          color: AppTheme.corTexto)),
+                      style: GoogleFonts.inter(color: AppTheme.corTexto)),
                   content: Text('Tem certeza que deseja excluir $nome?',
                       style: _inter(
                           AppTheme.corTextoSecundario, 14, FontWeight.w400)),
@@ -1805,6 +1952,21 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                             '/agendamentos/${item['id']}/cancelar', {});
                         await _carregarAgenda();
                       },
+                      onArrive: (item) async {
+                        await ApiService.patch(
+                            '/agendamentos/${item['id']}/chegou', {});
+                        await _carregarAgenda();
+                      },
+                      onStart: (item) async {
+                        await ApiService.patch(
+                            '/agendamentos/${item['id']}/iniciar', {});
+                        await _carregarAgenda();
+                      },
+                      onNoShow: (item) async {
+                        await ApiService.patch(
+                            '/agendamentos/${item['id']}/nao-compareceu', {});
+                        await _carregarAgenda();
+                      },
                     ),
         ),
       ]),
@@ -2005,7 +2167,7 @@ class _IconButton extends StatelessWidget {
 
 TextStyle _playfair(Color cor, double tamanho, FontWeight peso,
         {double letterSpacing = -0.4}) =>
-    GoogleFonts.playfairDisplay().copyWith(
+    GoogleFonts.inter().copyWith(
         color: cor,
         fontSize: tamanho,
         fontWeight: peso,

@@ -17,6 +17,7 @@
     "test:flutter:buttons": "node scripts/run-flutter-catalog-e2e.js --button-audit"
   },
   "dependencies": {
+    "@google/genai": "^2.22.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

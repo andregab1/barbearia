@@ -214,7 +214,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                                   ? 'Contatos disponíveis no aplicativo'
                                   : 'Permissão necessária',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.inter(
                                 color: AppTheme.corTexto,
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
@@ -436,7 +436,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                 ativo ? cor.withValues(alpha: 0.2) : AppTheme.surfaceElev,
             child: Text(
               nome.isNotEmpty ? nome[0].toUpperCase() : '?',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.inter(
                 color: ativo ? cor : AppTheme.corTextoSecundario,
                 fontWeight: FontWeight.w700,
               ),

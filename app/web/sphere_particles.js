@@ -4,6 +4,7 @@
   var activeInstance = null;
 
   function createSphereParticles(container) {
+    if (!window.THREE) return;
     if (activeInstance) activeInstance.destroy();
 
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

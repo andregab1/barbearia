@@ -4,6 +4,8 @@
 // ==========================================
 const { pool } = require('../config/database');
 const { obterColaboradorAcessivel } = require('../utils/access');
+const { createForecast, completeAppointment } = require('../services/financial.service');
+const { parseLocal, formatLocal } = require('../services/appointment-availability.service');
 
 // ==========================================
 // RF06: Criar novo agendamento
@@ -21,7 +23,7 @@ async function criar(req, res) {
     : [servico_id];
   const servicoIds = [...new Set(idsRecebidos.map((id) => Number.parseInt(id, 10)))];
   const servicoId = servicoIds[0];
-  const dataInicio = new Date(String(data_hora).replace(' ', 'T'));
+  const dataInicio = parseLocal(data_hora);
   if (!Number.isInteger(colaboradorId) || colaboradorId <= 0 ||
       servicoIds.length === 0 || servicoIds.length > 10 ||
       servicoIds.some((id) => !Number.isInteger(id) || id <= 0) ||
@@ -32,8 +34,7 @@ async function criar(req, res) {
     return res.status(400).json({ code: 'NOTE_TOO_LONG', erro: 'A observação deve ter no máximo 1000 caracteres.' });
   }
 
-  const pad = (value) => String(value).padStart(2, '0');
-  const formatar = (value) => `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())} ${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
+  const formatar = formatLocal;
   const dataHoraStr = formatar(dataInicio);
   const connection = await pool.getConnection();
   const lockName = `agendamento:${colaboradorId}`;
@@ -45,9 +46,16 @@ async function criar(req, res) {
       return res.status(409).json({ code: 'SCHEDULE_BUSY', erro: 'A agenda está sendo atualizada. Tente novamente.' });
     }
     await connection.beginTransaction();
+    if (req.assistantProposal) {
+      const [confirmed] = await connection.query('SELECT agendamento_id FROM assistant_confirmations WHERE proposal_id = ? AND cliente_id = ? FOR UPDATE', [req.assistantProposal.jti, cliente_id]);
+      if (confirmed.length) {
+        await connection.commit();
+        return res.json({ id: confirmed[0].agendamento_id, idempotent: true, mensagem: 'Agendamento já confirmado.' });
+      }
+    }
     const placeholders = servicoIds.map(() => '?').join(', ');
     const [servicos] = await connection.query(
-      `SELECT s.id, s.preco, s.duracao_min
+      `SELECT s.id, s.nome, s.preco, s.duracao_min, s.barbearia_id
          FROM servicos s
          JOIN colaboradores c ON c.id = ? AND c.barbearia_id = s.barbearia_id
          JOIN usuarios u ON u.id = c.usuario_id
@@ -63,6 +71,13 @@ async function criar(req, res) {
     }
     const duracaoFinal = servicos.reduce((total, item) => total + Number(item.duracao_min), 0);
     const valorFinal = servicos.reduce((total, item) => total + Number(item.preco), 0);
+    if (req.assistantProposal && servicos.some(s => {
+      const expected = req.assistantProposal.expected?.find(e => e.id === s.id);
+      return s.barbearia_id !== req.assistantProposal.shopId || !expected || expected.price !== Number(s.preco) || expected.duration !== Number(s.duracao_min);
+    })) {
+      await connection.rollback();
+      return res.status(409).json({ code: 'PROPOSAL_CHANGED', erro: 'Preço ou duração mudou. Peça um resumo atualizado antes de confirmar.' });
+    }
     const dataFim = new Date(dataInicio.getTime() + duracaoFinal * 60000);
     const dataFimStr = formatar(dataFim);
     const [expediente] = await connection.query(
@@ -82,7 +97,7 @@ async function criar(req, res) {
     }
     const [conflitos] = await connection.query(
       `SELECT id FROM agendamentos
-        WHERE colaborador_id = ? AND status IN ('confirmado', 'pendente')
+        WHERE colaborador_id = ? AND status IN ('confirmado', 'pendente', 'cliente_chegou', 'em_atendimento')
           AND data_hora < ? AND DATE_ADD(data_hora, INTERVAL duracao_min MINUTE) > ?
         LIMIT 1 FOR UPDATE`,
       [colaboradorId, dataFimStr, dataHoraStr],
@@ -109,6 +124,16 @@ async function criar(req, res) {
        VALUES ?`,
       [servicos.map((item) => [result.insertId, item.id, item.preco, item.duracao_min])],
     );
+    if (req.assistantProposal) await connection.query('INSERT INTO assistant_confirmations (proposal_id, cliente_id, agendamento_id) VALUES (?, ?, ?)', [req.assistantProposal.jti, cliente_id, result.insertId]);
+    await createForecast(connection, {
+      id: result.insertId,
+      barbearia_id: servicos[0].barbearia_id,
+      colaborador_id: colaboradorId,
+      cliente_id,
+      servico: servicos.map((item) => item.nome).join(', '),
+      valor_cobrado: valorFinal,
+      data_hora: dataHoraStr,
+    }, cliente_id);
     await connection.query(
       `INSERT INTO notificacoes (usuario_id, agendamento_id, tipo, titulo, mensagem, agendada_para)
        VALUES (?, ?, 'confirmacao', 'Agendamento confirmado!', 'Seu horário foi reservado com sucesso.', NOW())`,
@@ -227,8 +252,9 @@ async function cancelar(req, res) {
   try {
     await connection.beginTransaction();
     const [agendamento] = await connection.query(
-      `SELECT id, cliente_id, colaborador_id, data_hora, status
-         FROM agendamentos WHERE id = ? FOR UPDATE`,
+      `SELECT a.id, a.cliente_id, a.colaborador_id, a.data_hora, a.status, c.barbearia_id
+         FROM agendamentos a JOIN colaboradores c ON c.id = a.colaborador_id
+        WHERE a.id = ? FOR UPDATE`,
       [id]
     );
     if (agendamento.length === 0) {
@@ -271,7 +297,7 @@ async function cancelar(req, res) {
 
     const [updated] = await connection.query(
       `UPDATE agendamentos SET status = 'cancelado'
-        WHERE id = ? AND status IN ('confirmado', 'pendente')`,
+        WHERE id = ? AND status IN ('confirmado', 'pendente', 'cliente_chegou', 'em_atendimento')`,
       [id],
     );
     if (updated.affectedRows !== 1) {
@@ -284,6 +310,11 @@ async function cancelar(req, res) {
        VALUES (?, ?, 'cancelamento', 'Agendamento cancelado',
                'Seu agendamento foi cancelado.', NOW())`,
       [ag.cliente_id, id]
+    );
+    await connection.query(
+      `UPDATE financial_transactions SET status = 'cancelled'
+        WHERE barbearia_id = ? AND source_type = 'appointment' AND source_id = ? AND tipo = 'forecast'`,
+      [ag.barbearia_id, String(id)],
     );
 
     await connection.commit();
@@ -300,7 +331,7 @@ async function cancelar(req, res) {
 // ==========================================
 // RF03: Marcar agendamento como concluído
 // ==========================================
-async function concluir(req, res) {
+async function concluirLegacy(req, res) {
   const { id } = req.params;
 
   try {
@@ -354,6 +385,60 @@ async function concluir(req, res) {
 // ==========================================
 // RF11: Bloquear horário na agenda
 // ==========================================
+async function concluir(req, res) {
+  const { id } = req.params;
+  try {
+    const [appointments] = await pool.query(
+      'SELECT colaborador_id FROM agendamentos WHERE id = ? LIMIT 1', [id],
+    );
+    if (appointments.length === 0) return res.status(404).json({ erro: 'Agendamento não encontrado.' });
+    const colaborador = await obterColaboradorAcessivel(req.usuario, appointments[0].colaborador_id);
+    if (!colaborador) return res.status(403).json({ code: 'APPOINTMENT_FORBIDDEN', erro: 'Sem permissão para alterar este atendimento.' });
+    const result = await completeAppointment({
+      appointmentId: id,
+      actorId: req.usuario.id,
+      tenantId: colaborador.barbearia_id,
+      allowedProfessionalId: req.usuario.role === 'barbeiro' ? colaborador.id : null,
+    });
+    if (result.status === 403) return res.status(403).json({ code: result.code, erro: 'Sem permissão para alterar este atendimento.' });
+    if (result.status === 409) return res.status(409).json({ code: result.code, erro: 'Apenas agendamentos confirmados podem ser concluídos.' });
+    return res.json({ mensagem: result.idempotent ? 'Atendimento já estava concluído.' : 'Agendamento concluído com sucesso!', idempotent: !!result.idempotent });
+  } catch (err) {
+    console.error('ERRO ao concluir:', err.message);
+    return res.status(500).json({ erro: 'Erro interno ao concluir agendamento.' });
+  }
+}
+
+async function atualizarStatusOperacional(req, res) {
+  const { id } = req.params;
+  const { acao } = req.body || {};
+  const transicoes = {
+    chegou: { de: ['confirmado', 'pendente'], para: 'cliente_chegou', campo: 'cliente_chegou_em = NOW()' },
+    iniciar: { de: ['cliente_chegou'], para: 'em_atendimento', campo: 'iniciado_em = NOW()' },
+    'nao-compareceu': { de: ['confirmado', 'pendente'], para: 'nao_compareceu', campo: '' },
+  };
+  const transicao = transicoes[acao];
+  if (!transicao) return res.status(400).json({ code: 'INVALID_APPOINTMENT_ACTION', erro: 'Ação de atendimento inválida.' });
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, colaborador_id, status FROM agendamentos WHERE id = ? LIMIT 1', [id],
+    );
+    if (rows.length === 0) return res.status(404).json({ erro: 'Agendamento não encontrado.' });
+    const colaborador = await obterColaboradorAcessivel(req.usuario, rows[0].colaborador_id);
+    if (!colaborador) return res.status(403).json({ code: 'APPOINTMENT_FORBIDDEN', erro: 'Sem permissão para alterar este atendimento.' });
+    if (!transicao.de.includes(rows[0].status)) return res.status(409).json({ code: 'APPOINTMENT_STATE_CONFLICT', erro: 'O atendimento não está em um estado compatível com esta ação.' });
+    const [updated] = await pool.query(
+      `UPDATE agendamentos SET status = ?, atualizado_em = NOW()${transicao.campo ? ', ' + transicao.campo : ''} WHERE id = ? AND status IN (?)`,
+      [transicao.para, id, transicao.de],
+    );
+    if (updated.affectedRows !== 1) return res.status(409).json({ code: 'APPOINTMENT_STATE_CONFLICT', erro: 'O atendimento já foi atualizado.' });
+    return res.json({ mensagem: 'Status atualizado com sucesso.', status: transicao.para });
+  } catch (err) {
+    console.error('ERRO ao atualizar status operacional:', err.message);
+    return res.status(500).json({ erro: 'Não foi possível atualizar o atendimento.' });
+  }
+}
+
 async function bloquearHorario(req, res) {
   const { colaborador_id, data_hora_ini, data_hora_fim, motivo } = req.body;
 
@@ -380,7 +465,7 @@ async function bloquearHorario(req, res) {
     const [agendamentos] = await pool.query(
       `SELECT id FROM agendamentos
        WHERE colaborador_id = ?
-         AND status IN ('confirmado', 'pendente')
+         AND status IN ('confirmado', 'pendente', 'cliente_chegou', 'em_atendimento')
          AND data_hora < ? AND DATE_ADD(data_hora, INTERVAL duracao_min MINUTE) > ?`,
       [colaborador_id, data_hora_fim, data_hora_ini]
     );
@@ -418,7 +503,7 @@ async function preverBloqueio(req, res) {
       `SELECT id, data_hora AS startTime,
               DATE_ADD(data_hora, INTERVAL duracao_min MINUTE) AS endTime
          FROM agendamentos
-        WHERE colaborador_id = ? AND status IN ('confirmado','pendente')
+        WHERE colaborador_id = ? AND status IN ('confirmado','pendente','cliente_chegou','em_atendimento')
           AND data_hora < ? AND DATE_ADD(data_hora, INTERVAL duracao_min MINUTE) > ?`,
       [colaborador_id, data_hora_fim, data_hora_ini],
     );
@@ -471,7 +556,7 @@ async function bloquearRecorrente(req, res) {
         const start = format(period.start);
         const end = format(period.end);
         const [conflicts] = await connection.query(
-          `SELECT id FROM agendamentos WHERE colaborador_id = ? AND status IN ('confirmado','pendente')
+          `SELECT id FROM agendamentos WHERE colaborador_id = ? AND status IN ('confirmado','pendente','cliente_chegou','em_atendimento')
              AND data_hora < ? AND DATE_ADD(data_hora, INTERVAL duracao_min MINUTE) > ?
            UNION ALL
            SELECT id FROM horarios_bloqueados WHERE colaborador_id = ? AND data_hora_ini < ? AND data_hora_fim > ?`,
@@ -625,4 +710,4 @@ async function listarClientesProfissional(req, res) {
   }
 }
 
-module.exports = { criar, listarCliente, listarBarbeiro, cancelar, concluir, bloquearHorario, preverBloqueio, bloquearRecorrente, removerBloqueio, listarBloqueios, clientesAtivos, listarClientesProfissional };
+module.exports = { criar, listarCliente, listarBarbeiro, cancelar, concluir, atualizarStatusOperacional, bloquearHorario, preverBloqueio, bloquearRecorrente, removerBloqueio, listarBloqueios, clientesAtivos, listarClientesProfissional };
