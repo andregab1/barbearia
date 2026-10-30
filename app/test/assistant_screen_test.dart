@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:getcutt/core/services/barbearia_theme_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:getcutt/features/agendamento/controllers/agendamento_controller.dart';
 import 'package:getcutt/features/agendamento/screens/assistente_agendamento_screen.dart';
 
@@ -24,10 +26,16 @@ void main() {
   });
   testWidgets('proposal requires explicit confirmation and refreshes agenda',
       (tester) async {
+    SharedPreferences.setMockInitialValues({});
     final appointments = FakeAppointments();
     int confirmations = 0;
-    await tester.pumpWidget(ChangeNotifierProvider<AgendamentoController>.value(
-        value: appointments,
+    await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AgendamentoController>.value(
+              value: appointments),
+          ChangeNotifierProvider<BarbeariaThemeService>(
+              create: (_) => BarbeariaThemeService()),
+        ],
         child: MaterialApp(home: Scaffold(body: AssistenteAgendamentoScreen(
           request: (path, body) async {
             if (path.endsWith('confirmar')) {
