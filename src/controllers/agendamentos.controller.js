@@ -5,6 +5,7 @@
 const { pool } = require('../config/database');
 const { obterColaboradorAcessivel } = require('../utils/access');
 const { createForecast, completeAppointment } = require('../services/financial.service');
+const commissionService = require('../services/commission.service');
 const { parseLocal, formatLocal } = require('../services/appointment-availability.service');
 
 // ==========================================
@@ -134,6 +135,13 @@ async function criar(req, res) {
       valor_cobrado: valorFinal,
       data_hora: dataHoraStr,
     }, cliente_id);
+    if (typeof commissionService.reconcileAppointment === 'function') {
+      await commissionService.reconcileAppointment(connection, {
+        tenantId: servicos[0].barbearia_id,
+        appointmentId: result.insertId,
+        actorId: cliente_id,
+      });
+    }
     await connection.query(
       `INSERT INTO notificacoes (usuario_id, agendamento_id, tipo, titulo, mensagem, agendada_para)
        VALUES (?, ?, 'confirmacao', 'Agendamento confirmado!', 'Seu horário foi reservado com sucesso.', NOW())`,
@@ -306,6 +314,11 @@ async function cancelar(req, res) {
     }
 
     await connection.query(
+      "UPDATE commission_entitlements SET status = 'reversed' WHERE barbearia_id = ? AND agendamento_id = ? AND status IN ('pending_rule', 'open')",
+      [ag.barbearia_id, id],
+    );
+
+    await connection.query(
       `INSERT INTO notificacoes (usuario_id, agendamento_id, tipo, titulo, mensagem, agendada_para)
        VALUES (?, ?, 'cancelamento', 'Agendamento cancelado',
                'Seu agendamento foi cancelado.', NOW())`,
@@ -431,6 +444,12 @@ async function atualizarStatusOperacional(req, res) {
       `UPDATE agendamentos SET status = ?, atualizado_em = NOW()${transicao.campo ? ', ' + transicao.campo : ''} WHERE id = ? AND status IN (?)`,
       [transicao.para, id, transicao.de],
     );
+    if (transicao.para === 'nao_compareceu') {
+      await pool.query(
+        "UPDATE commission_entitlements SET status = 'reversed' WHERE barbearia_id = ? AND agendamento_id = ? AND status IN ('pending_rule', 'open')",
+        [colaborador.barbearia_id, id],
+      );
+    }
     if (updated.affectedRows !== 1) return res.status(409).json({ code: 'APPOINTMENT_STATE_CONFLICT', erro: 'O atendimento já foi atualizado.' });
     return res.json({ mensagem: 'Status atualizado com sucesso.', status: transicao.para });
   } catch (err) {

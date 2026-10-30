@@ -4,6 +4,8 @@ const { tenantContext, requireCapability } = require('../middlewares/capabilitie
 const controller = require('../controllers/fiscal.controller');
 
 router.use(autenticar, tenantContext);
+// * CONSULTAR/EDITAR: configuracao fiscal e documentos sempre ficam isolados
+// * pelo tenant; emitir documento e uma escrita protegida por capability.
 router.get('/settings', requireCapability('fiscal.read'), controller.getSettings);
 router.put('/settings', requireCapability('fiscal.issue'), controller.updateSettings);
 router.get('/documents', requireCapability('fiscal.read'), controller.documents);

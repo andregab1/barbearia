@@ -1,10 +1,11 @@
 // ==========================================
 // MAIN: Entrada principal do app
-// RF04 - Tema dinÃ¢mico sem recriar o router
+// RF04 - Tema dinâmico sem recriar o router
 // ==========================================
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -23,6 +24,7 @@ import 'web/sphere_helper_stub.dart'
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) usePathUrlStrategy();
   GoogleFonts.config.allowRuntimeFetching = false;
   _disableDebugPaintOverlays();
   await initializeDateFormatting('pt_BR');

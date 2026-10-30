@@ -1,4 +1,8 @@
+// * Camada de partida dobrada. Toda conta e lancamento recebe barbearia_id;
+// * o mesmo evento financeiro pode ser consultado depois sem recalcular o fato.
 async function ensureAccount(connection, tenantId, code, name, nature) {
+  // * ADICIONAR/REUTILIZAR: cria a conta padrao se ainda nao existir e retorna
+  // * o ID do tenant, evitando que um lancamento aponte para outra barbearia.
   await connection.query(
     `INSERT IGNORE INTO accounting_accounts (barbearia_id, codigo, nome, natureza) VALUES (?, ?, ?, ?)`,
     [tenantId, code, name, nature],
@@ -10,6 +14,8 @@ async function ensureAccount(connection, tenantId, code, name, nature) {
   return row.id;
 }
 
+// * ADICIONAR: grava cabecalho e linhas de debito/credito dentro da conexao da
+// * transacao chamadora. ON DUPLICATE KEY torna o comando idempotente.
 async function postEntry(connection, { tenantId, actorId, financialTransactionId, sourceType, sourceId, description, competenceDate, debit, credit, amount }) {
   const debitId = await ensureAccount(connection, tenantId, debit.code, debit.name, debit.nature);
   const creditId = await ensureAccount(connection, tenantId, credit.code, credit.name, credit.nature);

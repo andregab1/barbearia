@@ -1,3 +1,5 @@
+// * Controller de comissoes: separa leitura, regras, aprovacao e pagamento.
+// * Cada comando envia tenantId e actorId ao service para validar o escopo.
 const service = require('../services/commission.service');
 const reportService = require('../services/commission-report.service');
 const adjustmentService = require('../services/commission-adjustment.service');

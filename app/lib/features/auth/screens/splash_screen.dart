@@ -83,8 +83,8 @@ class _SplashScreenState extends State<SplashScreen>
                       showMark: false,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 20),
+                  SizedBox(height: 8),
                   Text(
                     'Gestão profissional para sua barbearia',
                     style: GoogleFonts.inter(
@@ -93,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
                       letterSpacing: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 52),
+                  SizedBox(height: 52),
                   SizedBox(
                     width: 28,
                     height: 28,

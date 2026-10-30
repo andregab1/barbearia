@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/services/api_service.dart';
+import '../../../shared/layout/responsive.dart';
 import '../../../shared/widgets/premium_ui.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
 import '../controllers/admin_controller.dart';
 
 class AgendaAdminScreen extends StatefulWidget {
@@ -19,14 +21,21 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
   final Map<int, Map<String, dynamic>> _agendas = {};
   int? _barbeiroFiltro;
   int? _servicoFiltro;
+  late DateTime _dataInicioFiltro;
+  late DateTime _dataFimFiltro;
   String _erro = '';
   bool _carregando = false;
 
   @override
   void initState() {
     super.initState();
+    final hoje = _dia(DateTime.now());
+    _dataInicioFiltro = hoje;
+    _dataFimFiltro = hoje.add(const Duration(days: 29));
     WidgetsBinding.instance.addPostFrameCallback((_) => _carregarAgendas());
   }
+
+  DateTime _dia(DateTime value) => DateTime(value.year, value.month, value.day);
 
   Future<void> _carregarAgendas() async {
     if (!mounted) return;
@@ -54,7 +63,10 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
           'erro': 'ID inválido',
         };
       }
-      final resultado = await ApiService.get('/agenda/dashboard/$id');
+      final from = DateFormat('yyyy-MM-dd').format(_dataInicioFiltro);
+      final to = DateFormat('yyyy-MM-dd').format(_dataFimFiltro);
+      final resultado = await ApiService.get(
+          '/agenda/dashboard/$id?from=$from&to=$to');
       final agendamentos = resultado['upcomingAppointments'] is List
           ? (resultado['upcomingAppointments'] as List)
               .map((item) => Map<String, dynamic>.from(item))
@@ -94,6 +106,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
       Map<String, dynamic> agenda) {
     final agendamentos = (agenda['agendamentos'] as List? ?? const [])
         .map((item) => Map<String, dynamic>.from(item))
+        .where(_filtraPeriodo)
         .where(_filtraServico)
         .toList();
     agendamentos.sort((a, b) {
@@ -109,6 +122,31 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
     if (_servicoFiltro == null) return true;
     final id = int.tryParse(agendamento['servico_id']?.toString() ?? '');
     return id == _servicoFiltro;
+  }
+
+  bool _filtraPeriodo(Map<String, dynamic> agendamento) {
+    final data = _parseDate(agendamento['data_hora']);
+    if (data == null) return false;
+    final dia = _dia(data);
+    return !dia.isBefore(_dataInicioFiltro) && !dia.isAfter(_dataFimFiltro);
+  }
+
+  Future<void> _selecionarPeriodo(BuildContext anchorContext) async {
+    final hoje = _dia(DateTime.now());
+    final escolhido = await showGetCuttDateRangePickerPopover(
+      context: anchorContext,
+      initialStart: _dataInicioFiltro,
+      initialEnd: _dataFimFiltro,
+      firstDate: hoje,
+      lastDate: DateTime(2100),
+      title: 'Filtrar agenda por periodo',
+    );
+    if (escolhido == null || !mounted) return;
+    setState(() {
+      _dataInicioFiltro = _dia(escolhido.start);
+      _dataFimFiltro = _dia(escolhido.end);
+    });
+    await _carregarAgendas();
   }
 
   DateTime? _parseDate(dynamic value) {
@@ -174,14 +212,14 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
       actions: [
         OutlinedButton.icon(
           onPressed: _carregando ? null : _carregarAgendas,
-          icon: const Icon(Icons.refresh, size: 17),
-          label: const Text('Atualizar'),
+          icon: Icon(Icons.refresh, size: 17),
+          label: Text('Atualizar'),
         ),
       ],
       child: Column(
         children: [
           _buildFilters(controller),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -192,7 +230,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Expanded(
             child: _carregando
                 ? const PremiumLoadingState(
@@ -216,7 +254,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                             : ListView.separated(
                                 itemCount: agendas.length,
                                 separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: 12),
                                 itemBuilder: (_, index) => _buildAgendaCard(
                                   agendas[index],
                                   controller,
@@ -235,16 +273,43 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
     final servicos =
         controller.servicos.where((servico) => servico['id'] != null).toList();
 
+    final compact = ResponsiveBreakpoints.isCompact(context);
+    final width = compact ? double.infinity : 290.0;
+
     return Wrap(
       spacing: 12,
       runSpacing: 12,
       children: [
+        SizedBox(
+          width: width,
+          child: Builder(
+            builder: (filterContext) => OutlinedButton.icon(
+              onPressed: () => _selecionarPeriodo(filterContext),
+              icon: Icon(Icons.date_range_outlined, size: 18),
+              label: Text(
+                '${DateFormat('dd/MM/yyyy').format(_dataInicioFiltro)} - '
+                '${DateFormat('dd/MM/yyyy').format(_dataFimFiltro)}',
+                overflow: TextOverflow.ellipsis,
+              ),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(56),
+                alignment: Alignment.centerLeft,
+                foregroundColor: PremiumColors.textPrimary,
+                backgroundColor: PremiumColors.surface,
+                side: BorderSide(color: PremiumColors.border),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+        ),
         _buildFilter<int>(
           label: 'Barbeiro',
           icon: Icons.person_outline,
           value: _barbeiroFiltro,
           items: [
-            const DropdownMenuItem<int>(
+            DropdownMenuItem<int>(
                 value: null, child: Text('Todos os barbeiros')),
             ...colaboradores.map((colaborador) => DropdownMenuItem<int>(
                   value: int.tryParse(colaborador['id'].toString()),
@@ -253,13 +318,14 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                 )),
           ],
           onChanged: (value) => setState(() => _barbeiroFiltro = value),
+          width: width,
         ),
         _buildFilter<int>(
           label: 'Serviço',
           icon: Icons.content_cut_outlined,
           value: _servicoFiltro,
           items: [
-            const DropdownMenuItem<int>(
+            DropdownMenuItem<int>(
                 value: null, child: Text('Todos os serviços')),
             ...servicos.map((servico) => DropdownMenuItem<int>(
                   value: int.tryParse(servico['id'].toString()),
@@ -267,6 +333,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                 )),
           ],
           onChanged: (value) => setState(() => _servicoFiltro = value),
+          width: width,
         ),
       ],
     );
@@ -278,9 +345,10 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
     required T? value,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    required double width,
   }) {
     return SizedBox(
-      width: 290,
+      width: width,
       child: DropdownButtonFormField<T>(
         initialValue: value,
         items: items,
@@ -293,11 +361,11 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
           fillColor: PremiumColors.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: PremiumColors.border),
+            borderSide: BorderSide(color: PremiumColors.border),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: PremiumColors.border),
+            borderSide: BorderSide(color: PremiumColors.border),
           ),
         ),
         dropdownColor: PremiumColors.surfaceSecondary,
@@ -318,7 +386,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
+            padding: EdgeInsets.fromLTRB(18, 16, 18, 12),
             child: Row(
               children: [
                 CircleAvatar(
@@ -332,7 +400,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     nome,
@@ -353,10 +421,10 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: PremiumColors.border),
+          Divider(height: 1, color: PremiumColors.border),
           if (erro.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.all(18),
+              padding: EdgeInsets.all(18),
               child: Text(
                 'Não foi possível carregar esta agenda.',
                 style:
@@ -365,7 +433,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
             )
           else if (agendamentos.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(18),
+              padding: EdgeInsets.all(18),
               child: Text(
                 'Nenhum atendimento nos próximos 30 dias para este filtro.',
                 style: GoogleFonts.inter(
@@ -393,11 +461,11 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
     final statusColor = _statusColor(status);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 13, 18, 13),
+      padding: EdgeInsets.fromLTRB(18, 13, 18, 13),
       decoration: BoxDecoration(
         border: last
             ? null
-            : const Border(bottom: BorderSide(color: PremiumColors.border)),
+            : Border(bottom: BorderSide(color: PremiumColors.border)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +481,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,7 +494,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
                   cliente,
                   style: GoogleFonts.inter(
@@ -437,12 +505,12 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: .12),
                   borderRadius: BorderRadius.circular(7),
@@ -456,7 +524,7 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5),
               Text(
                 premiumCurrency(appointment['valor_cobrado']),
                 style: GoogleFonts.inter(

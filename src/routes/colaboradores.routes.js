@@ -13,7 +13,9 @@ router.get('/gerenciar/:barbearia_id', autenticar, autorizar('admin'), listarGer
 // Público — clientes podem ver os profissionais
 router.get('/:barbearia_id',          listar);
 
+// * ADICIONAR: vincula um usuario como colaborador do tenant.
 router.post('/:barbearia_id',         autenticar, autorizar('admin'), cadastrar);
+// * EDITAR: dados, status ativo/inativo e exclusao do vinculo.
 router.put('/:id',                    autenticar, autorizar('admin'), atualizar);
 router.patch('/:id/status',           autenticar, autorizar('admin'), alterarStatus);
 router.delete('/:id',                 autenticar, autorizar('admin'), remover);

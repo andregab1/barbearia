@@ -6,6 +6,8 @@ const router = require('express').Router();
 const { autenticar, autorizar } = require('../middlewares/auth.middleware');
 const { horariosdisponiveis, historico, dashboard } = require('../controllers/agenda.controller');
 
+// * CONSULTAR: disponibilidade, historico e dashboard; nenhuma dessas rotas
+// * cria ou remove horario por conta propria.
 // Sem acento para evitar problemas de encoding na URL
 router.get('/disponiveis/:colaborador_id', autenticar, horariosdisponiveis);
 router.get('/historico/:cliente_id',       autenticar, historico);

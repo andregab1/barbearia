@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/services/api_service.dart';
 
+// * Estado da area financeira no Flutter. Este controller concentra consultas
+// * e comandos HTTP; a API continua responsavel por tenant, permissoes,
+// * transacoes e idempotencia.
 enum FinancialArea {
   serviceReceipts,
   overview,
@@ -13,6 +16,8 @@ enum FinancialArea {
 
 class FinancialController extends ChangeNotifier {
   int _commandSequence = 0;
+  bool _periodWasSelected = false;
+  bool _commissionPeriodInitialized = false;
   FinancialArea area = FinancialArea.overview;
   DateTime from = DateTime(DateTime.now().year, DateTime.now().month, 1);
   DateTime to = DateTime.now();
@@ -40,7 +45,6 @@ class FinancialController extends ChangeNotifier {
   List<Map<String, dynamic>> commissionProfessionals = [];
   Map<String, dynamic> commissionBoardTotals = {};
   Map<String, dynamic> commissionPagination = {};
-  Map<String, dynamic> commissionApprovalSettings = {};
   List<Map<String, dynamic>> commissionHistory = [];
 
   String _date(DateTime value) =>
@@ -60,11 +64,20 @@ class FinancialController extends ChangeNotifier {
 
   Future<void> setArea(FinancialArea value) async {
     area = value;
+    if (value == FinancialArea.commissions &&
+        !_periodWasSelected &&
+        !_commissionPeriodInitialized) {
+      final now = DateTime.now();
+      from = DateTime(now.year, now.month, 1);
+      to = DateTime(now.year, now.month + 1, 0);
+      _commissionPeriodInitialized = true;
+    }
     notifyListeners();
     await loadCurrent();
   }
 
   Future<void> setPeriod(DateTime start, DateTime end) async {
+    _periodWasSelected = true;
     from = start;
     to = end;
     await loadCurrent();
@@ -189,6 +202,7 @@ class FinancialController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // * CONSULTAR: carrega o quadro de comissoes e seus totais derivados.
   Future<void> loadCommissionBoard({
     String search = '',
     String? status,
@@ -221,10 +235,6 @@ class FinancialController extends ChangeNotifier {
     commissionPagination = response['pagination'] is Map
         ? Map<String, dynamic>.from(response['pagination'])
         : {};
-    final settings = await ApiService.get('/finance/commissions/settings');
-    if (settings['data'] is Map) {
-      commissionApprovalSettings = Map<String, dynamic>.from(settings['data']);
-    }
   }
 
   Future<Map<String, dynamic>?> loadCommissionProfessionalDetails(
@@ -255,6 +265,8 @@ class FinancialController extends ChangeNotifier {
         : null;
   }
 
+  // * EDITAR ESTADO: pagamentos usam Idempotency-Key; repetir o clique nao
+  // * deve criar um segundo pagamento.
   Future<Map<String, dynamic>?> payCommissionBatch(Map<String, dynamic> body,
       {String? idempotencyKey}) async {
     final response = await ApiService.post(
@@ -270,31 +282,6 @@ class FinancialController extends ChangeNotifier {
     return response['data'] is Map
         ? Map<String, dynamic>.from(response['data'])
         : {};
-  }
-
-  Future<String?> approveCommissions(List<int> ids) async {
-    final response = await ApiService.post(
-        '/finance/commissions/approvals', {'commissionIds': ids},
-        extraHeaders: {'Idempotency-Key': _key('commission-approval')});
-    if (response['erro'] != null) return response['erro'].toString();
-    await loadCommissionBoard();
-    return null;
-  }
-
-  Future<String?> saveCommissionApprovalSettings(String mode) async {
-    final version =
-        int.tryParse(commissionApprovalSettings['version']?.toString() ?? '') ??
-            1;
-    final response = await ApiService.patch('/finance/commissions/settings', {
-      'approvalMode': mode,
-      'expectedVersion': version,
-    });
-    if (response['erro'] != null) return response['erro'].toString();
-    if (response['data'] is Map) {
-      commissionApprovalSettings = Map<String, dynamic>.from(response['data']);
-    }
-    notifyListeners();
-    return null;
   }
 
   Future<void> loadCommissionHistory() async {
@@ -333,6 +320,7 @@ class FinancialController extends ChangeNotifier {
     }
   }
 
+  // * ADICIONAR: despesas, regras, rascunhos, ajustes e categorias.
   Future<String?> createExpense(Map<String, dynamic> body) =>
       _command('/finance/expenses', body);
   Future<String?> createCommissionRule(Map<String, dynamic> body) =>
@@ -418,6 +406,8 @@ class FinancialController extends ChangeNotifier {
     }
   }
 
+  // * ADICIONAR/EDITAR: fechamento, pagamento, adiantamento e ajustes de
+  // * comissao; reversal e cancelamento sao compensacoes auditaveis.
   Future<String?> createCommissionSettlement(Map<String, dynamic> body) =>
       _command('/finance/commissions/settlements', body,
           key: _key('commission-settlement'));

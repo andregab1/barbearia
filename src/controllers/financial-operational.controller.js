@@ -1,6 +1,8 @@
 const service = require('../services/financial-operational.service');
 const { errorBody } = require('../middlewares/request.middleware');
 
+// * Este controller traduz HTTP em comandos do dominio financeiro. Ele passa
+// * tenantId e actorId ao service, preservando autorizacao, auditoria e erros.
 const MESSAGES = {
   VALIDATION_ERROR: 'Revise os campos informados.', INVALID_RELATION: 'Categoria, conta ou responsavel invalido.',
   INVALID_ACCOUNT: 'A conta financeira nao pertence a esta barbearia.', EXPENSE_NOT_FOUND: 'Despesa nao encontrada.',
@@ -11,6 +13,8 @@ const MESSAGES = {
 };
 
 function sendResult(req, res, result, successMessage) {
+  // * Todas as operacoes de escrita passam por esta resposta padronizada:
+  // * erros de negocio viram status/codigo seguro e sucesso inclui requestId.
   if (result.status >= 400) {
     const message = result.code === 'FULL_PAYMENT_REQUIRED' && result.outstanding
       ? `${MESSAGES[result.code]} Saldo: R$ ${result.outstanding}.` : (MESSAGES[result.code] || 'Nao foi possivel concluir a operacao.');
@@ -19,16 +23,26 @@ function sendResult(req, res, result, successMessage) {
   return res.status(result.status).json({ data: result, message: successMessage, requestId: req.requestId });
 }
 
+// * CONSULTAR: dashboard, movimentacoes, despesas, recebiveis e metadados.
 async function dashboard(req, res, next) { try { return res.json({ data: await service.getDashboard(req.tenant.id, req.query), requestId: req.requestId }); } catch (e) { return next(e); } }
 async function movements(req, res, next) { try { const result = await service.listMovements(req.tenant.id, req.query); return res.json({ data: result.rows || result, pagination: result.pagination, requestId: req.requestId }); } catch (e) { return next(e); } }
 async function movement(req, res, next) { try { const data = await service.movementDetail(req.tenant.id, Number(req.params.id)); return data ? res.json({ data, requestId: req.requestId }) : res.status(404).json(errorBody(req, 'MOVEMENT_NOT_FOUND', 'Movimentacao nao encontrada.')); } catch (e) { return next(e); } }
 async function expenses(req, res, next) { try { const result = await service.listExpenses(req.tenant.id, req.query); return res.json({ data: result.rows, summary: result.summary, pagination: result.pagination, requestId: req.requestId }); } catch (e) { return next(e); } }
+
+// * ADICIONAR/EDITAR: cria ou altera somente despesas que o service considera
+// * validas e pertencentes ao tenant da sessao.
 async function createExpense(req, res, next) { try { return sendResult(req, res, await service.createExpense({ tenantId: req.tenant.id, actorId: req.usuario.id, data: req.body, requestId: req.requestId }), 'Despesa cadastrada com sucesso.'); } catch (e) { return next(e); } }
 async function updateExpense(req, res, next) { try { return sendResult(req, res, await service.updateExpense({ tenantId: req.tenant.id, actorId: req.usuario.id, expenseId: Number(req.params.id), data: req.body, requestId: req.requestId }), 'Despesa atualizada com sucesso.'); } catch (e) { return next(e); } }
+
+// * EDITAR ESTADO: pagar e cancelar sao comandos financeiros auditaveis;
+// * nao removem a despesa fisicamente e aceitam idempotency-key quando aplicavel.
 async function payExpense(req, res, next) { try { return sendResult(req, res, await service.payExpense({ tenantId: req.tenant.id, actorId: req.usuario.id, expenseId: Number(req.params.id), accountId: req.body.account_id, paidAt: req.body.paid_at, idempotencyKey: req.headers['x-idempotency-key'], requestId: req.requestId }), 'Despesa paga com sucesso.'); } catch (e) { return next(e); } }
 async function payExpenses(req, res, next) { try { return sendResult(req, res, await service.payExpenses({ tenantId: req.tenant.id, actorId: req.usuario.id, expenseIds: req.body.expense_ids, accountId: req.body.account_id, paidAt: req.body.paid_at, idempotencyKey: req.headers['x-idempotency-key'], requestId: req.requestId }), 'Despesas pagas com sucesso.'); } catch (e) { return next(e); } }
 async function cancelExpense(req, res, next) { try { return sendResult(req, res, await service.cancelExpense({ tenantId: req.tenant.id, actorId: req.usuario.id, expenseId: Number(req.params.id), reason: req.body.reason, requestId: req.requestId }), 'Despesa cancelada com sucesso.'); } catch (e) { return next(e); } }
 async function cancelExpenses(req, res, next) { try { return sendResult(req, res, await service.cancelExpenses({ tenantId: req.tenant.id, actorId: req.usuario.id, expenseIds: req.body.expense_ids, reason: req.body.reason, requestId: req.requestId }), 'Despesas canceladas com sucesso.'); } catch (e) { return next(e); } }
+
+// * ADICIONAR/EDITAR: pagamento de recebivel cria o movimento; estorno
+// * compensa o pagamento original sem apagar seu historico.
 async function receivables(req, res, next) { try { const result = await service.listReceivables(req.tenant.id, req.query); return res.json({ data: result.rows, pagination: result.pagination, requestId: req.requestId }); } catch (e) { return next(e); } }
 async function payment(req, res, next) { try { return sendResult(req, res, await service.registerPayment({ tenantId: req.tenant.id, actorId: req.usuario.id, appointmentId: Number(req.params.appointmentId), data: req.body, idempotencyKey: req.headers['x-idempotency-key'], requestId: req.requestId }), 'Pagamento registrado com sucesso.'); } catch (e) { return next(e); } }
 async function refund(req, res, next) { try { return sendResult(req, res, await service.refundPayment({ tenantId: req.tenant.id, actorId: req.usuario.id, paymentId: Number(req.params.paymentId), data: req.body, idempotencyKey: req.headers['x-idempotency-key'], requestId: req.requestId }), 'Estorno registrado com sucesso.'); } catch (e) { return next(e); } }

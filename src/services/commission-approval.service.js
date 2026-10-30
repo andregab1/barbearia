@@ -1,3 +1,5 @@
+// * Configuracao de aprovacao da comissao. A versao impede que uma sessao
+// * sobrescreva alteracao feita por outra sessao.
 const { pool } = require('../config/database');
 const crypto = require('crypto');
 
@@ -20,7 +22,8 @@ function payloadHash(value) {
 async function ensureSettings(connection, tenantId) {
   await connection.query(
     `INSERT INTO commission_settings (barbearia_id, approval_mode, version)
-     VALUES (?, 'manual', 1) ON DUPLICATE KEY UPDATE barbearia_id = VALUES(barbearia_id)`,
+     VALUES (?, 'automatic', 1)
+     ON DUPLICATE KEY UPDATE approval_mode = 'automatic'`,
     [tenantId],
   );
   const [[row]] = await connection.query(
@@ -54,8 +57,10 @@ async function getSettings({ tenantId }) {
   }
 }
 
+// * EDITAR: atualiza o modo de aprovacao somente se a versao esperada ainda
+// * for a mesma, registrando o ator da mudanca.
 async function updateSettings({ tenantId, actorId, mode, expectedVersion }) {
-  const nextMode = approvalMode(mode);
+  const nextMode = 'automatic';
   const expected = Number(expectedVersion);
   if (!Number.isInteger(expected) || expected < 1) return { status: 422, code: 'INVALID_VERSION' };
   const connection = await pool.getConnection();

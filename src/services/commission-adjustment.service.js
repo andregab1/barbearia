@@ -1,3 +1,5 @@
+// * Ajustes sao eventos compensatorios auditaveis; nao editam o lancamento
+// * original e exigem idempotency-key para evitar duplicacao.
 const { pool } = require('../config/database');
 
 function parseSignedAmount(value) {
@@ -16,6 +18,7 @@ function decimal(cents) {
   return `${sign}${absolute / 100n}.${(absolute % 100n).toString().padStart(2, '0')}`;
 }
 
+// * ADICIONAR: cria ajuste positivo/negativo validando o entitlement do tenant.
 async function createAdjustment({ tenantId, actorId, entitlementId, amount, reason, idempotencyKey, effectiveAt }) {
   const entitlement = Number.parseInt(entitlementId, 10);
   const signedAmount = parseSignedAmount(amount);

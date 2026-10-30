@@ -61,7 +61,7 @@ class _LandingScreenState extends State<LandingScreen> {
       body: Stack(
         children: [
           if (kIsWeb)
-            const Positioned.fill(
+            Positioned.fill(
               child: HtmlElementView(viewType: 'sphere-container'),
             )
           else
@@ -123,11 +123,11 @@ class _LandingScreenState extends State<LandingScreen> {
                   () => _scrollController.animateTo(0,
                       duration: const Duration(milliseconds: 650),
                       curve: Curves.easeOutCubic)),
-              const SizedBox(width: 32),
+              SizedBox(width: 32),
               _navLink('Serviços', () => _scrollTo(_servicesKey)),
-              const SizedBox(width: 32),
+              SizedBox(width: 32),
               _navLink('Sobre', () => _scrollTo(_aboutKey)),
-              const SizedBox(width: 32),
+              SizedBox(width: 32),
               _navLink('Contato', () => _scrollTo(_contactKey)),
             ]),
             // Botão Login
@@ -139,7 +139,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -174,7 +174,7 @@ class _LandingScreenState extends State<LandingScreen> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 10),
           child: Text(text,
               style: GoogleFonts.inter(
                 color: AppTheme.textMuted,
@@ -193,7 +193,7 @@ class _LandingScreenState extends State<LandingScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= 900;
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 600),
+      constraints: BoxConstraints(minHeight: 600),
       color: Colors.transparent,
       child: Stack(
         children: [
@@ -202,7 +202,7 @@ class _LandingScreenState extends State<LandingScreen> {
           Align(
             alignment: Alignment.centerLeft,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
+              constraints: BoxConstraints(maxWidth: 700),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     isDesktop ? 96 : 24, 80, isDesktop ? 48 : 24, 80),
@@ -210,14 +210,14 @@ class _LandingScreenState extends State<LandingScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Ícone
+                    // Ãcone
                     Text('GESTÃO INTELIGENTE PARA BARBEARIAS',
                         style: GoogleFonts.inter(
                             color: cor,
                             fontSize: isDesktop ? 15 : 12,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5)),
-                    const SizedBox(height: 26),
+                    SizedBox(height: 26),
                     // Título
                     // Subtítulo
                     Text('Sua barbearia,\ndo seu jeito.',
@@ -228,7 +228,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             height: 1.04,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -2.0)),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     // Descrição
                     Text(
                         'Gerencie agendamentos, serviços, horários e equipe de forma simples e eficiente.',
@@ -238,22 +238,22 @@ class _LandingScreenState extends State<LandingScreen> {
                             fontSize: isDesktop ? 18 : 16,
                             fontWeight: FontWeight.w400,
                             height: 1.6)),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40),
                     // Botão CTA
                     ElevatedButton(
                       onPressed: () => context.go(AppConstants.routeCadastro),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cor,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: 36, vertical: 18),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
                       ),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.add, size: 20),
-                        const SizedBox(width: 10),
+                        Icon(Icons.add, size: 20),
+                        SizedBox(width: 10),
                         Text('AGENDAR AGORA',
                             style: GoogleFonts.inter(
                                 fontSize: 15,
@@ -261,7 +261,21 @@ class _LandingScreenState extends State<LandingScreen> {
                                 letterSpacing: 1.0)),
                       ]),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => context.go('/barbearias'),
+                      icon: Icon(Icons.storefront_outlined, size: 18),
+                      label: Text('ENCONTRAR UMA BARBEARIA'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: cor,
+                        side: BorderSide(color: cor.withValues(alpha: .65)),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                    SizedBox(height: 16),
                     // Link login
                     TextButton(
                       onPressed: () => context.go(AppConstants.routeLogin),
@@ -311,13 +325,13 @@ class _LandingScreenState extends State<LandingScreen> {
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text('Tudo que você precisa em um só lugar.',
               style: GoogleFonts.inter(
                   color: AppTheme.textMuted,
                   fontSize: 15,
                   fontWeight: FontWeight.w400)),
-          const SizedBox(height: 48),
+          SizedBox(height: 48),
           // Cards
           Wrap(
             spacing: 20,
@@ -353,7 +367,7 @@ class _LandingScreenState extends State<LandingScreen> {
               fontSize: 12,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5)),
-      const SizedBox(height: 16),
+      SizedBox(height: 16),
       Text('A operação da barbearia em um único lugar.',
           style: GoogleFonts.inter(
               color: AppTheme.text,
@@ -361,7 +375,7 @@ class _LandingScreenState extends State<LandingScreen> {
               height: 1.15,
               fontWeight: FontWeight.w800,
               letterSpacing: -1)),
-      const SizedBox(height: 18),
+      SizedBox(height: 18),
       Text(
           'O GetCutt conecta proprietários, profissionais e clientes. Agenda, equipe, serviços e resultados compartilham os mesmos dados, reduzindo tarefas manuais e conflitos de horário.',
           style: GoogleFonts.inter(
@@ -387,16 +401,16 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: BoxConstraints(maxWidth: 1120),
           child: desktop
               ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(flex: 5, child: copy),
-                  const SizedBox(width: 72),
+                  SizedBox(width: 72),
                   Expanded(flex: 4, child: metrics),
                 ])
               : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   copy,
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   metrics,
                 ]),
         ),
@@ -407,7 +421,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _aboutMetric(Color cor, String value, String label) => Container(
         width: 190,
         height: 112,
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: AppTheme.surfaceElev,
           borderRadius: BorderRadius.circular(14),
@@ -417,7 +431,7 @@ class _LandingScreenState extends State<LandingScreen> {
           Text(value,
               style: GoogleFonts.inter(
                   color: cor, fontSize: 20, fontWeight: FontWeight.w800)),
-          const Spacer(),
+          Spacer(),
           Text(label,
               style: GoogleFonts.inter(
                   color: AppTheme.textMuted, fontSize: 12, height: 1.3)),
@@ -433,7 +447,7 @@ class _LandingScreenState extends State<LandingScreen> {
           horizontal: desktop ? 96 : 24, vertical: desktop ? 88 : 64),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: BoxConstraints(maxWidth: 1120),
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(desktop ? 42 : 24),
@@ -458,7 +472,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                 color: AppTheme.text,
                                 fontSize: desktop ? 28 : 23,
                                 fontWeight: FontWeight.w800)),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         Text(
                             'Crie sua conta de teste ou fale com nossa equipe pelo e-mail contato@getcutt.com.br.',
                             style: GoogleFonts.inter(
@@ -469,8 +483,8 @@ class _LandingScreenState extends State<LandingScreen> {
                 ),
                 ElevatedButton.icon(
                   onPressed: () => context.go(AppConstants.routeCadastro),
-                  icon: const Icon(Icons.arrow_forward_rounded),
-                  label: const Text('COMEÇAR AGORA'),
+                  icon: Icon(Icons.arrow_forward_rounded),
+                  label: Text('COMEÇAR AGORA'),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: cor,
                       foregroundColor: AppTheme.black,
@@ -487,7 +501,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _featureCard(Color cor, IconData icone, String titulo, String desc) {
     return Container(
       width: 320,
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: AppTheme.surfaceElev,
         borderRadius: BorderRadius.circular(16),
@@ -505,13 +519,13 @@ class _LandingScreenState extends State<LandingScreen> {
             ),
             child: Icon(icone, size: 24, color: cor),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Text(titulo,
               style: GoogleFonts.inter(
                   color: AppTheme.text,
                   fontSize: 17,
                   fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(desc,
               style: GoogleFonts.inter(
                   color: AppTheme.textMuted,
@@ -529,7 +543,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _buildFooter(BuildContext context, Color cor) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32),
       decoration: BoxDecoration(
         border: Border(
             top: BorderSide(color: AppTheme.border.withValues(alpha: 0.3))),

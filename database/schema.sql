@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS barbearias (
   nome VARCHAR(150) NOT NULL,
   slug VARCHAR(80) NULL,
   descricao TEXT NULL,
-  logo_url VARCHAR(500) NULL,
+  logo_url MEDIUMTEXT NULL,
   cor_primaria VARCHAR(7) DEFAULT '#1A1A1A',
   cor_secundaria VARCHAR(7) DEFAULT '#C9A84C',
   telefone VARCHAR(20) NULL,

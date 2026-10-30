@@ -190,12 +190,12 @@ class _HorariosScreenState extends State<HorariosScreen> {
       child: _carregandoHorarios
           ? Center(child: CircularProgressIndicator(color: primary))
           : SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 28),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _topBar(primary),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     LayoutBuilder(builder: (context, constraints) {
                       final wide = constraints.maxWidth >= 1080;
                       final bloqueio = BloquearHorarioScreen(
@@ -205,7 +205,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                       if (!wide) {
                         return Column(children: [
                           _weeklySchedule(primary),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           bloqueio,
                         ]);
                       }
@@ -213,12 +213,12 @@ class _HorariosScreenState extends State<HorariosScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(child: _weeklySchedule(primary)),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           SizedBox(width: 360, child: bloqueio),
                         ],
                       );
                     }),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     _models(primary),
                   ]),
             ),
@@ -236,18 +236,18 @@ class _HorariosScreenState extends State<HorariosScreen> {
             Container(
                 width: 285,
                 height: 58,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.symmetric(horizontal: 12),
                 decoration: _panel(),
                 child: Row(children: [
                   Text('Profissional', style: _muted(11)),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton<Map<String, dynamic>>(
                     isExpanded: true,
                     value: selected,
                     dropdownColor: AppTheme.surfaceElev,
-                    icon: const Icon(Icons.keyboard_arrow_down),
+                    icon: Icon(Icons.keyboard_arrow_down),
                     items: _colaboradores
                         .map((c) => DropdownMenuItem(
                             value: c,
@@ -262,7 +262,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                           : '${c['nome']}'[0].toUpperCase(),
                                       style: TextStyle(
                                           color: primary, fontSize: 11))),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               Expanded(
                                   child: Text('${c['nome']}',
                                       overflow: TextOverflow.ellipsis,
@@ -279,24 +279,24 @@ class _HorariosScreenState extends State<HorariosScreen> {
               OutlinedButton.icon(
                   onPressed: () => AppToast.show(
                       context, 'Cadastre o profissional na aba Equipe.'),
-                  icon: const Icon(Icons.person_add_alt_1, size: 16),
-                  label: const Text('Novo profissional')),
-            if (isAdmin) const SizedBox(width: 12),
+                  icon: Icon(Icons.person_add_alt_1, size: 16),
+                  label: Text('Novo profissional')),
+            if (isAdmin) SizedBox(width: 12),
             OutlinedButton.icon(
                 onPressed: _aplicarModelo,
-                icon: const Icon(Icons.save_alt_outlined, size: 16),
-                label: const Text('Aplicar modelo')),
-            const SizedBox(width: 8),
+                icon: Icon(Icons.save_alt_outlined, size: 16),
+                label: Text('Aplicar modelo')),
+            SizedBox(width: 8),
             FilledButton.icon(
                 onPressed: _salvando ? null : _salvar,
-                icon: const Icon(Icons.save_outlined, size: 16),
+                icon: Icon(Icons.save_outlined, size: 16),
                 label: Text(_salvando ? 'Salvando...' : 'Salvar alteracoes')),
           ]),
         ]);
   }
 
   Widget _weeklySchedule(Color primary) => Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: _panel(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
@@ -306,15 +306,15 @@ class _HorariosScreenState extends State<HorariosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                   Text('Agenda semanal', style: _strong(15)),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(
                       'Defina os dias e horarios de atendimento deste profissional.',
                       style: _muted(11))
                 ])),
-            const Icon(Icons.lightbulb_outline, size: 17)
+            Icon(Icons.lightbulb_outline, size: 17)
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         LayoutBuilder(builder: (context, constraints) {
           final compact = constraints.maxWidth < 880;
           return compact
@@ -322,7 +322,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   children: List.generate(
                       7,
                       (i) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
+                          padding: EdgeInsets.only(bottom: 8),
                           child: _dayCard(_dayOrder[i], _labels[i], primary))))
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,7 +340,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
     final active = _ativo[day] == true;
     final ranges = _ranges(day);
     return Container(
-        padding: const EdgeInsets.all(9),
+        padding: EdgeInsets.all(9),
         decoration: BoxDecoration(
             color: AppTheme.surface,
             borderRadius: BorderRadius.circular(8),
@@ -366,12 +366,12 @@ class _HorariosScreenState extends State<HorariosScreen> {
           ]),
           if (active)
             ...ranges.map((range) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
+                padding: EdgeInsets.only(bottom: 6),
                 child: InkWell(
                     onTap: () => _selecionarHora(day, range == ranges.first),
                     child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: 7, vertical: 6),
                         decoration: BoxDecoration(
                             border: Border.all(
@@ -409,7 +409,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
   }
 
   Widget _models(Color primary) => Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: _panel(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -418,7 +418,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Text('Modelos de agenda', style: _strong(15)),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
                     'Aplique um modelo padrão para configurar os horarios rapidamente.',
                     style: _muted(11))
@@ -431,7 +431,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                       fontWeight: FontWeight.w700,
                       fontSize: 11)))
         ]),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         LayoutBuilder(builder: (context, constraints) {
           final compact = constraints.maxWidth < 760;
           final cards = [
@@ -450,13 +450,13 @@ class _HorariosScreenState extends State<HorariosScreen> {
               ? Column(
                   children: cards
                       .map((e) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8), child: e))
+                          padding: EdgeInsets.only(bottom: 8), child: e))
                       .toList())
               : Row(
                   children: cards
                       .map((e) => Expanded(
                           child: Padding(
-                              padding: const EdgeInsets.only(right: 8),
+                              padding: EdgeInsets.only(right: 8),
                               child: e)))
                       .toList());
         }),
@@ -469,7 +469,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
         onTap: () => setState(() => _modelo = name),
         child: Container(
             height: 82,
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
                 color: selected
                     ? primary.withValues(alpha: .08)
@@ -487,7 +487,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                       color: primary.withValues(alpha: .12),
                       borderRadius: BorderRadius.circular(6)),
                   child: Icon(icon, color: primary, size: 20)),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,16 +497,16 @@ class _HorariosScreenState extends State<HorariosScreen> {
                       Expanded(child: Text(name, style: _strong(11))),
                       if (badge.isNotEmpty)
                         Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 3),
                             decoration: BoxDecoration(
                                 color: primary,
                                 borderRadius: BorderRadius.circular(8)),
                             child: Text(badge,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 8, fontWeight: FontWeight.w700)))
                     ]),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(description, maxLines: 2, style: _muted(9))
                   ])),
               Icon(

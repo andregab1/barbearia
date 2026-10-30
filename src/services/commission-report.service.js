@@ -1,3 +1,5 @@
+// * Relatorios de comissao. Sao leituras derivadas e preservam os filtros de
+// * periodo/profissional recebidos pelo controller.
 const { pool } = require('../config/database');
 
 function positiveId(value) {
@@ -45,12 +47,13 @@ function baseAmount(row) {
   return row.base === 'gross' ? numberValue(row.gross_amount) : numberValue(row.original_net_amount);
 }
 
+// * CONSULTAR: consolida calculado, liberado, pago e saldo pendente.
 async function overview({ tenantId, professionalId = null, from = null, to = null, ownProfessionalId = null }) {
   const period = normalizePeriod(from, to);
   if (!period) return { status: 422, code: 'INVALID_PERIOD' };
 
   const selectedProfessional = ownProfessionalId != null ? ownProfessionalId : positiveId(professionalId);
-  const entitlementWhere = ['ce.barbearia_id = ?', 'ce.completed_at >= ?', 'ce.completed_at < ?'];
+  const entitlementWhere = ['ce.barbearia_id = ?', "ce.status <> 'reversed'", 'ce.completed_at >= ?', 'ce.completed_at < ?'];
   const entitlementParams = [tenantId, `${period.from} 00:00:00`, `${period.to} 00:00:00`];
   const entryWhere = ['e.barbearia_id = ?', 'e.effective_at >= ?', 'e.effective_at < ?'];
   const entryParams = [tenantId, `${period.from} 00:00:00`, `${period.to} 00:00:00`];
@@ -165,7 +168,7 @@ async function statement({ tenantId, professionalId = null, from = null, to = nu
   if (!period) return { status: 422, code: 'INVALID_PERIOD' };
   const selectedProfessional = ownProfessionalId != null ? ownProfessionalId : positiveId(professionalId);
   const params = [tenantId, `${period.from} 00:00:00`, `${period.to} 00:00:00`];
-  const filters = ['ce.barbearia_id = ?', 'ce.completed_at >= ?', 'ce.completed_at < ?'];
+  const filters = ['ce.barbearia_id = ?', "ce.status <> 'reversed'", 'ce.completed_at >= ?', 'ce.completed_at < ?'];
   if (selectedProfessional != null) {
     filters.push('ce.profissional_id = ?');
     params.push(selectedProfessional);

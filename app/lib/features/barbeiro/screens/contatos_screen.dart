@@ -208,7 +208,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                           children: [
                             Icon(Icons.contacts_outlined,
                                 color: AppTheme.corTextoSecundario, size: 64),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Text(
                               kIsWeb
                                   ? 'Contatos disponíveis no aplicativo'
@@ -221,7 +221,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                               ),
                             ),
                             if (kIsWeb) ...[
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Text(
                                 'O acesso aos contatos do aparelho não está disponível na versão Web.',
                                 textAlign: TextAlign.center,
@@ -230,19 +230,19 @@ class _ContatosScreenState extends State<ContatosScreen> {
                                 ),
                               ),
                             ],
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24),
                             if (!kIsWeb)
                               Center(
                                 child: ElevatedButton(
                                   onPressed: _iniciar,
-                                  child: const Text('Permitir acesso'),
+                                  child: Text('Permitir acesso'),
                                 ),
                               ),
                           ]),
                     )
                   : Column(children: [
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16),
                         child: TextField(
                           controller: _buscaCtrl,
                           onChanged: _filtrar,
@@ -271,7 +271,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                             : ListView(children: [
                                 if (_ativos.isNotEmpty) ...[
                                   _sectionHeader(
-                                      '● Agendamento ativo (${_ativos.length})',
+                                      '? Agendamento ativo (${_ativos.length})',
                                       AppTheme.sucesso),
                                   ..._ativos.map(
                                       (c) => _contactTile(c, cor, ativo: true)),
@@ -290,11 +290,11 @@ class _ContatosScreenState extends State<ContatosScreen> {
 
   Widget _buildWebContacts(Color cor) => Column(children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 18),
+          padding: EdgeInsets.fromLTRB(4, 0, 4, 18),
           child: TextField(
             controller: _buscaCtrl,
             onChanged: _filtrar,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Buscar cliente por nome, telefone ou e-mail',
               prefixIcon: Icon(Icons.search_rounded),
             ),
@@ -312,7 +312,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                 )
               : ListView.separated(
                   itemCount: _clientesWebFiltrados.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, __) => SizedBox(height: 10),
                   itemBuilder: (_, index) =>
                       _webContactCard(_clientesWebFiltrados[index], cor),
                 ),
@@ -329,7 +329,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
     String formatar(DateTime data) =>
         '${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}';
     return PremiumSurface(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 15),
       color: PremiumColors.card,
       child: LayoutBuilder(builder: (context, constraints) {
         final compact = constraints.maxWidth < 620;
@@ -342,11 +342,11 @@ class _ContatosScreenState extends State<ContatosScreen> {
                   color: PremiumColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(telefone.isEmpty ? 'Telefone não cadastrado' : telefone,
               style: GoogleFonts.inter(
                   color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 5),
+          SizedBox(height: 5),
           Text(
               proximo != null
                   ? 'Próximo agendamento: ${formatar(proximo)}'
@@ -362,8 +362,8 @@ class _ContatosScreenState extends State<ContatosScreen> {
         final action = OutlinedButton.icon(
           onPressed:
               telefone.isEmpty ? null : () => _abrirWhatsAppNumero(telefone),
-          icon: const Icon(Icons.chat_outlined, size: 17),
-          label: const Text('WhatsApp'),
+          icon: Icon(Icons.chat_outlined, size: 17),
+          label: Text('WhatsApp'),
           style: OutlinedButton.styleFrom(
               foregroundColor: const Color(0xFF55C77A),
               minimumSize: const Size(126, 44)),
@@ -372,17 +372,17 @@ class _ContatosScreenState extends State<ContatosScreen> {
             ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   _contactAvatar(nome, cor, proximo != null),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(child: details),
                 ]),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 SizedBox(width: double.infinity, child: action),
               ])
             : Row(children: [
                 _contactAvatar(nome, cor, proximo != null),
-                const SizedBox(width: 14),
+                SizedBox(width: 14),
                 Expanded(child: details),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 action,
               ]);
       }),
@@ -416,7 +416,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
 
   Widget _sectionHeader(String label, Color cor) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Text(label,
           style: GoogleFonts.inter(
               color: AppTheme.corTextoSecundario,
@@ -468,7 +468,7 @@ class _ContatosScreenState extends State<ContatosScreen> {
                     color: AppTheme.corTextoSecundario, fontSize: 12))
             : null,
         trailing: IconButton(
-          icon: const Icon(Icons.chat, color: Color(0xFF25D366)),
+          icon: Icon(Icons.chat, color: Color(0xFF25D366)),
           onPressed: () => _abrirWhatsApp(c),
         ),
       ),

@@ -3,7 +3,6 @@
 // Layout dashboard moderno estilo website
 // ==========================================
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -255,7 +254,8 @@ class PersonalizacaoScreen extends StatefulWidget {
 }
 
 class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
-  File? _logoFile;
+  XFile? _logoFile;
+  Uint8List? _logoBytes;
   Color _corAtual = const Color(0xFFCA8A04);
   bool _salvando = false;
 
@@ -342,13 +342,29 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
   }
 
   Future<void> _selecionarLogo() async {
-    final picker = ImagePicker();
-    final imagem = await picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 25,
-        maxWidth: 200,
-        maxHeight: 200);
-    if (imagem != null) setState(() => _logoFile = File(imagem.path));
+    try {
+      final picker = ImagePicker();
+      final imagem = await picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 25,
+          maxWidth: 200,
+          maxHeight: 200);
+      if (imagem == null) return;
+
+      final bytes = await imagem.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _logoFile = imagem;
+        _logoBytes = bytes;
+      });
+    } catch (e) {
+      debugPrint('Falha ao selecionar logo: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Não foi possível carregar essa imagem.'),
+        backgroundColor: AppTheme.corErro,
+      ));
+    }
   }
 
   Future<void> _salvar() async {
@@ -357,6 +373,13 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(AppConstants.keyAccessToken) ?? '';
+      final barbeariaId = prefs.getInt(AppConstants.keyBarbeariaId);
+      if (barbeariaId == null || barbeariaId <= 0) {
+        messenger.showSnackBar(const SnackBar(
+            content: Text('Não foi possível identificar a barbearia.'),
+            backgroundColor: AppTheme.corErro));
+        return;
+      }
       final hex = _corParaHex(_corAtual);
 
       final Map<String, dynamic> body = {
@@ -366,13 +389,14 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
       if (_logoFile != null) {
         final bytes = await _logoFile!.readAsBytes();
         final b64 = base64Encode(bytes);
-        final ext = _logoFile!.path.split('.').last.toLowerCase();
+        final ext = _logoFile!.name.toLowerCase().split('.').last;
         final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
         body['logo_base64'] = 'data:$mime;base64,$b64';
       }
 
       final response = await http.patch(
-        Uri.parse('${AppConstants.baseUrl}/barbearias/1/personalizar'),
+        Uri.parse(
+            '${AppConstants.baseUrl}/barbearias/$barbeariaId/personalizar'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json'
@@ -395,7 +419,7 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
         await context.read<BarbeariaThemeService>().atualizarDireto(
             corPrimariaHex: hex,
             logoUrlServidor: data['logo_url'],
-            logoUrlLocal: _logoFile?.path);
+          );
         messenger.showSnackBar(const SnackBar(
             content: Text('Personalização salva!'),
             backgroundColor: AppTheme.corSucesso,
@@ -406,8 +430,10 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
             backgroundColor: AppTheme.corErro));
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(
-          content: Text('Erro: $e'), backgroundColor: AppTheme.corErro));
+      debugPrint('Falha ao salvar personalização: $e');
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Não foi possível salvar a personalização.'),
+          backgroundColor: AppTheme.corErro));
     } finally {
       if (mounted) setState(() => _salvando = false);
     }
@@ -457,8 +483,7 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
       title: 'Personalizar barbearia',
       subtitle:
           'Ajuste a identidade visual e visualize o resultado em tempo real.',
-      headingFontSize: 27,
-      horizontalPadding: 40,
+      headingFontSize: 28,
       padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
       child: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 32),
@@ -565,8 +590,8 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(11),
-                  child: _logoFile != null
-                      ? Image.file(_logoFile!, fit: BoxFit.cover)
+                  child: _logoBytes != null
+                      ? Image.memory(_logoBytes!, fit: BoxFit.cover)
                       : LogoWidget(
                           logoUrl: tema.logoUrl,
                           size: 120,
@@ -824,10 +849,10 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
                   border:
                       Border.all(color: cor.withValues(alpha: 0.4), width: 1.5),
                 ),
-                child: _logoFile != null
+                child: _logoBytes != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(7),
-                        child: Image.file(_logoFile!, fit: BoxFit.cover))
+                        child: Image.memory(_logoBytes!, fit: BoxFit.cover))
                     : Icon(Icons.content_cut, color: cor, size: 20),
               ),
               const SizedBox(width: 12),

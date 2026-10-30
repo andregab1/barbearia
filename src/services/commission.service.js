@@ -1,3 +1,5 @@
+// * Dominio de regras e lancamentos de comissao. As operacoes de escrita usam
+// * transacao, versao e auditoria para nao alterar historico silenciosamente.
 const { pool } = require('../config/database');
 const { parseCents } = require('./commission-calculator');
 const { getApprovalMode, shouldAutoApprove } = require('./commission-approval.service');
@@ -27,6 +29,8 @@ async function validateReferences(connection, tenantId, rule) {
   if (rule.professionalId != null) { const [[row]] = await connection.query('SELECT id FROM colaboradores WHERE id = ? AND barbearia_id = ? AND ativo = 1', [rule.professionalId, tenantId]); if (!row) return false; }
   if (rule.serviceId != null) { const [[row]] = await connection.query('SELECT id FROM servicos WHERE id = ? AND barbearia_id = ? AND ativo = 1', [rule.serviceId, tenantId]); if (!row) return false; } return true;
 }
+// * ADICIONAR: valida referencias, vigencia e sobreposicao antes de criar uma
+// * regra versionada para o tenant.
 async function createRule({ tenantId, actorId, data }) {
   const rule = normalizeRule(data); if (rule.error) return { status: 422, code: rule.error }; const connection = await pool.getConnection();
   try { await connection.beginTransaction(); if (!await validateReferences(connection, tenantId, rule)) { await connection.rollback(); return { status: 422, code: 'INVALID_RELATION' }; }
@@ -35,6 +39,7 @@ async function createRule({ tenantId, actorId, data }) {
     if (overlap.length) { await connection.rollback(); return { status: 409, code: 'COMMISSION_RULE_OVERLAP' }; }
     const lifecycle = rule.validFrom && rule.validFrom > new Date() ? 'scheduled' : 'active';
     const [result] = await connection.query('INSERT INTO commission_rules (nome, config_json, lifecycle, barbearia_id, profissional_id, servico_id, scope_key, tipo, valor, valor_bps, base, valido_de, valido_ate, versao, criado_por) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [rule.name, JSON.stringify(rule.config), lifecycle, tenantId, rule.professionalId, rule.serviceId, key, rule.type, rule.value, rule.valueBps, rule.base, rule.validFrom, rule.validUntil, version, actorId]);
+    await reconcileAppointmentsForRule(connection, { tenantId, actorId, rule });
     await connection.query("INSERT INTO audit_logs (barbearia_id, usuario_id, acao, recurso, recurso_id, detalhes) VALUES (?, ?, 'commission.rule.created', 'commission_rule', ?, JSON_OBJECT('scope', ?, 'version', ?))", [tenantId, actorId, String(result.insertId), key, version]); await connection.commit(); return { status: 201, id: result.insertId, version };
   } catch (error) { await connection.rollback().catch(() => {}); throw error; } finally { connection.release(); }
 }
@@ -52,7 +57,7 @@ async function getEntryDetail({ tenantId, entryId }) {
 }
 async function listEntries({ tenantId, professionalId = null, from = null, to = null, ownProfessionalId = null }) { const filters = ['e.barbearia_id = ?']; const params = [tenantId]; const selected = ownProfessionalId != null ? ownProfessionalId : professionalId; if (selected != null) { filters.push('e.profissional_id = ?'); params.push(selected); } if (from) { filters.push('e.effective_at >= ?'); params.push(from); } if (to) { filters.push('e.effective_at < ?'); params.push(to); } const sql = 'SELECT e.id, e.entitlement_id, e.profissional_id professional_id, e.agendamento_id appointment_id, e.payment_id, e.refund_id, e.kind, e.signed_amount amount, e.source_event_id, e.reason, e.effective_at, e.criado_em created_at, u.nome professional_name FROM commission_entries e JOIN colaboradores c ON c.id = e.profissional_id JOIN usuarios u ON u.id = c.usuario_id WHERE ' + filters.join(' AND ') + ' ORDER BY e.effective_at DESC, e.id DESC LIMIT 500'; const [rows] = await pool.query(sql, params); return rows; }
 async function summary({ tenantId, professionalId = null, ownProfessionalId = null }) { const selected = ownProfessionalId != null ? ownProfessionalId : professionalId; const params = [tenantId]; const filter = selected == null ? '' : ' AND e.profissional_id = ?'; if (selected != null) params.push(selected); const [rows] = await pool.query('SELECT COALESCE(SUM(CASE WHEN e.kind IN (\'release\',\'manual_adjustment\',\'correction\') THEN e.signed_amount ELSE 0 END), 0) released, COALESCE(SUM(e.signed_amount), 0) balance, COUNT(DISTINCT e.agendamento_id) appointments FROM commission_entries e WHERE e.barbearia_id = ?' + filter, params); return rows[0]; }
-module.exports = { normalizeRule, createRule, listRules, listEntries, summary };
+module.exports = { normalizeRule, createRule, listRules, listEntries, summary, reconcileAppointment, reconcileEntitlement };
 module.exports.getEntryDetail = getEntryDetail;
 const { calculateItem, targetReleased, resolveCommissionRule } = require('./commission-calculator');
 
@@ -77,7 +82,7 @@ function applyRuleException(rule, serviceId) {
   return { ...rule, type: calculation.model === 'FIXED_PER_UNIT' ? 'fixed' : 'percentage', value: calculation.model === 'FIXED_PER_UNIT' ? calculation.fixedValue : calculation.rate, valueBps, base: calculation.basis === 'GROSS' ? 'gross' : 'net_after_discount', exception_id: exception.itemId || exception.serviceId };
 }
 async function appointmentItems(connection, tenantId, appointmentId) {
-  const [rows] = await connection.query('SELECT a.id appointmentId, a.colaborador_id professionalId, a.cliente_id clientId, a.valor_cobrado appointmentAmount, a.concluido_em completedAt, s.id serviceId, s.nome serviceName, COALESCE(ags.preco_cobrado, a.valor_cobrado) grossAmount FROM agendamentos a JOIN colaboradores c ON c.id = a.colaborador_id LEFT JOIN agendamento_servicos ags ON ags.agendamento_id = a.id JOIN servicos s ON s.id = COALESCE(ags.servico_id, a.servico_id) WHERE a.id = ? AND c.barbearia_id = ? FOR UPDATE', [appointmentId, tenantId]); return rows;
+  const [rows] = await connection.query('SELECT a.id appointmentId, a.colaborador_id professionalId, a.cliente_id clientId, a.valor_cobrado appointmentAmount, COALESCE(a.concluido_em, a.data_hora) completedAt, s.id serviceId, s.nome serviceName, COALESCE(ags.preco_cobrado, a.valor_cobrado) grossAmount FROM agendamentos a JOIN colaboradores c ON c.id = a.colaborador_id LEFT JOIN agendamento_servicos ags ON ags.agendamento_id = a.id JOIN servicos s ON s.id = COALESCE(ags.servico_id, a.servico_id) WHERE a.id = ? AND c.barbearia_id = ? FOR UPDATE', [appointmentId, tenantId]); return rows;
 }
 async function reconcileAppointment(connection, { tenantId, appointmentId, actorId }) {
   const items = await appointmentItems(connection, tenantId, appointmentId); if (!items.length || !items[0].completedAt) return { created: 0, released: 0n };
@@ -89,11 +94,69 @@ async function reconcileAppointment(connection, { tenantId, appointmentId, actor
     const rule = applyRuleException(await findRule(connection, tenantId, item.professionalId, item.serviceId, item.completedAt), item.serviceId);
     const snapshot = rule ? calculateItem({ grossCents: gross, discountCents: discount, rule: { type: rule.type, base: rule.base, value: String(rule.value), valueBps: Number(rule.valueBps || 0) } }) : { gross, discount, originalNet: gross - discount, totalCommission: 0n };
     const status = rule ? 'open' : 'pending_rule';
-    await connection.query('INSERT INTO commission_entitlements (barbearia_id, agendamento_id, servico_id, profissional_id, rule_id, completed_at, gross_amount, discount_amount, original_net_amount, total_commission, snapshot_json, calculation_version, status, approval_mode_snapshot, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)', [tenantId, item.appointmentId, item.serviceId, item.professionalId, rule?.id || null, item.completedAt, decimalFromCents(snapshot.gross), decimalFromCents(snapshot.discount), decimalFromCents(snapshot.originalNet), decimalFromCents(snapshot.totalCommission), JSON.stringify({ rule, gross: decimalFromCents(snapshot.gross), discount: decimalFromCents(snapshot.discount), originalNet: decimalFromCents(snapshot.originalNet), totalCommission: decimalFromCents(snapshot.totalCommission), professionalId: item.professionalId, serviceId: item.serviceId }), 'commission-v1', status, approvalMode, 'pending']);
+    const approvalStatus = approvalMode === 'automatic' ? 'approved' : 'pending';
+    await connection.query('INSERT INTO commission_entitlements (barbearia_id, agendamento_id, servico_id, profissional_id, rule_id, completed_at, gross_amount, discount_amount, original_net_amount, total_commission, snapshot_json, calculation_version, status, approval_mode_snapshot, approval_status, approved_at, approval_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)', [tenantId, item.appointmentId, item.serviceId, item.professionalId, rule?.id || null, item.completedAt, decimalFromCents(snapshot.gross), decimalFromCents(snapshot.discount), decimalFromCents(snapshot.originalNet), decimalFromCents(snapshot.totalCommission), JSON.stringify({ rule, gross: decimalFromCents(snapshot.gross), discount: decimalFromCents(snapshot.discount), originalNet: decimalFromCents(snapshot.originalNet), totalCommission: decimalFromCents(snapshot.totalCommission), professionalId: item.professionalId, serviceId: item.serviceId }), 'commission-v1', status, approvalMode, approvalStatus, approvalStatus === 'approved' ? new Date() : null, approvalStatus === 'approved' ? 'automatic' : null]);
+    if (approvalMode === 'automatic') {
+      await connection.query("UPDATE commission_entitlements SET approval_mode_snapshot = 'automatic', approval_status = 'approved', approved_at = COALESCE(approved_at, CURRENT_TIMESTAMP), approved_by = NULL, approval_source = 'automatic' WHERE barbearia_id = ? AND agendamento_id = ? AND servico_id = ? AND profissional_id = ?", [tenantId, item.appointmentId, item.serviceId, item.professionalId]);
+    }
     const [[entitlement]] = await connection.query('SELECT id FROM commission_entitlements WHERE barbearia_id = ? AND agendamento_id = ? AND servico_id = ? AND profissional_id = ? ORDER BY revision DESC LIMIT 1 FOR UPDATE', [tenantId, item.appointmentId, item.serviceId, item.professionalId]);
-    if (entitlement && rule) { const result = await reconcileEntitlement(connection, { tenantId, entitlementId: entitlement.id, appointmentId: item.appointmentId, actorId }); created += result.created; }
+    if (entitlement && rule) {
+      await connection.query(
+        `UPDATE commission_entitlements
+            SET rule_id = ?, completed_at = ?, gross_amount = ?, discount_amount = ?,
+                original_net_amount = ?, total_commission = ?, snapshot_json = ?,
+                status = 'open', approval_mode_snapshot = ?, approval_status = ?,
+                approved_at = ?, approved_by = NULL, approval_source = ?
+          WHERE id = ? AND barbearia_id = ? AND status = 'pending_rule'`,
+        [rule.id, item.completedAt, decimalFromCents(snapshot.gross),
+          decimalFromCents(snapshot.discount), decimalFromCents(snapshot.originalNet),
+          decimalFromCents(snapshot.totalCommission), JSON.stringify({ rule,
+            gross: decimalFromCents(snapshot.gross),
+            discount: decimalFromCents(snapshot.discount),
+            originalNet: decimalFromCents(snapshot.originalNet),
+            totalCommission: decimalFromCents(snapshot.totalCommission),
+            professionalId: item.professionalId, serviceId: item.serviceId }),
+          approvalMode, approvalStatus,
+          approvalStatus === 'approved' ? new Date() : null,
+          approvalStatus === 'approved' ? 'automatic' : null,
+          entitlement.id, tenantId],
+      );
+      const result = await reconcileEntitlement(connection, { tenantId, entitlementId: entitlement.id, appointmentId: item.appointmentId, actorId });
+      created += result.created;
+    }
   }
   return { created };
+}
+
+async function reconcileAppointmentsForRule(connection, { tenantId, actorId, rule }) {
+  const filters = [
+    'c.barbearia_id = ?',
+    "a.status NOT IN ('cancelado', 'nao_compareceu')",
+    '(? IS NULL OR a.colaborador_id = ?)',
+    '(? IS NULL OR COALESCE(ags.servico_id, a.servico_id) = ?)',
+    '(? IS NULL OR COALESCE(a.concluido_em, a.data_hora) >= ?)',
+    '(? IS NULL OR COALESCE(a.concluido_em, a.data_hora) < ?)',
+  ];
+  const params = [tenantId,
+    rule.professionalId, rule.professionalId,
+    rule.serviceId, rule.serviceId,
+    rule.validFrom, rule.validFrom,
+    rule.validUntil, rule.validUntil];
+  const [appointments] = await connection.query(
+    `SELECT DISTINCT a.id
+       FROM agendamentos a
+       JOIN colaboradores c ON c.id = a.colaborador_id
+       LEFT JOIN agendamento_servicos ags ON ags.agendamento_id = a.id
+      WHERE ${filters.join(' AND ')}`,
+    params,
+  );
+  for (const appointment of appointments) {
+    await reconcileAppointment(connection, {
+      tenantId,
+      appointmentId: appointment.id,
+      actorId,
+    });
+  }
 }
 async function reconcileEntitlement(connection, { tenantId, entitlementId, appointmentId, actorId }) {
   const [[entitlement]] = await connection.query('SELECT * FROM commission_entitlements WHERE id = ? AND barbearia_id = ? FOR UPDATE', [entitlementId, tenantId]); if (!entitlement || entitlement.status === 'pending_rule') return { created: 0 };
@@ -485,6 +548,7 @@ async function publishRuleDraft({ tenantId, actorId, draftId: requestedId }) {
         if (overlap.length) { await connection.rollback(); return { status: 409, code: 'COMMISSION_RULE_OVERLAP' }; }
         const lifecycle = rule.validFrom && rule.validFrom > new Date() ? 'scheduled' : 'active';
         const [inserted] = await connection.query('INSERT INTO commission_rules (nome, config_json, lifecycle, barbearia_id, profissional_id, servico_id, scope_key, tipo, valor, valor_bps, base, valido_de, valido_ate, versao, criado_por) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [rule.name, JSON.stringify(rule.config), lifecycle, tenantId, rule.professionalId, rule.serviceId, key, rule.type, rule.value, rule.valueBps, rule.base, rule.validFrom, rule.validUntil, version, actorId]);
+        await reconcileAppointmentsForRule(connection, { tenantId, actorId, rule });
         await connection.query("INSERT INTO audit_logs (barbearia_id, usuario_id, acao, recurso, recurso_id, detalhes) VALUES (?, ?, ?, 'commission_rule', ?, JSON_OBJECT('scope', ?, 'version', ?, 'draftId', ?, 'sourceRuleId', ?))", [tenantId, actorId, sourceRuleId == null ? 'commission.rule.published' : 'commission.rule.versioned', String(inserted.insertId), key, version, parsed, sourceRuleId]);
         created.push({ id: inserted.insertId, version, professionalId: rule.professionalId, serviceId: rule.serviceId });
       }

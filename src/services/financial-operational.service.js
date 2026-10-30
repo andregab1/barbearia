@@ -2,8 +2,13 @@ const { pool } = require('../config/database');
 const { cents, decimal } = require('./financial.service');
 const commissionService = require('./commission.service');
 
+// * Servico operacional da tesouraria. As consultas sempre recebem tenantId;
+// * os comandos de escrita validam estado, relacionamentos e transacao antes
+// * de gerar movimento contabil ou auditoria.
 const PAYMENT_METHODS = ['cash', 'pix', 'debit_card', 'credit_card', 'other'];
 
+// * CONSULTAR: normaliza periodo, filtros e paginacao usados por todos os
+// * paineis financeiros para que datas e limites tenham uma unica regra.
 function parsePeriod(query = {}) {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
   const today = new Date().toISOString().slice(0, 10);
@@ -27,6 +32,7 @@ function appointmentScope(filters, alias = 'a') {
   return { sql: clauses.length ? ` AND ${clauses.join(' AND ')}` : '', params };
 }
 
+// * CONSULTAR: consolida entradas, despesas, recebimentos e saldo do tenant.
 async function getDashboard(tenantId, query) {
   const filters = parsePeriod(query);
   if (!filters) return { error: 'INVALID_PERIOD' };
@@ -115,6 +121,7 @@ async function getDashboard(tenantId, query) {
   };
 }
 
+// * CONSULTAR: lista o livro de movimentacoes sem alterar dados persistidos.
 async function listMovements(tenantId, query = {}) {
   const filters = parsePeriod(query);
   if (!filters) return [];
@@ -156,6 +163,7 @@ async function listMovements(tenantId, query = {}) {
   return { rows, pagination: { page, limit, total: Number(count.total), pages: Math.ceil(Number(count.total) / limit) } };
 }
 
+// * CONSULTAR: variante usada pelo painel quando precisa incluir pendencias.
 async function listMovementsWithPending(tenantId, query = {}) {
   const filters = parsePeriod(query);
   if (!filters) return [];
@@ -231,6 +239,7 @@ async function listMovementsWithPending(tenantId, query = {}) {
   return { rows, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
 }
 
+// * CONSULTAR: detalha um movimento somente se ele pertence ao tenant atual.
 async function movementDetail(tenantId, id) {
   const [rows] = await pool.query(
     `SELECT fm.*, client.nome client, professional.nome professional, fa.nome account,
@@ -247,6 +256,7 @@ async function movementDetail(tenantId, id) {
   return rows[0] || null;
 }
 
+// * CONSULTAR: lista contas a pagar e calcula resumo/paginacao para a tela.
 async function listExpenses(tenantId, query = {}) {
   const filters = parsePeriod(query);
   if (!filters) return { rows: [], pagination: { page: 1, limit: 25, total: 0, pages: 0 } };
@@ -279,6 +289,8 @@ async function listExpenses(tenantId, query = {}) {
   return { rows, summary: { paid: Number(summary.paid), pending: Number(summary.pending), periodTotal: Number(summary.period_total), balanceImpact: -Number(summary.paid) }, pagination: { page, limit, total: Number(count.total), pages: Math.ceil(Number(count.total) / limit) } };
 }
 
+// * VALIDAR: confirma que categoria, conta e responsavel pertencem ao tenant
+// * antes de qualquer INSERT/UPDATE de despesa.
 async function validateExpenseRelations(connection, tenantId, categoryId, accountId, responsibleUserId, requireAccount) {
   const [[category]] = await connection.query(`SELECT id FROM financial_categories WHERE id=? AND barbearia_id=? AND tipo='expense' AND ativo=1`, [categoryId, tenantId]);
   const [[responsible]] = await connection.query(`SELECT u.id FROM usuarios u WHERE u.id=? AND u.ativo=1 AND (EXISTS (SELECT 1 FROM memberships m WHERE m.usuario_id=u.id AND m.barbearia_id=? AND m.ativo=1) OR EXISTS (SELECT 1 FROM barbearias b WHERE b.id=? AND b.admin_id=u.id AND b.ativa=1))`, [responsibleUserId, tenantId, tenantId]);
@@ -287,6 +299,8 @@ async function validateExpenseRelations(connection, tenantId, categoryId, accoun
   return !!category && !!responsible && (!accountId || !!account) && (!requireAccount || !!account);
 }
 
+// * ADICIONAR: cria uma despesa pendente, registra o ator e preserva o
+// * relacionamento com categoria/conta sem aceitar IDs de outra barbearia.
 async function createExpense({ tenantId, actorId, data, requestId }) {
   const amount = cents(data.amount);
   const categoryId = Number.parseInt(data.category_id, 10);
@@ -309,6 +323,7 @@ async function createExpense({ tenantId, actorId, data, requestId }) {
   } catch (error) { await connection.rollback().catch(()=>{}); throw error; } finally { connection.release(); }
 }
 
+// * EDITAR: altera os campos permitidos enquanto a despesa ainda esta pendente.
 async function updateExpense({ tenantId, actorId, expenseId, data, requestId }) {
   const connection = await pool.getConnection();
   try {
@@ -326,6 +341,8 @@ async function updateExpense({ tenantId, actorId, expenseId, data, requestId }) 
   } catch (error) { await connection.rollback().catch(()=>{}); throw error; } finally { connection.release(); }
 }
 
+// * EDITAR ESTADO: pagamento individual delega para o fluxo em lote para
+// * manter as mesmas regras de conta, idempotencia e transacao.
 async function payExpense(args) {
   const result = await payExpenses({ ...args, expenseIds: [args.expenseId] });
   if (result.status === 201 && result.ids?.length) return { ...result, id: result.ids[0] };
@@ -333,6 +350,8 @@ async function payExpense(args) {
   return result;
 }
 
+// * ADICIONAR MOVIMENTO: paga uma ou varias despesas em uma transacao e grava
+// * os lancamentos de caixa/auditoria correspondentes.
 async function payExpenses({ tenantId, actorId, expenseIds, accountId, paidAt, idempotencyKey, requestId }) {
   const key = String(idempotencyKey || '').trim();
   const ids = Array.isArray(expenseIds)
@@ -365,6 +384,7 @@ async function payExpenses({ tenantId, actorId, expenseIds, accountId, paidAt, i
   } catch (error) { await connection.rollback().catch(()=>{}); if (error.code === 'ER_DUP_ENTRY' || error.code === 'ER_LOCK_DEADLOCK') return { status: 409, code: 'EXPENSE_PAYMENT_CONFLICT' }; throw error; } finally { connection.release(); }
 }
 
+// * EXCLUIR LOGICAMENTE: cancela uma despesa pendente sem apagar historico.
 async function cancelExpense({ tenantId, actorId, expenseId, reason, requestId }) {
   const cleanReason = String(reason || '').trim(); if (cleanReason.length < 3 || cleanReason.length > 240) return { status: 422, code: 'VALIDATION_ERROR' };
   const connection = await pool.getConnection();
@@ -378,6 +398,7 @@ async function cancelExpense({ tenantId, actorId, expenseId, reason, requestId }
   } catch(error){await connection.rollback().catch(()=>{});throw error;} finally{connection.release();}
 }
 
+// * EXCLUIR LOGICAMENTE EM LOTE: aplica o mesmo cancelamento aos IDs validos.
 async function cancelExpenses({ tenantId, actorId, expenseIds, reason, requestId }) {
   const cleanReason = String(reason || '').trim();
   const ids = Array.isArray(expenseIds)
@@ -400,6 +421,7 @@ async function cancelExpenses({ tenantId, actorId, expenseIds, reason, requestId
   } catch (error) { await connection.rollback().catch(()=>{}); throw error; } finally { connection.release(); }
 }
 
+// * CONSULTAR: lista contas a receber geradas pelos atendimentos concluidos.
 async function listReceivables(tenantId, query = {}) {
   const filters = parsePeriod(query); if (!filters) return { rows: [], pagination: { page:1,limit:25,total:0,pages:0 } };
   const page=Math.max(1,Number.parseInt(query.page,10)||1), limit=Math.min(100,Math.max(1,Number.parseInt(query.limit,10)||25)); const scope=appointmentScope(filters);
@@ -414,6 +436,8 @@ async function listReceivables(tenantId, query = {}) {
   const [[count]]=await pool.query(`SELECT COUNT(*) total ${sql}`,baseParams); return {rows,pagination:{page,limit,total:Number(count.total),pages:Math.ceil(Number(count.total)/limit)}};
 }
 
+// * ADICIONAR MOVIMENTO: registra pagamento integral do atendimento com chave
+// * de idempotencia e revalidacao de saldo dentro da transacao.
 async function registerPayment({ tenantId, actorId, appointmentId, data, idempotencyKey, requestId }) {
   const amount=cents(data.amount), accountId=Number.parseInt(data.account_id,10), method=String(data.method||''), key=String(idempotencyKey||'').trim(), notes=String(data.notes||'').trim()||null;
   if(amount==null||amount<=0n||!PAYMENT_METHODS.includes(method)||!accountId||!/^\d{4}-\d{2}-\d{2}$/.test(data.paid_at||'')||!/^[a-zA-Z0-9._:-]{8,100}$/.test(key)||notes?.length>500)return{status:422,code:'VALIDATION_ERROR'};
@@ -432,6 +456,8 @@ async function registerPayment({ tenantId, actorId, appointmentId, data, idempot
   }catch(error){await connection.rollback().catch(()=>{});if(error.code==='ER_DUP_ENTRY'||error.code==='ER_LOCK_DEADLOCK')return{status:409,code:'PAYMENT_CONFLICT'};throw error;}finally{connection.release();}
 }
 
+// * EDITAR/ESTORNAR: cria a compensacao de um pagamento, sem apagar o evento
+// * original, e recalcula o saldo da conta a receber.
 async function refundPayment({ tenantId, actorId, paymentId, data, idempotencyKey, requestId }) {
   const amount = cents(data.amount);
   const reason = String(data.reason || '').trim();
@@ -520,6 +546,8 @@ async function refundPayment({ tenantId, actorId, paymentId, data, idempotencyKe
   }
 }
 
+// * ADICIONAR MOVIMENTO EM LOTE: registra varios pagamentos mantendo o mesmo
+// * contrato de idempotencia e validacao usado no pagamento individual.
 async function registerPayments({ tenantId, actorId, items, accountId, method, paidAt, notes, idempotencyKey, requestId }) {
   const normalized = Array.isArray(items) ? items.map((item) => ({ appointmentId: Number(item.appointment_id), amount: item.amount })).filter((item) => Number.isInteger(item.appointmentId) && item.appointmentId > 0) : [];
   if (!normalized.length || normalized.length > 100 || !/^\d{4}-\d{2}-\d{2}$/.test(paidAt || '') || !/^[a-zA-Z0-9._:-]{8,100}$/.test(String(idempotencyKey || ''))) return { status: 422, code: 'VALIDATION_ERROR' };
@@ -539,6 +567,8 @@ async function registerPayments({ tenantId, actorId, items, accountId, method, p
   return { status: 201, completed };
 }
 
+// * EXCLUIR LOGICAMENTE: remove contas a receber da operacao por marcacao de
+// * exclusao/cancelamento e gera auditoria para cada atendimento afetado.
 async function excludeReceivables({ tenantId, actorId, appointmentIds, requestId }) {
   const ids = [...new Set((Array.isArray(appointmentIds) ? appointmentIds : []).map(Number).filter((id) => Number.isInteger(id) && id > 0))];
   if (!ids.length || ids.length > 100) return { status: 422, code: 'VALIDATION_ERROR' };
@@ -589,6 +619,8 @@ async function excludeReceivables({ tenantId, actorId, appointmentIds, requestId
   }
 }
 
+// * CONSULTAR/REUTILIZAR: garante contas, categorias, profissionais e servicos
+// * ativos que alimentam os formularios financeiros.
 async function metadata(tenantId) {
   await pool.query(`INSERT IGNORE INTO financial_accounts (barbearia_id,nome,tipo) VALUES (?,'Caixa','cash')`,[tenantId]);
   await pool.query(`INSERT IGNORE INTO financial_categories (barbearia_id,nome,tipo) VALUES (?,'Servicos','income'),(?,'Outras despesas','expense')`,[tenantId,tenantId]);
@@ -600,6 +632,8 @@ async function metadata(tenantId) {
   return {accounts,categories,professionals,responsibles,services};
 }
 
+// * CONSULTAR: lista categorias ativas e inativas para permitir reativacao ou
+// * desativacao sem perder lancamentos antigos.
 async function listCategories(tenantId) {
   const [rows] = await pool.query(
     `SELECT id, nome name, tipo type, ativo active, criado_em created_at, atualizado_em updated_at
@@ -611,6 +645,7 @@ async function listCategories(tenantId) {
   return rows;
 }
 
+// * ADICIONAR: cria categoria de receita/despesa validando nome, tipo e tenant.
 async function createCategory({ tenantId, data }) {
   const name = String(data?.name || data?.nome || '').trim();
   const type = String(data?.type || data?.tipo || '').trim().toLowerCase();
@@ -629,6 +664,8 @@ async function createCategory({ tenantId, data }) {
   }
 }
 
+// * EDITAR: altera nome/tipo/ativo somente da categoria do tenant informado;
+// * nao existe DELETE fisico porque o historico depende dela.
 async function updateCategory({ tenantId, categoryId, data }) {
   const name = String(data?.name || data?.nome || '').trim();
   const type = String(data?.type || data?.tipo || '').trim().toLowerCase();

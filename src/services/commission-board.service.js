@@ -1,3 +1,5 @@
+// * Quadro operacional de comissoes: monta saldos por profissional e fecha
+// * pagamentos com revalidacao de valores e idempotencia.
 const { pool } = require('../config/database');
 const crypto = require('crypto');
 const { parseCents } = require('./commission-calculator');
@@ -52,7 +54,7 @@ async function rawEntitlements(connection, tenantId, filters = {}) {
   const range = period(filters);
   if (!range) return { status: 422, code: 'INVALID_PERIOD' };
   const params = [tenantId, `${range.from} 00:00:00`, `${range.toExclusive} 00:00:00`];
-  const where = ['ce.barbearia_id = ?', 'ce.completed_at >= ?', 'ce.completed_at < ?'];
+  const where = ['ce.barbearia_id = ?', "ce.status <> 'reversed'", 'ce.completed_at >= ?', 'ce.completed_at < ?'];
   const professionalId = positiveId(filters.professionalId);
   const serviceId = positiveId(filters.serviceId);
   if (professionalId != null) { where.push('ce.profissional_id = ?'); params.push(professionalId); }
@@ -205,6 +207,7 @@ function publicTotals(totals) {
   };
 }
 
+// * CONSULTAR: lista profissionais e totais filtrados por tenant e periodo.
 async function professionals({ tenantId, filters = {} }) {
   const connection = await pool.getConnection();
   try {
@@ -258,7 +261,7 @@ async function details({ tenantId, professionalId, filters = {} }) {
         settled_amount: decimal(settled),
         remaining_amount: decimal(released > settled ? released - settled : 0n),
         eligible,
-        reason: row.entitlement_status === 'pending_rule' ? 'Regra de comissão pendente.' : !eligible ? 'Aguardando conclusão ou recebimento.' : row.approval_status !== 'approved' ? 'Aguardando aprovação administrativa.' : null,
+        reason: row.entitlement_status === 'pending_rule' ? 'Regra de comissão pendente.' : !eligible ? 'Aguardando conclusão ou recebimento.' : null,
       };
     });
     return { status: 200, professionalId: professional, professionalName: firstName, period: result.range, items };

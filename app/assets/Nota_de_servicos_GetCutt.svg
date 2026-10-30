@@ -1,52 +1,140 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 840 1188" role="img" aria-labelledby="title desc">
-<title id="title">GetCutt — Comprovante de serviços</title>
-<desc id="desc">Modelo demonstrativo editável em formato A4. Dados fictícios. Documento sem valor fiscal. Três serviços, subtotal de 100 reais, desconto de 10 reais e total pago de 90 reais.</desc>
-<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#202020}.muted{fill:#757570}.label{font-size:10px;letter-spacing:1.5px;font-weight:700}.small{font-size:12px}.body{font-size:14px}.bold{font-weight:700}.line{stroke:#e5e5df;stroke-width:1}.num{font-variant-numeric:tabular-nums}</style></defs>
-<!-- Formato A4. Textos e valores editáveis; dados demonstrativos. -->
-<rect width="840" height="1188" fill="#fff"/>
-<rect width="840" height="178" fill="#151513"/>
-<rect y="178" width="840" height="5" fill="#f4d000"/>
-<!-- Assinatura tipográfica GetCutt -->
-<g id="marca">
-<rect x="48" y="40" width="43" height="43" rx="12" fill="#f4d000"/>
-<g stroke="#151513" stroke-width="2.5" fill="none" stroke-linecap="round"><circle cx="60" cy="68" r="4"/><circle cx="79" cy="68" r="4"/><path d="M63 65 79 51M76 65 60 51"/></g>
-<text x="103" y="72" style="fill:#fff;font-size:35px;font-weight:700;letter-spacing:-1.8px">getcutt<tspan fill="#f4d000">.</tspan></text>
-<text x="792" y="54" text-anchor="end" class="label" style="fill:#b9b9b0">COMPROVANTE DE SERVIÇOS</text>
-<text x="792" y="82" text-anchor="end" class="num" style="fill:#fff;font-size:23px;font-weight:700">Nº 000128</text>
-<text x="48" y="132" style="fill:#fff;font-size:22px;font-weight:700">Barbearia Exemplo</text>
-<text x="48" y="155" class="small" style="fill:#b9b9b0">Rua Exemplo, 123 · Centro · Araucária / PR</text>
-<text x="792" y="132" text-anchor="end" class="small" style="fill:#b9b9b0">Emissão</text>
-<text x="792" y="155" text-anchor="end" class="body" style="fill:#fff">28/09/2026 · 10:45</text>
+<title id="title">GetCutt - Nota Fiscal de Servico Eletronica</title>
+<desc id="desc">Modelo visual de nota fiscal de servicos em formato A4, com campos de prestador, tomador, servicos e valores.</desc>
+<rect width="840" height="1188" fill="#ffffff"/>
+<rect x="24" y="24" width="792" height="1140" fill="#ffffff" stroke="#252525" stroke-width="1.4"/>
+
+<!-- Cabecalho NFS-e -->
+<g id="cabecalho" font-family="Inter" fill="#171717">
+  <text x="42" y="43" font-size="8" fill="#626262">DOCUMENTO AUXILIAR DE SERVICOS - MODELO PARA CONFERENCIA</text>
+  <rect x="40" y="55" width="240" height="90" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="52" y="65" width="60" height="60" fill="#f4d000" stroke="#252525" stroke-width="1"/>
+  <g stroke="#171717" stroke-width="2.5" fill="none" stroke-linecap="round">
+    <circle cx="69" cy="101" r="5"/><circle cx="94" cy="101" r="5"/><path d="M73 97 95 78M90 97 68 78"/>
+  </g>
+  <text x="126" y="93" font-size="25" font-weight="700">getcutt<tspan fill="#b88a00">.</tspan></text>
+  <text x="126" y="113" font-size="8.5" fill="#626262">GESTAO DE SERVICOS</text>
+  <text x="440" y="79" text-anchor="middle" font-size="14" font-weight="700">NOTA FISCAL DE SERVICO</text>
+  <text x="440" y="100" text-anchor="middle" font-size="14" font-weight="700">ELETRONICA - NFS-e</text>
+  <text x="440" y="121" text-anchor="middle" font-size="9" fill="#626262">Prestacao de servicos</text>
+  <rect x="610" y="55" width="186" height="90" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <line x1="610" y1="84" x2="796" y2="84" stroke="#252525"/>
+  <line x1="610" y1="113" x2="796" y2="113" stroke="#252525"/>
+  <text x="620" y="70" font-size="7.5" fill="#626262">NUMERO DA NOTA</text>
+  <text id="field-receipt-number" x="620" y="80" font-size="11" font-weight="700">Nº 000128</text>
+  <text x="620" y="96" font-size="7.5" fill="#626262">DATA DE EMISSAO</text>
+  <text id="field-issued-at" x="786" y="106" text-anchor="end" font-size="10" font-weight="700">28/09/2026 · 10:45</text>
+  <text x="620" y="128" font-size="7.5" fill="#626262">CODIGO DE VERIFICACAO</text>
+  <text id="field-verification" x="620" y="140" font-size="8" font-weight="700">NFS-GETCUTT-000128</text>
 </g>
-<g id="aviso"><rect x="48" y="209" width="744" height="38" rx="6" fill="#f7f7f2"/><circle cx="66" cy="228" r="3" fill="#c0a300"/><text x="80" y="232" class="label" style="fill:#64645b;font-size:10px;letter-spacing:1.1px">SEM VALOR FISCAL</text><text x="773" y="232" text-anchor="end" class="small muted">Modelo demonstrativo · Dados fictícios</text></g>
-<g id="cliente">
-<text x="48" y="287" class="label muted">CLIENTE</text><text x="48" y="316" font-size="21" class="bold">João da Silva</text><text x="48" y="339" class="small muted">Telefone: (00) 00000-0000</text>
-<text x="471" y="287" class="label muted">ATENDIMENTO</text><text x="471" y="315" class="body bold">28/09/2026 · 10:00</text><text x="471" y="339" class="small muted">Profissional: Lucas · Agendamento #00482</text>
-<line x1="48" x2="792" y1="367" y2="367" class="line"/>
+
+<!-- Prestador -->
+<g id="prestador" font-family="Inter" fill="#171717">
+  <rect x="40" y="162" width="756" height="128" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="40" y="162" width="756" height="25" fill="#eeeeee"/>
+  <text x="52" y="179" font-size="10" font-weight="700" letter-spacing="1">PRESTADOR DE SERVICOS</text>
+  <line x1="40" y1="230" x2="796" y2="230" stroke="#252525"/>
+  <line x1="40" y1="260" x2="796" y2="260" stroke="#252525"/>
+  <line x1="360" y1="187" x2="360" y2="290" stroke="#252525"/>
+  <line x1="568" y1="187" x2="568" y2="290" stroke="#252525"/>
+  <text x="52" y="204" font-size="8" fill="#626262">RAZAO SOCIAL / NOME FANTASIA</text>
+  <text id="field-barbershop-name" x="52" y="221" font-size="12" font-weight="700">Barbearia Exemplo</text>
+  <text x="372" y="204" font-size="8" fill="#626262">CNPJ</text>
+  <text x="372" y="221" font-size="10">Nao informado</text>
+  <text x="580" y="204" font-size="8" fill="#626262">INSCRICAO MUNICIPAL</text>
+  <text x="580" y="221" font-size="10">Nao informado</text>
+  <text x="52" y="248" font-size="8" fill="#626262">ENDERECO</text>
+  <text id="field-barbershop-address" x="52" y="276" font-size="10">Rua Exemplo, 123 · Centro · Araucaria / PR</text>
+  <text x="372" y="248" font-size="8" fill="#626262">MUNICIPIO / UF</text>
+  <text x="372" y="276" font-size="10">Araucaria / PR</text>
+  <text x="580" y="248" font-size="8" fill="#626262">TELEFONE</text>
+  <text x="580" y="276" font-size="10">Nao informado</text>
 </g>
-<g id="servicos">
-<text x="48" y="408" font-size="21" class="bold">Serviços realizados</text><text x="792" y="408" text-anchor="end" class="small muted">3 serviços</text>
-<rect x="48" y="429" width="744" height="37" rx="5" fill="#f5f5f1"/>
-<text x="64" y="452" class="label muted">DESCRIÇÃO</text><text x="493" y="452" text-anchor="middle" class="label muted">QTD.</text><text x="638" y="452" text-anchor="end" class="label muted">UNITÁRIO</text><text x="776" y="452" text-anchor="end" class="label muted">TOTAL</text>
-<text x="64" y="497" class="body bold">Corte masculino</text><text x="64" y="518" class="small muted">Degradê + acabamento</text><text x="493" y="506" text-anchor="middle" class="body num">1</text><text x="638" y="506" text-anchor="end" class="body num">R$ 50,00</text><text x="776" y="506" text-anchor="end" class="body bold num">R$ 50,00</text>
-<line x1="48" x2="792" y1="538" y2="538" class="line"/>
-<text x="64" y="569" class="body bold">Barba completa</text><text x="64" y="590" class="small muted">Modelagem + finalização</text><text x="493" y="578" text-anchor="middle" class="body num">1</text><text x="638" y="578" text-anchor="end" class="body num">R$ 35,00</text><text x="776" y="578" text-anchor="end" class="body bold num">R$ 35,00</text>
-<line x1="48" x2="792" y1="610" y2="610" class="line"/>
-<text x="64" y="641" class="body bold">Sobrancelha</text><text x="64" y="662" class="small muted">Acabamento com navalha</text><text x="493" y="650" text-anchor="middle" class="body num">1</text><text x="638" y="650" text-anchor="end" class="body num">R$ 15,00</text><text x="776" y="650" text-anchor="end" class="body bold num">R$ 15,00</text>
-<line x1="48" x2="792" y1="682" y2="682" class="line"/>
+
+<!-- Tomador -->
+<g id="tomador" font-family="Inter" fill="#171717">
+  <rect x="40" y="302" width="756" height="112" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="40" y="302" width="756" height="25" fill="#eeeeee"/>
+  <text x="52" y="319" font-size="10" font-weight="700" letter-spacing="1">TOMADOR DE SERVICOS</text>
+  <line x1="40" y1="365" x2="796" y2="365" stroke="#252525"/>
+  <line x1="430" y1="327" x2="430" y2="365" stroke="#252525"/>
+  <text x="52" y="344" font-size="8" fill="#626262">NOME / RAZAO SOCIAL</text>
+  <text id="field-client-name" x="52" y="358" font-size="11" font-weight="700">João da Silva</text>
+  <text x="442" y="344" font-size="8" fill="#626262">TELEFONE</text>
+  <text id="field-client-phone" x="442" y="358" font-size="10">Telefone: (00) 00000-0000</text>
+  <text x="52" y="383" font-size="8" fill="#626262">PROFISSIONAL / AGENDAMENTO</text>
+  <text id="field-professional" x="52" y="402" font-size="10">Profissional: Lucas · Agendamento #00482</text>
+  <text id="field-appointment-date" x="778" y="402" text-anchor="end" font-size="10" font-weight="700">28/09/2026 · 10:00</text>
 </g>
-<g id="pagamento">
-<text x="48" y="726" class="label muted">PAGAMENTO</text>
-<rect x="48" y="744" width="74" height="28" rx="14" fill="#edf4ed"/><path d="m61 758 4 4 7-8" stroke="#3a6a42" stroke-width="1.7" fill="none" stroke-linecap="round"/><text x="81" y="762" class="small bold" style="fill:#3a6a42">Pago</text>
-<text x="48" y="802" class="body bold">Pix · R$ 90,00</text><text x="48" y="824" class="small muted">Recebido em 28/09/2026 às 10:43</text><text x="48" y="849" class="small muted">Saldo pendente: R$ 0,00</text>
-<text x="470" y="729" class="body muted">Subtotal</text><text x="792" y="729" text-anchor="end" class="body num">R$ 100,00</text>
-<text x="470" y="761" class="body muted">Desconto (10%)</text><text x="792" y="761" text-anchor="end" class="body num">− R$ 10,00</text>
-<rect x="448" y="784" width="344" height="88" rx="9" fill="#f4d000"/>
-<text x="470" y="812" class="label">TOTAL DO ATENDIMENTO</text><text x="769" y="851" text-anchor="end" class="bold num" font-size="34" letter-spacing="-1">R$ 90,00</text>
+
+<!-- Discriminacao dos servicos -->
+<g id="servico" font-family="Inter" fill="#171717">
+  <rect x="40" y="426" width="756" height="278" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="40" y="426" width="756" height="25" fill="#eeeeee"/>
+  <text x="52" y="443" font-size="10" font-weight="700" letter-spacing="1">DISCRIMINACAO DOS SERVICOS</text>
+  <text id="field-service-count" x="784" y="443" text-anchor="end" font-size="8" fill="#626262">3 servicos</text>
+  <rect x="52" y="460" width="732" height="32" fill="#f5f5f5" stroke="#252525" stroke-width=".8"/>
+  <text x="64" y="481" font-size="9" font-weight="700">CODIGO / DESCRICAO DO SERVICO</text>
+  <text x="492" y="481" text-anchor="middle" font-size="9" font-weight="700">QTD.</text>
+  <text x="638" y="481" text-anchor="end" font-size="9" font-weight="700">UNITARIO</text>
+  <text x="776" y="481" text-anchor="end" font-size="9" font-weight="700">TOTAL</text>
+  <line x1="52" y1="492" x2="784" y2="492" stroke="#252525"/>
+  <text id="field-service-name-1" x="64" y="510" font-size="11" font-weight="700">Corte masculino</text>
+  <text id="field-service-description-1" x="64" y="528" font-size="9" fill="#626262">Degrade + acabamento</text>
+  <text id="field-service-qty-1" x="492" y="515" text-anchor="middle" font-size="10">1</text>
+  <text id="field-service-unit-1" x="638" y="515" text-anchor="end" font-size="10">R$ 50,00</text>
+  <text id="field-service-total-1" x="776" y="515" text-anchor="end" font-size="10" font-weight="700">R$ 50,00</text>
+  <line x1="52" y1="546" x2="784" y2="546" stroke="#252525"/>
+  <text id="field-service-name-2" x="64" y="564" font-size="11" font-weight="700">Barba completa</text>
+  <text id="field-service-description-2" x="64" y="582" font-size="9" fill="#626262">Modelagem + finalizacao</text>
+  <text id="field-service-qty-2" x="492" y="569" text-anchor="middle" font-size="10">1</text>
+  <text id="field-service-unit-2" x="638" y="569" text-anchor="end" font-size="10">R$ 35,00</text>
+  <text id="field-service-total-2" x="776" y="569" text-anchor="end" font-size="10" font-weight="700">R$ 35,00</text>
+  <line x1="52" y1="600" x2="784" y2="600" stroke="#252525"/>
+  <text id="field-service-name-3" x="64" y="618" font-size="11" font-weight="700">Sobrancelha</text>
+  <text id="field-service-description-3" x="64" y="636" font-size="9" fill="#626262">Acabamento com navalha</text>
+  <text id="field-service-qty-3" x="492" y="623" text-anchor="middle" font-size="10">1</text>
+  <text id="field-service-unit-3" x="638" y="623" text-anchor="end" font-size="10">R$ 15,00</text>
+  <text id="field-service-total-3" x="776" y="623" text-anchor="end" font-size="10" font-weight="700">R$ 15,00</text>
+  <line x1="52" y1="654" x2="784" y2="654" stroke="#252525"/>
+  <text id="field-attendance" x="52" y="682" font-size="8" fill="#626262">Atendimento em 28/09/2026 · 10:00</text>
 </g>
-<g id="observacoes"><line x1="48" x2="792" y1="908" y2="908" class="line"/><text x="48" y="944" class="label muted">OBSERVAÇÕES</text><text x="48" y="970" class="small">Serviços concluídos. Desconto aplicado sobre o subtotal do atendimento.</text><text x="48" y="991" class="small muted">Este comprovante registra os serviços e o pagamento informado pela barbearia.</text></g>
-<g id="rodape"><line x1="48" x2="792" y1="1056" y2="1056" class="line"/>
-<text x="48" y="1090" class="body bold">Obrigado pela preferência.</text><text x="48" y="1113" class="small muted">Documento não fiscal. Não substitui uma nota fiscal.</text>
-<text x="792" y="1090" text-anchor="end" class="small muted">Emitido pelo</text><text x="792" y="1117" text-anchor="end" font-size="24" class="bold" letter-spacing="-1">getcutt<tspan fill="#b39800">.</tspan></text>
-<text x="48" y="1155" class="label muted" style="font-size:9px">CONTROLE INTERNO · Nº 000128</text><text x="792" y="1155" text-anchor="end" class="small muted">1 / 1</text></g>
+
+<!-- Valores -->
+<g id="totais" font-family="Inter" fill="#171717">
+  <rect x="40" y="718" width="756" height="112" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="40" y="718" width="756" height="25" fill="#eeeeee"/>
+  <text x="52" y="735" font-size="10" font-weight="700" letter-spacing="1">VALORES DA NOTA</text>
+  <line x1="292" y1="743" x2="292" y2="830" stroke="#252525"/>
+  <line x1="544" y1="743" x2="544" y2="830" stroke="#252525"/>
+  <text x="52" y="762" font-size="8" fill="#626262">VALOR DOS SERVICOS</text>
+  <text id="field-subtotal" x="52" y="785" font-size="12" font-weight="700">R$ 100,00</text>
+  <text id="field-discount-label" x="304" y="762" font-size="8" fill="#626262">DESCONTO (10%)</text>
+  <text id="field-discount" x="304" y="785" font-size="12" font-weight="700">R$ 10,00</text>
+  <text x="556" y="762" font-size="8" fill="#626262">VALOR LIQUIDO</text>
+  <text id="field-total" x="784" y="785" text-anchor="end" font-size="13" font-weight="700">R$ 90,00</text>
+  <text x="52" y="813" font-size="8" fill="#626262">ISS estimado conforme configuracao fiscal.</text>
+</g>
+
+<!-- Outras informacoes -->
+<g id="informacoes" font-family="Inter" fill="#171717">
+  <rect x="40" y="844" width="756" height="145" fill="#ffffff" stroke="#252525" stroke-width="1"/>
+  <rect x="40" y="844" width="756" height="25" fill="#eeeeee"/>
+  <text x="52" y="861" font-size="10" font-weight="700" letter-spacing="1">OUTRAS INFORMACOES</text>
+  <text id="field-observation" x="52" y="888" font-size="9">Servicos concluidos. Desconto aplicado sobre o subtotal do atendimento.</text>
+  <text id="field-payment-status" x="52" y="925" font-size="9" fill="#626262">Pagamento: Pago</text>
+  <text id="field-payment-method" x="258" y="925" font-size="9" fill="#626262">Pix · R$ 90,00</text>
+  <text id="field-payment-date" x="500" y="925" font-size="9" fill="#626262">Recebido em 28/09/2026 às 10:43</text>
+  <text id="field-balance" x="52" y="950" font-size="9" fill="#626262">Saldo pendente: R$ 0,00</text>
+  <text x="52" y="974" font-size="7" fill="#626262">Documento gerado pelo GetCutt. A validade fiscal depende da autorizacao do municipio ou provedor integrado.</text>
+</g>
+
+<!-- Rodape -->
+<g id="rodape" font-family="Inter" fill="#171717">
+  <line x1="40" x2="796" y1="1006" y2="1006" stroke="#252525"/>
+  <text x="52" y="1031" font-size="11" font-weight="700">Obrigado pela preferencia.</text>
+  <text x="52" y="1051" font-size="8" fill="#626262">Nota de servicos emitida pelo sistema GetCutt.</text>
+  <text id="field-control-number" x="52" y="1084" font-size="8" fill="#626262">CONTROLE INTERNO · Nº 000128</text>
+  <text x="784" y="1084" text-anchor="end" font-size="8" fill="#626262">1 / 1</text>
+</g>
 </svg>

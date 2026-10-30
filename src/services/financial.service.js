@@ -3,6 +3,8 @@ const { pool } = require('../config/database');
 const { postEntry } = require('./accounting.service');
 const commissionService = require('./commission.service');
 
+// * Nucleo financeiro ligado ao ciclo do agendamento: converte dinheiro para
+// * centavos, cria previsoes, reconhece receita e registra pagamentos.
 function cents(value) {
   const text = String(value ?? '').trim();
   if (!/^\d{1,10}([.,]\d{1,2})?$/.test(text)) return null;
@@ -15,6 +17,8 @@ function decimal(valueInCents) {
   return `${valueInCents / 100n}.${String(valueInCents % 100n).padStart(2, '0')}`;
 }
 
+// * ADICIONAR/REUTILIZAR: categorias e contas sao criadas sob demanda por
+// * tenant, evitando duplicidade e mantendo os IDs usados nos lancamentos.
 async function categoryId(connection, tenantId, name, type) {
   await connection.query(
     `INSERT IGNORE INTO financial_categories (barbearia_id, nome, tipo) VALUES (?, ?, ?)`,
@@ -39,6 +43,8 @@ async function accountId(connection, tenantId, name = 'Caixa', type = 'cash') {
   return row.id;
 }
 
+// * ADICIONAR: ao criar um agendamento concluido, grava a previsao de receita
+// * de forma idempotente para que o mesmo atendimento nao gere duplicatas.
 async function createForecast(connection, appointment, actorId) {
   const category = await categoryId(connection, appointment.barbearia_id, 'Servicos', 'income');
   await connection.query(
@@ -55,6 +61,9 @@ async function createForecast(connection, appointment, actorId) {
   );
 }
 
+// * EDITAR ESTADO: conclui o atendimento dentro de uma transacao. A ordem
+// * protege conflito de status, gera receita, reconcilia comissao e cancela a
+// * previsao antiga antes de publicar a conta a receber.
 async function completeAppointment({ appointmentId, actorId, allowedProfessionalId = null, tenantId }) {
   const connection = await pool.getConnection();
   try {
@@ -129,6 +138,8 @@ async function completeAppointment({ appointmentId, actorId, allowedProfessional
   }
 }
 
+// * ADICIONAR: registra o recebimento de um atendimento concluido. Valida
+// * tenant, saldo, metodo e chave de idempotencia antes de alterar o caixa.
 async function registerPayment({ tenantId, actorId, appointmentId, method, amount, idempotencyKey }) {
   const amountCents = cents(amount);
   if (amountCents == null || amountCents <= 0n) return { status: 422, code: 'INVALID_AMOUNT' };

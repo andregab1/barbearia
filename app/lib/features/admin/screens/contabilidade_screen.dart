@@ -3,11 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../shared/widgets/app_toast.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/admin_controller.dart';
 import '../controllers/financial_controller.dart';
 import 'financeiro_screen.dart';
 
+// * Tela de apoio contabil: consulta contas/entradas/resultado e tributos,
+// * reutilizando o periodo e o estado financeiro ja carregados.
 class ContabilidadeScreen extends StatefulWidget {
   const ContabilidadeScreen({super.key});
 
@@ -101,17 +104,17 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Remover lancamento?'),
+        title: Text('Remover lancamento?'),
         content:
-            const Text('O valor deixara de compor o resultado do periodo.'),
+            Text('O valor deixara de compor o resultado do periodo.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Remover'),
+            child: Text('Remover'),
           ),
         ],
       ),
@@ -142,19 +145,18 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
       title: 'Contabilidade',
       subtitle:
           'Visao gerencial para acompanhar vendas, impostos, despesas e resultado.',
-      headingFontSize: 27,
-      horizontalPadding: 40,
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
+      headingFontSize: 28,
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 32),
       actions: [
         IconButton(
           tooltip: 'Atualizar',
           onPressed: financial.loading || _loadingTaxes ? null : _load,
-          icon: const Icon(Icons.refresh_rounded),
+          icon: Icon(Icons.refresh_rounded),
         ),
         FilledButton.icon(
           onPressed: _openTaxForm,
-          icon: const Icon(Icons.add_rounded),
-          label: const Text('Cadastrar imposto'),
+          icon: Icon(Icons.add_rounded),
+          label: Text('Cadastrar imposto'),
         ),
       ],
       child: financial.loading || _loadingTaxes
@@ -176,16 +178,16 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _periodLabel(financial),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           _formulaCards(sales, taxes, expenses, result),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           FinancialChart(
                             rows: _items(dashboard['evolution']),
                             money: _money,
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           _taxSection(),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           _disclaimer(),
                         ],
                       ),
@@ -194,15 +196,15 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
   }
 
   Widget _periodLabel(FinancialController financial) => PremiumSurface(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            const Icon(Icons.calendar_month_outlined,
+            Icon(Icons.calendar_month_outlined,
                 size: 18, color: PremiumColors.gold),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               'Periodo: ${DateFormat('dd/MM/yyyy').format(financial.from)} a ${DateFormat('dd/MM/yyyy').format(financial.to)}',
-              style: const TextStyle(color: PremiumColors.textSecondary),
+              style: TextStyle(color: PremiumColors.textSecondary),
             ),
           ],
         ),
@@ -249,17 +251,17 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
                         child: Row(
                           children: [
                             Icon(card.$3, color: card.$4),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(card.$1,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           color: PremiumColors.textSecondary)),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4),
                                   Text(_money.format(card.$2),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w700)),
                                 ],
@@ -294,18 +296,18 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text('Impostos cadastrados',
                       style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
                 Text('${_taxes.length} lancamento(s)',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: PremiumColors.textMuted, fontSize: 12)),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             if (_taxes.isEmpty)
-              const Text(
+              Text(
                 'Nenhum imposto informado no periodo. O preenchimento e opcional e manual.',
                 style: TextStyle(color: PremiumColors.textMuted),
               )
@@ -313,7 +315,7 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
               ..._taxes.map(
                 (tax) => ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.receipt_long_outlined,
+                  leading: Icon(Icons.receipt_long_outlined,
                       color: PremiumColors.gold),
                   title: Text(
                       _taxLabels[tax['type']] ?? 'Outro tributo ou encargo'),
@@ -326,7 +328,7 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
                       IconButton(
                         tooltip: 'Remover',
                         onPressed: () => _deleteTax(tax),
-                        icon: const Icon(Icons.delete_outline_rounded,
+                        icon: Icon(Icons.delete_outline_rounded,
                             color: PremiumColors.error),
                       ),
                     ],
@@ -337,7 +339,7 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
         ),
       );
 
-  Widget _disclaimer() => const PremiumSurface(
+  Widget _disclaimer() => PremiumSurface(
         color: PremiumColors.surfaceSecondary,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,7 +436,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Cadastrar imposto'),
+        title: Text('Cadastrar imposto'),
         content: SizedBox(
           width: 480,
           child: Form(
@@ -446,7 +448,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                   DropdownButtonFormField<String>(
                     initialValue: _type,
                     decoration:
-                        const InputDecoration(labelText: 'Tipo de tributo *'),
+                        InputDecoration(labelText: 'Tipo de tributo *'),
                     items: widget.taxLabels.entries
                         .map((entry) => DropdownMenuItem(
                             value: entry.key, child: Text(entry.value)))
@@ -455,10 +457,10 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         ? null
                         : (value) => setState(() => _type = value ?? _type),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _regime,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: 'Enquadramento, se souber'),
                     items: widget.regimeLabels.entries
                         .map((entry) => DropdownMenuItem(
@@ -468,11 +470,11 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         ? null
                         : (value) => setState(() => _regime = value ?? _regime),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _calculationType,
                     decoration:
-                        const InputDecoration(labelText: 'Forma de calculo *'),
+                        InputDecoration(labelText: 'Forma de calculo *'),
                     items: const [
                       DropdownMenuItem(
                           value: 'percentage', child: Text('Percentual (%)')),
@@ -484,7 +486,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         : (value) => setState(
                             () => _calculationType = value ?? _calculationType),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                     controller: _amount,
                     enabled: !_saving,
@@ -510,7 +512,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -518,25 +520,25 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     _calculationType == 'percentage'
                         ? 'O percentual sera aplicado sobre as vendas dos servicos selecionados.'
                         : _selectedServiceIds.isEmpty
                             ? 'Sem vinculo, o valor sera lancado uma vez no periodo.'
                             : 'Com vinculo, o valor sera aplicado a cada atendimento desses servicos.',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: PremiumColors.textMuted, fontSize: 12),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   if (widget.services.isEmpty)
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text('Nenhum servico ativo cadastrado.'),
                     )
                   else
                     Container(
-                      constraints: const BoxConstraints(maxHeight: 180),
+                      constraints: BoxConstraints(maxHeight: 180),
                       decoration: BoxDecoration(
                         border: Border.all(color: PremiumColors.border),
                         borderRadius: BorderRadius.circular(10),
@@ -545,7 +547,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         shrinkWrap: true,
                         children: widget.services.map((service) {
                           final id = int.tryParse('${service['id']}');
-                          if (id == null) return const SizedBox.shrink();
+                          if (id == null) return SizedBox.shrink();
                           return CheckboxListTile(
                             dense: true,
                             value: _selectedServiceIds.contains(id),
@@ -565,27 +567,30 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         }).toList(),
                       ),
                     ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                         'Competencia: ${DateFormat('MM/yyyy').format(_date)}'),
-                    trailing: IconButton(
-                      tooltip: 'Escolher competencia',
-                      onPressed: _saving
-                          ? null
-                          : () async {
-                              final picked = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(2020),
-                                  lastDate: DateTime(2100),
-                                  initialDate: _date);
-                              if (picked != null) {
-                                setState(() => _date =
-                                    DateTime(picked.year, picked.month, 1));
-                              }
-                            },
-                      icon: const Icon(Icons.calendar_month_outlined),
+                    trailing: Builder(
+                      builder: (buttonContext) => IconButton(
+                        tooltip: 'Escolher competencia',
+                        onPressed: _saving
+                            ? null
+                            : () async {
+                                final picked =
+                                    await showGetCuttDatePickerPopover(
+                                        context: buttonContext,
+                                        firstDate: DateTime(2020),
+                                        lastDate: DateTime(2100),
+                                        initialDate: _date);
+                                if (picked != null) {
+                                  setState(() => _date =
+                                      DateTime(picked.year, picked.month, 1));
+                                }
+                              },
+                        icon: Icon(Icons.calendar_month_outlined),
+                      ),
                     ),
                   ),
                   TextFormField(
@@ -593,11 +598,11 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                     enabled: !_saving,
                     maxLength: 240,
                     maxLines: 2,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: 'Observacao (opcional)'),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
+                  SizedBox(height: 4),
+                  Text(
                     'Use o valor da guia ou apuracao ja conferida. Este cadastro nao substitui a orientacao contabil.',
                     style:
                         TextStyle(color: PremiumColors.textMuted, fontSize: 12),
@@ -610,7 +615,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
         actions: [
           TextButton(
               onPressed: _saving ? null : () => Navigator.pop(context, false),
-              child: const Text('Cancelar')),
+              child: Text('Cancelar')),
           FilledButton(
               onPressed: _saving ? null : _save,
               child: Text(_saving ? 'Salvando...' : 'Salvar')),

@@ -7,6 +7,8 @@ const { autenticar, autorizar } = require('../middlewares/auth.middleware');
 const { listar, listarCategorias, criarCategoria, criar, atualizar, desativar } = require('../controllers/servicos.controller');
 
 router.get('/categorias/:barbearia_id', autenticar, autorizar('admin'), listarCategorias);
+// * ADICIONAR/EDITAR/EXCLUIR: categorias e servicos sao gerenciados pelo
+// * administrador; desativar preserva referencias historicas.
 router.post('/categorias/:barbearia_id', autenticar, autorizar('admin'), criarCategoria);
 
 // Público — clientes podem ver os serviços sem login

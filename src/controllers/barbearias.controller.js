@@ -11,14 +11,14 @@ async function listarPublicas(req, res) {
   const limite = Math.min(Math.max(Number.parseInt(req.query.limite, 10) || 30, 1), 50);
   try {
     const params = [];
-    let filtro = 'WHERE 1 = 1';
+    let filtro = 'WHERE b.ativa = 1';
     if (busca) {
       filtro += ' AND b.nome LIKE ?';
       params.push(`%${busca}%`);
     }
     params.push(limite);
     const [rows] = await pool.query(
-      `SELECT b.id, b.nome, b.telefone, b.email, b.logo_url, b.cor_primaria,
+      `SELECT b.id, b.slug, b.nome, b.telefone, b.email, b.logo_url, b.cor_primaria,
               COUNT(DISTINCT c.id) AS total_profissionais,
               COUNT(DISTINCT s.id) AS total_servicos
          FROM barbearias b
@@ -64,6 +64,45 @@ async function buscar(req, res) {
     if (rows.length === 0) return res.status(404).json({ erro: 'Barbearia não encontrada.' });
     return res.json(rows[0]);
   } catch (err) {
+    return res.status(500).json({ erro: 'Erro interno ao buscar barbearia.' });
+  }
+}
+
+async function buscarPublicaPorSlug(req, res) {
+  const slug = String(req.params.slug || '').trim().toLowerCase();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    return res.status(404).json({ erro: 'Barbearia não encontrada.' });
+  }
+
+  const legado = /^barbearia-(\d+)$/.exec(slug);
+  const filtroPublico = legado
+    ? '(b.slug = ? OR (b.slug IS NULL AND b.id = ?))'
+    : 'b.slug = ?';
+  const parametrosPublicos = legado ? [slug, Number(legado[1])] : [slug];
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT b.id, b.slug, b.nome, b.descricao, b.telefone, b.email,
+              b.endereco, b.timezone, b.logo_url, b.cor_primaria,
+              b.cor_secundaria,
+              COUNT(DISTINCT c.id) AS total_profissionais,
+              COUNT(DISTINCT s.id) AS total_servicos
+         FROM barbearias b
+         LEFT JOIN colaboradores c
+           ON c.barbearia_id = b.id AND c.ativo = 1
+         LEFT JOIN servicos s
+           ON s.barbearia_id = b.id AND s.ativo = 1
+        WHERE ${filtroPublico} AND b.ativa = 1
+        GROUP BY b.id
+        LIMIT 1`,
+      parametrosPublicos,
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ erro: 'Barbearia não encontrada.' });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error('ERRO ao buscar perfil publico:', err.message);
     return res.status(500).json({ erro: 'Erro interno ao buscar barbearia.' });
   }
 }
@@ -134,7 +173,7 @@ async function personalizar(req, res) {
     });
   } catch (err) {
     console.error('ERRO personalizar:', err.message);
-    return res.status(500).json({ erro: 'Erro interno ao personalizar: ' + err.message });
+    return res.status(500).json({ erro: 'Erro interno ao personalizar.' });
   }
 }
 
@@ -154,4 +193,11 @@ async function atualizar(req, res) {
   }
 }
 
-module.exports = { listarPublicas, cadastrar, buscar, personalizar, atualizar };
+module.exports = {
+  listarPublicas,
+  cadastrar,
+  buscar,
+  buscarPublicaPorSlug,
+  personalizar,
+  atualizar,
+};

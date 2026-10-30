@@ -3,7 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../shared/widgets/app_toast.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
 import '../../../shared/widgets/premium_ui.dart';
+import '../../../core/services/barbearia_theme_service.dart';
 import '../controllers/financial_controller.dart';
 import 'commission_dashboard_screen.dart';
 import 'commission_rule_wizard_screen.dart';
@@ -11,6 +13,9 @@ import 'report_download_stub.dart'
     if (dart.library.html) 'report_download_web.dart';
 import 'service_receipt_pdf_svg.dart';
 
+// * Tela operacional: navega entre visao geral, movimentos, contas a pagar,
+// * contas a receber, comissoes, categorias e recibos. Escritas passam pelo
+// * FinancialController, que delega validacoes e transacoes ao backend.
 class FinanceiroScreen extends StatefulWidget {
   const FinanceiroScreen({super.key});
   @override
@@ -45,22 +50,21 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     return PremiumPage(
       title: 'Financeiro',
       subtitle: 'Acompanhe o desempenho financeiro da sua barbearia.',
-      headingFontSize: 27,
-      horizontalPadding: 40,
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
+      headingFontSize: 28,
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 32),
       actions: [
         IconButton(
             tooltip: 'Atualizar',
             onPressed: state.loading ? null : state.loadCurrent,
-            icon: const Icon(Icons.refresh_rounded)),
+            icon: Icon(Icons.refresh_rounded)),
         if (state.area == FinancialArea.overview ||
             state.area == FinancialArea.expenses) ...[
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           FilledButton.icon(
               onPressed:
                   state.submitting ? null : () => _expenseDialogStable(state),
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Nova despesa')),
+              icon: Icon(Icons.add_rounded),
+              label: Text('Nova despesa')),
         ],
       ],
       child: Column(children: [
@@ -68,8 +72,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           final compact = constraints.maxWidth < 760;
           final content =
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            _filters(state),
-            const SizedBox(height: 14),
+            if (state.area != FinancialArea.commissions) ...[
+              _filters(state),
+              SizedBox(height: 14),
+            ],
             Expanded(
                 child: state.loading
                     ? const PremiumLoadingState(label: 'Carregando financeiro')
@@ -92,13 +98,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           if (compact) {
             return Column(children: [
               _compactNavigation(state),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Expanded(child: content),
             ]);
           }
           return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             SizedBox(width: 220, child: _navigation(state)),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
             Expanded(child: content),
           ]);
         })),
@@ -117,7 +123,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       (FinancialArea.categories, Icons.sell_outlined, 'Categorias'),
     ];
     return PremiumSurface(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -134,7 +140,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       IconData icon, String label) {
     final selected = state.area == area;
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
+      padding: EdgeInsets.only(right: 6),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: state.loading
@@ -145,7 +151,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
                 ? PremiumColors.gold.withValues(alpha: .12)
@@ -162,7 +168,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                 color: selected
                     ? PremiumColors.gold
                     : PremiumColors.textSecondary),
-            const SizedBox(width: 7),
+            SizedBox(width: 7),
             Text(label,
                 style: TextStyle(
                     color: selected
@@ -177,55 +183,59 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   }
 
   Widget _navigation(FinancialController state) => PremiumSurface(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            child: Text('Financeiro',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 14),
-            child: Text('Gestao financeira',
-                style: TextStyle(
-                    color: PremiumColors.textSecondary, fontSize: 11)),
-          ),
-          _financeNavItem(state, FinancialArea.serviceReceipts,
-              Icons.receipt_long_outlined, 'Notas de serviço'),
-          const SizedBox(height: 14),
-          _financeNavSection('OPERACAO', [
-            _financeNavItem(state, FinancialArea.overview,
-                Icons.dashboard_outlined, 'Visao geral'),
-            _financeNavItem(state, FinancialArea.movements,
-                Icons.swap_vert_rounded, 'Movimentacoes'),
-          ]),
-          const SizedBox(height: 14),
-          _financeNavSection('CONTROLE', [
-            _financeNavItem(state, FinancialArea.receivables,
-                Icons.pending_actions_outlined, 'Contas a receber'),
-            _financeNavItem(state, FinancialArea.expenses,
-                Icons.receipt_long_outlined, 'Contas a pagar'),
-          ]),
-          const SizedBox(height: 14),
-          _financeNavSection('EQUIPE', [
-            _financeNavItem(state, FinancialArea.commissions,
-                Icons.groups_2_outlined, 'Comissoes'),
-          ]),
-          const SizedBox(height: 14),
-          _financeNavSection('CONFIGURACAO', [
-            _financeNavItem(state, FinancialArea.categories,
-                Icons.sell_outlined, 'Categorias'),
-          ]),
-        ]),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+        child: SingleChildScrollView(
+            primary: false,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    child: Text('Financeiro',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 14),
+                    child: Text('Gestao financeira',
+                        style: TextStyle(
+                            color: PremiumColors.textSecondary, fontSize: 11)),
+                  ),
+                  _financeNavItem(state, FinancialArea.serviceReceipts,
+                      Icons.receipt_long_outlined, 'Notas de serviço'),
+                  SizedBox(height: 14),
+                  _financeNavSection('OPERACAO', [
+                    _financeNavItem(state, FinancialArea.overview,
+                        Icons.dashboard_outlined, 'Visao geral'),
+                    _financeNavItem(state, FinancialArea.movements,
+                        Icons.swap_vert_rounded, 'Movimentacoes'),
+                  ]),
+                  SizedBox(height: 14),
+                  _financeNavSection('CONTROLE', [
+                    _financeNavItem(state, FinancialArea.receivables,
+                        Icons.pending_actions_outlined, 'Contas a receber'),
+                    _financeNavItem(state, FinancialArea.expenses,
+                        Icons.receipt_long_outlined, 'Contas a pagar'),
+                  ]),
+                  SizedBox(height: 14),
+                  _financeNavSection('EQUIPE', [
+                    _financeNavItem(state, FinancialArea.commissions,
+                        Icons.groups_2_outlined, 'Comissoes'),
+                  ]),
+                  SizedBox(height: 14),
+                  _financeNavSection('CONFIGURACAO', [
+                    _financeNavItem(state, FinancialArea.categories,
+                        Icons.sell_outlined, 'Categorias'),
+                  ]),
+                ])),
       );
 
   Widget _financeNavSection(String title, List<Widget> items) =>
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 6),
             child: Text(title,
-                style: const TextStyle(
+                style: TextStyle(
                     color: PremiumColors.textMuted,
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
@@ -237,7 +247,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       IconData icon, String label) {
     final selected = state.area == area;
     return Padding(
-        padding: const EdgeInsets.only(bottom: 4),
+        padding: EdgeInsets.only(bottom: 4),
         child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -253,7 +263,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: BoxDecoration(
                     color: selected
                         ? PremiumColors.gold.withValues(alpha: .10)
@@ -274,13 +284,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 ? PremiumColors.gold
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(3))),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Icon(icon,
                         size: 18,
                         color: selected
                             ? PremiumColors.gold
                             : PremiumColors.textSecondary),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Expanded(
                         child: Text(label,
                             overflow: TextOverflow.ellipsis,
@@ -307,27 +317,27 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (compact) ...[
-                const Text('Comissoes',
+                Text('Comissoes',
                     style:
                         TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 Align(alignment: Alignment.centerLeft, child: actions),
               ] else
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Expanded(
+                    Expanded(
                         child: Text('Comissoes',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w800))),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Flexible(
                         child: Align(
                             alignment: Alignment.topRight, child: actions)),
                   ],
                 ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                   'Disponível após concluir o atendimento e confirmar o recebimento. Cada item preserva sua regra e memória de cálculo.',
                   style: TextStyle(
                       color: PremiumColors.textSecondary, fontSize: 12)),
@@ -344,29 +354,29 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               onPressed: state.submitting
                   ? null
                   : () => _commissionAdvanceDialog(state),
-              icon: const Icon(Icons.payments_outlined),
-              label: const Text('Adiantamento')),
+              icon: Icon(Icons.payments_outlined),
+              label: Text('Adiantamento')),
           OutlinedButton.icon(
               onPressed: state.submitting
                   ? null
                   : () => _commissionSettlementDialog(state),
-              icon: const Icon(Icons.lock_clock_outlined),
-              label: const Text('Fechar período')),
+              icon: Icon(Icons.lock_clock_outlined),
+              label: Text('Fechar período')),
           OutlinedButton.icon(
               onPressed: state.submitting
                   ? null
                   : () => _commissionSimulationDialog(state),
-              icon: const Icon(Icons.calculate_outlined),
-              label: const Text('Simular')),
+              icon: Icon(Icons.calculate_outlined),
+              label: Text('Simular')),
           OutlinedButton.icon(
               onPressed: state.submitting ? null : _showCommissionRules,
-              icon: const Icon(Icons.rule_outlined),
-              label: const Text('Ver regras')),
+              icon: Icon(Icons.rule_outlined),
+              label: Text('Ver regras')),
           FilledButton.icon(
               onPressed:
                   state.submitting ? null : () => _openCommissionWizard(state),
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Nova regra')),
+              icon: Icon(Icons.add_rounded),
+              label: Text('Nova regra')),
         ],
       );
 
@@ -439,7 +449,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _commissionTabButton(int index, IconData icon, String label) {
     final selected = _commissionTab == index;
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: EdgeInsets.only(right: 8),
       child: Material(
         color: selected
             ? PremiumColors.gold.withValues(alpha: .14)
@@ -449,8 +459,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           borderRadius: BorderRadius.circular(10),
           onTap: () => setState(() => _commissionTab = index),
           child: Container(
-            constraints: const BoxConstraints(minHeight: 46),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            constraints: BoxConstraints(minHeight: 46),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
@@ -462,7 +472,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                   color: selected
                       ? PremiumColors.gold
                       : PremiumColors.textSecondary),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(label,
                   style: TextStyle(
                       color: selected
@@ -483,9 +493,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       1 => <Widget>[_commissionStatementCard(state)],
       2 => <Widget>[
           _commissionSettlementsCard(state),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           _commissionPaymentsCard(state),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           _commissionAdvancesCard(state),
         ],
       _ => <Widget>[_commissionRulesCard(state)],
@@ -494,43 +504,40 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
 
   Widget _commissionProfessionalsCard(FinancialController state) =>
       PremiumSurface(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Por profissional',
+          Text('Por profissional',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          const Text(
+          SizedBox(height: 5),
+          Text(
               'Saldo disponível agora e pendências do período selecionado.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
-          if (state.commissionOverview['professionals'] is! List ||
-              (state.commissionOverview['professionals'] as List).isEmpty)
-            const Text('Nenhum profissional com comissão calculada no período.')
+          SizedBox(height: 12),
+          if (state.commissionProfessionals.isEmpty)
+            Text('Nenhum profissional com comissão calculada no período.')
           else
-            ...(state.commissionOverview['professionals'] as List)
-                .map((raw) => Map<String, dynamic>.from(raw as Map))
-                .map((professional) => ListTile(
+            ...state.commissionProfessionals.map((professional) => ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.person_outline,
+                      leading: Icon(Icons.person_outline,
                           color: PremiumColors.gold),
                       title: Text(
                           professional['professional_name']?.toString() ??
                               'Profissional'),
                       subtitle: Text('A liberar ' +
-                          money.format(_num(professional['to_release'])) +
+                          money.format(_num(professional['pending_release'])) +
                           ' · Pago ' +
-                          money.format(_num(professional['paid_period']))),
+                          money.format(_num(professional['settled']))),
                       trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(money.format(_num(professional['available'])),
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontWeight: FontWeight.w800,
                                     color: PremiumColors.success)),
-                            const Text('Disponível agora',
+                            Text('Disponível agora',
                                 style: TextStyle(
                                     color: PremiumColors.textSecondary,
                                     fontSize: 11)),
@@ -540,40 +547,40 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       );
 
   Widget _commissionStatementCard(FinancialController state) => PremiumSurface(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            const Expanded(
+            Expanded(
                 child: Text('Extrato detalhado',
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
             Text('${state.commissionStatementItems.length} itens',
-                style: const TextStyle(color: PremiumColors.textSecondary)),
+                style: TextStyle(color: PremiumColors.textSecondary)),
           ]),
-          const SizedBox(height: 5),
+          SizedBox(height: 5),
           Text(
               'Saldo inicial ' +
                   money.format(
                       _num(state.commissionOverview['opening_balance'])) +
                   ' · saldo disponível agora ' +
                   money.format(_num(state.commissionOverview['available'])),
-              style: const TextStyle(
+              style: TextStyle(
                   color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 4),
-          const Text('Clique em um item para ver a conta completa.',
+          SizedBox(height: 4),
+          Text('Clique em um item para ver a conta completa.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.commissionStatementItems.isEmpty)
-            const Padding(
+            Padding(
                 padding: EdgeInsets.all(20),
                 child: Text('Nenhuma comissão calculada no período.'))
           else
             ...state.commissionStatementItems.map((item) => ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () => _commissionDetailDialog(state, item),
-                  leading: const Icon(Icons.receipt_long_outlined,
+                  leading: Icon(Icons.receipt_long_outlined,
                       color: PremiumColors.gold),
                   title: Text(
                       '${item['professional_name'] ?? 'Profissional'} · ${item['service_name'] ?? 'Serviço'}'),
@@ -585,7 +592,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       children: [
                         Text(money.format(_num(item['total_commission'])),
                             style:
-                                const TextStyle(fontWeight: FontWeight.w700)),
+                                TextStyle(fontWeight: FontWeight.w700)),
                         Text(
                             'Pendente ${money.format(_num(item['pending_amount']))}',
                             style: TextStyle(
@@ -614,19 +621,19 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
 
   Widget _commissionRulesCard(FinancialController state) => PremiumSurface(
         key: _commissionRulesCardKey,
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Regras vigentes e histórico',
+          Text('Regras vigentes e histórico',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          const Text(
+          SizedBox(height: 5),
+          Text(
               'A regra usada fica congelada no lançamento; alterar uma regra não muda o passado.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.commissionRules.isEmpty)
-            const Text('Nenhuma regra cadastrada.')
+            Text('Nenhuma regra cadastrada.')
           else
             ...state.commissionRules.map((rule) {
               final fixed = rule['type'] == 'fixed';
@@ -653,7 +660,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       onPressed: state.submitting
                           ? null
                           : () => _editCommissionRule(state, rule),
-                      icon: const Icon(Icons.edit_outlined),
+                      icon: Icon(Icons.edit_outlined),
                     ),
                   ],
                 ),
@@ -690,23 +697,23 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
 
   Widget _commissionSettlementsCard(FinancialController state) =>
       PremiumSurface(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Fechamentos e pagamentos',
+          Text('Fechamentos e pagamentos',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          const Text(
+          SizedBox(height: 5),
+          Text(
               'Fechar o período consolida o acerto; pagar é uma etapa separada e pode ser parcial.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.commissionSettlements.isEmpty)
-            const Text('Nenhum período fechado.')
+            Text('Nenhum período fechado.')
           else
             ...state.commissionSettlements.map((settlement) => ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.lock_clock_outlined,
+                  leading: Icon(Icons.lock_clock_outlined,
                       color: PremiumColors.gold),
                   title: Text(
                       '${settlement['professional_name'] ?? 'Profissional'} · ${settlement['status']}'),
@@ -725,18 +732,18 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       );
 
   Widget _commissionPaymentsCard(FinancialController state) => PremiumSurface(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Pagamentos registrados',
+          Text('Pagamentos registrados',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          const Text('Saídas efetivamente registradas e reversões autorizadas.',
+          SizedBox(height: 5),
+          Text('Saídas efetivamente registradas e reversões autorizadas.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.commissionPayments.isEmpty)
-            const Text('Nenhum pagamento registrado.')
+            Text('Nenhum pagamento registrado.')
           else
             ...state.commissionPayments.map((payment) => ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -761,32 +768,32 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               ? null
                               : () => _reverseCommissionPaymentDialog(
                                   state, payment),
-                          icon: const Icon(Icons.undo_outlined,
+                          icon: Icon(Icons.undo_outlined,
                               color: PremiumColors.error))
-                      : const Text('Revertido',
+                      : Text('Revertido',
                           style: TextStyle(color: PremiumColors.textMuted)),
                 )),
         ]),
       );
 
   Widget _commissionAdvancesCard(FinancialController state) => PremiumSurface(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Adiantamentos',
+          Text('Adiantamentos',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 5),
-          const Text(
+          SizedBox(height: 5),
+          Text(
               'Cada adiantamento é compensado uma única vez em fechamentos futuros.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (state.commissionAdvances.isEmpty)
-            const Text('Nenhum adiantamento registrado.')
+            Text('Nenhum adiantamento registrado.')
           else
             ...state.commissionAdvances.map((advance) => ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.payments_outlined,
+                  leading: Icon(Icons.payments_outlined,
                       color: PremiumColors.error),
                   title: Text(
                       '${advance['professional_id'] ?? 'Profissional'} · ${money.format(_num(advance['amount']))}'),
@@ -801,7 +808,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               ? null
                               : () => _reverseCommissionAdvanceDialog(
                                   state, advance),
-                          icon: const Icon(Icons.undo_outlined,
+                          icon: Icon(Icons.undo_outlined,
                               color: PremiumColors.error))
                   ]),
                 )),
@@ -820,7 +827,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     await showDialog<void>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-              title: const Text('Como a comissão foi calculada'),
+              title: Text('Como a comissão foi calculada'),
               content: SizedBox(
                   width: 480,
                   child: Column(
@@ -829,26 +836,26 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       children: [
                         Text(
                             '${item['professional_name'] ?? 'Profissional'} · ${item['service_name'] ?? 'Serviço'}'),
-                        const SizedBox(height: 14),
+                        SizedBox(height: 14),
                         Text('Valor bruto: ${money.format(gross)}'),
                         Text('Desconto: ${money.format(discount)}'),
                         Text('Base de cálculo: ${money.format(base)}'),
-                        const Divider(height: 22),
+                        Divider(height: 22),
                         Text(rule['type'] == 'fixed'
                             ? 'Regra: valor fixo de ${money.format(_num(rule['value']))} por unidade'
                             : 'Regra: ${_num(rule['value']).toStringAsFixed(2)}% sobre ${rule['base'] == 'gross' ? 'o bruto' : 'o líquido após desconto'}'),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text('Comissão total: ${money.format(total)}',
                             style:
-                                const TextStyle(fontWeight: FontWeight.w800)),
+                                TextStyle(fontWeight: FontWeight.w800)),
                         Text(
                             'Liberado: ${money.format(_num(item['released_amount']))}'),
                         Text(
                             'Ainda a liberar: ${money.format(_num(item['pending_amount']))}'),
                         if (item['snapshot'] is Map &&
                             (item['snapshot'] as Map)['rule'] != null) ...[
-                          const SizedBox(height: 12),
-                          const Text(
+                          SizedBox(height: 12),
+                          Text(
                               'A regra acima é um snapshot do momento do atendimento.',
                               style: TextStyle(
                                   color: PremiumColors.textSecondary,
@@ -858,11 +865,11 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               actions: [
                 OutlinedButton.icon(
                     onPressed: () => _commissionAdjustmentDialog(state, item),
-                    icon: const Icon(Icons.edit_note_outlined),
-                    label: const Text('Ajuste manual')),
+                    icon: Icon(Icons.edit_note_outlined),
+                    label: Text('Ajuste manual')),
                 TextButton(
                     onPressed: () => Navigator.pop(dialogContext),
-                    child: const Text('Fechar'))
+                    child: Text('Fechar'))
               ],
             ));
   }
@@ -876,44 +883,44 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                    title: const Text('Ajuste manual de comissão'),
+                    title: Text('Ajuste manual de comissão'),
                     content: SizedBox(
                         width: 440,
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                   'Use valor positivo para acrescentar e negativo para descontar. O lançamento original será preservado.'),
-                              const SizedBox(height: 14),
+                              SizedBox(height: 14),
                               TextField(
                                   controller: amount,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true, signed: true),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Valor do ajuste *',
                                       prefixText: 'R\$ ')),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               TextField(
                                   controller: reason,
                                   maxLength: 240,
                                   maxLines: 3,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Motivo *',
                                       hintText:
                                           'Explique por que o ajuste foi feito.')),
                               if (error != null)
                                 Padding(
-                                    padding: const EdgeInsets.only(top: 8),
+                                    padding: EdgeInsets.only(top: 8),
                                     child: Text(error!,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             color: PremiumColors.error)))
                             ])),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(dialogContext, false),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: () async {
                             final rawAmount = amount.text.trim();
@@ -938,7 +945,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                             }
                             Navigator.pop(dialogContext, true);
                           },
-                          child: const Text('Registrar ajuste'))
+                          child: Text('Registrar ajuste'))
                     ])));
     amount.dispose();
     reason.dispose();
@@ -954,23 +961,23 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-              title: const Text('Reverter pagamento'),
+              title: Text('Reverter pagamento'),
               content: SizedBox(
                   width: 420,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text('Valor: ' + money.format(_num(payment['amount']))),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     TextField(
                         controller: reason,
                         maxLength: 240,
                         maxLines: 3,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Motivo obrigatório'))
                   ])),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(dialogContext, false),
-                    child: const Text('Cancelar')),
+                    child: Text('Cancelar')),
                 FilledButton(
                     onPressed: () async {
                       final note = reason.text.trim();
@@ -985,7 +992,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       }
                       Navigator.pop(dialogContext, true);
                     },
-                    child: const Text('Confirmar reversão'))
+                    child: Text('Confirmar reversão'))
               ],
             ));
     reason.dispose();
@@ -1001,23 +1008,23 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-              title: const Text('Reverter adiantamento'),
+              title: Text('Reverter adiantamento'),
               content: SizedBox(
                   width: 420,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text('Valor: ' + money.format(_num(advance['amount']))),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     TextField(
                         controller: reason,
                         maxLength: 240,
                         maxLines: 3,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Motivo obrigatório'))
                   ])),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(dialogContext, false),
-                    child: const Text('Cancelar')),
+                    child: Text('Cancelar')),
                 FilledButton(
                     onPressed: () async {
                       final note = reason.text.trim();
@@ -1032,7 +1039,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       }
                       Navigator.pop(dialogContext, true);
                     },
-                    child: const Text('Confirmar reversão'))
+                    child: Text('Confirmar reversão'))
               ],
             ));
     reason.dispose();
@@ -1053,22 +1060,22 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
               builder: (context, setDialogState) => AlertDialog(
-                title: const Text('Registrar pagamento de comissão'),
+                title: Text('Registrar pagamento de comissão'),
                 content: SizedBox(
                     width: 430,
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(
                           'Saldo do acerto: ${money.format(_num(settlement['balance']))}'),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       TextField(
                           controller: amountController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                               labelText: 'Valor a pagar', prefixText: 'R\$ ')),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       DropdownButtonFormField<int>(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                               labelText: 'Conta de saída *'),
                           items: _items(state.metadata['accounts'])
                               .map((e) => DropdownMenuItem(
@@ -1077,10 +1084,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               .toList(),
                           onChanged: (value) =>
                               setDialogState(() => accountId = value)),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                           initialValue: method,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                               labelText: 'Forma de pagamento'),
                           items: const [
                             DropdownMenuItem(
@@ -1096,15 +1103,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               setDialogState(() => method = value ?? method)),
                       if (error != null)
                         Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10),
                             child: Text(error!,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: PremiumColors.error))),
                     ])),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(dialogContext, false),
-                      child: const Text('Cancelar')),
+                      child: Text('Cancelar')),
                   FilledButton(
                       onPressed: accountId == null
                           ? null
@@ -1125,7 +1132,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               }
                               Navigator.pop(dialogContext, true);
                             },
-                      child: const Text('Registrar pagamento'))
+                      child: Text('Registrar pagamento'))
                 ],
               ),
             ));
@@ -1143,13 +1150,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                  title: const Text('Fechar período de comissão'),
+                  title: Text('Fechar período de comissão'),
                   content: SizedBox(
                       width: 430,
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int?>(
                             initialValue: professionalId,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem<int?>(
@@ -1158,22 +1165,22 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 .toList(),
                             onChanged: (value) =>
                                 setDialogState(() => professionalId = value)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Text('Período selecionado: ' +
                             DateFormat('dd/MM/yyyy').format(state.from) +
                             ' até ' +
                             DateFormat('dd/MM/yyyy').format(state.to)),
                         if (error != null)
                           Padding(
-                              padding: const EdgeInsets.only(top: 12),
+                              padding: EdgeInsets.only(top: 12),
                               child: Text(error!,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: PremiumColors.error))),
                       ])),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(dialogContext, false),
-                        child: const Text('Cancelar')),
+                        child: Text('Cancelar')),
                     FilledButton(
                         onPressed: () async {
                           if (professionalId == null) {
@@ -1196,7 +1203,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           }
                           Navigator.pop(dialogContext, true);
                         },
-                        child: const Text('Confirmar fechamento'))
+                        child: Text('Confirmar fechamento'))
                   ],
                 )));
     if (result == true && mounted)
@@ -1216,13 +1223,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                  title: const Text('Registrar adiantamento'),
+                  title: Text('Registrar adiantamento'),
                   content: SizedBox(
                       width: 430,
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int?>(
                             initialValue: professionalId,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem<int?>(
@@ -1231,17 +1238,17 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 .toList(),
                             onChanged: (value) =>
                                 setDialogState(() => professionalId = value)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         TextField(
                             controller: amountController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Valor *', prefixText: 'R\$ ')),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         DropdownButtonFormField<int?>(
                             initialValue: accountId,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Conta financeira *'),
                             items: _items(state.metadata['accounts'])
                                 .map((e) => DropdownMenuItem<int?>(
@@ -1250,10 +1257,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 .toList(),
                             onChanged: (value) =>
                                 setDialogState(() => accountId = value)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         DropdownButtonFormField<String>(
                             initialValue: method,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Forma de pagamento'),
                             items: const [
                               DropdownMenuItem(
@@ -1270,15 +1277,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 setDialogState(() => method = value ?? method)),
                         if (error != null)
                           Padding(
-                              padding: const EdgeInsets.only(top: 12),
+                              padding: EdgeInsets.only(top: 12),
                               child: Text(error!,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: PremiumColors.error))),
                       ])),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(dialogContext, false),
-                        child: const Text('Cancelar')),
+                        child: Text('Cancelar')),
                     FilledButton(
                         onPressed: () async {
                           if (professionalId == null ||
@@ -1304,7 +1311,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           }
                           Navigator.pop(dialogContext, true);
                         },
-                        child: const Text('Registrar'))
+                        child: Text('Registrar'))
                   ],
                 )));
     amountController.dispose();
@@ -1328,14 +1335,14 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                  title: const Text('Simular comissão'),
+                  title: Text('Simular comissão'),
                   content: SizedBox(
                       width: 500,
                       child: SingleChildScrollView(
                           child:
                               Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int>(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem(
@@ -1344,10 +1351,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 .toList(),
                             onChanged: (value) =>
                                 setDialogState(() => professionalId = value)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         DropdownButtonFormField<int>(
                             decoration:
-                                const InputDecoration(labelText: 'Serviço *'),
+                                InputDecoration(labelText: 'Serviço *'),
                             items: services
                                 .map((e) => DropdownMenuItem(
                                     value: _int(e['id']),
@@ -1355,7 +1362,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 .toList(),
                             onChanged: (value) =>
                                 setDialogState(() => serviceId = value)),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Row(children: [
                           Expanded(
                               child: TextField(
@@ -1363,19 +1370,19 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Preço bruto'))),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Expanded(
                               child: TextField(
                                   controller: discount,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Desconto')))
                         ]),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Row(children: [
                           Expanded(
                               child: TextField(
@@ -1383,32 +1390,32 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Recebido'))),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           SizedBox(
                               width: 100,
                               child: TextField(
                                   controller: quantity,
                                   keyboardType: TextInputType.number,
                                   decoration:
-                                      const InputDecoration(labelText: 'Qtd.')))
+                                      InputDecoration(labelText: 'Qtd.')))
                         ]),
                         if (failure != null)
                           Padding(
-                              padding: const EdgeInsets.only(top: 12),
+                              padding: EdgeInsets.only(top: 12),
                               child: Text(failure!,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: PremiumColors.error))),
                         if (result != null) ...[
-                          const Divider(height: 24),
+                          Divider(height: 24),
                           Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                   result!['status_code'] == 'NO_APPLICABLE_RULE'
                                       ? 'Nenhuma regra aplicável.'
                                       : 'Memória de cálculo',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.w800))),
                           if (result!['rule'] is Map)
                             Align(
@@ -1437,7 +1444,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
-                        child: const Text('Fechar')),
+                        child: Text('Fechar')),
                     FilledButton(
                         onPressed: () async {
                           if (professionalId == null || serviceId == null) {
@@ -1462,7 +1469,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 : null;
                           });
                         },
-                        child: const Text('Calcular'))
+                        child: Text('Calcular'))
                   ],
                 )));
     gross.dispose();
@@ -1483,7 +1490,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                    title: const Text('Nova regra de comissao'),
+                    title: Text('Nova regra de comissao'),
                     content: SizedBox(
                         width: 430,
                         child: SingleChildScrollView(
@@ -1495,15 +1502,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Valor',
                                       helperText:
                                           'Percentual de 0 a 100 ou valor fixo por unidade.')),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               DropdownButtonFormField<String>(
                                   initialValue: type,
                                   decoration:
-                                      const InputDecoration(labelText: 'Tipo'),
+                                      InputDecoration(labelText: 'Tipo'),
                                   items: const [
                                     DropdownMenuItem(
                                         value: 'percentage',
@@ -1515,10 +1522,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   onChanged: (value) => setDialogState(
                                       () => type = value ?? type)),
                               if (type == 'percentage') ...[
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12),
                                 DropdownButtonFormField<String>(
                                     initialValue: base,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                         labelText: 'Base'),
                                     items: const [
                                       DropdownMenuItem(
@@ -1530,13 +1537,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                     onChanged: (value) => setDialogState(
                                         () => base = value ?? base))
                               ],
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               DropdownButtonFormField<int?>(
                                   initialValue: professionalId,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Profissional (opcional)'),
                                   items: [
-                                    const DropdownMenuItem<int?>(
+                                    DropdownMenuItem<int?>(
                                         value: null,
                                         child: Text('Todos os profissionais')),
                                     ...professionals.map((e) =>
@@ -1546,13 +1553,13 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   ],
                                   onChanged: (value) => setDialogState(
                                       () => professionalId = value)),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12),
                               DropdownButtonFormField<int?>(
                                   initialValue: serviceId,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Servico (opcional)'),
                                   items: [
-                                    const DropdownMenuItem<int?>(
+                                    DropdownMenuItem<int?>(
                                         value: null,
                                         child: Text('Todos os servicos')),
                                     ...services.map((e) =>
@@ -1566,7 +1573,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(dialogContext, false),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: () async {
                             final error = await state.createCommissionRule({
@@ -1584,7 +1591,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                             }
                             Navigator.pop(dialogContext, true);
                           },
-                          child: const Text('Salvar'))
+                          child: Text('Salvar'))
                     ])));
     valueController.dispose();
     if (result == true && mounted)
@@ -1596,22 +1603,22 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            const Expanded(
+            Expanded(
                 child: Text('Categorias financeiras',
                     style:
                         TextStyle(fontSize: 17, fontWeight: FontWeight.w800))),
             FilledButton.icon(
                 onPressed:
                     state.submitting ? null : () => _categoryDialog(state),
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('Nova categoria')),
+                icon: Icon(Icons.add_rounded),
+                label: Text('Nova categoria')),
           ]),
-          const SizedBox(height: 6),
-          const Text(
+          SizedBox(height: 6),
+          Text(
               'Organize receitas e despesas sem apagar categorias já usadas no histórico.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Expanded(
               child: state.categories.isEmpty
                   ? const PremiumEmptyState(
@@ -1621,7 +1628,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           'Crie a primeira categoria financeira da barbearia.')
                   : ListView.separated(
                       itemCount: state.categories.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, __) => Divider(height: 1),
                       itemBuilder: (_, index) {
                         final item = state.categories[index];
                         final active = item['active'] == true ||
@@ -1666,7 +1673,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                    title: const Text('Nova categoria'),
+                    title: Text('Nova categoria'),
                     content: SizedBox(
                         width: 380,
                         child:
@@ -1675,12 +1682,12 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               controller: name,
                               autofocus: true,
                               decoration:
-                                  const InputDecoration(labelText: 'Nome')),
-                          const SizedBox(height: 12),
+                                  InputDecoration(labelText: 'Nome')),
+                          SizedBox(height: 12),
                           DropdownButtonFormField<String>(
                               initialValue: type,
                               decoration:
-                                  const InputDecoration(labelText: 'Tipo'),
+                                  InputDecoration(labelText: 'Tipo'),
                               items: const [
                                 DropdownMenuItem(
                                     value: 'income', child: Text('Receita')),
@@ -1693,7 +1700,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(dialogContext, false),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: () async {
                             final error =
@@ -1706,7 +1713,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                             }
                             Navigator.pop(dialogContext, true);
                           },
-                          child: const Text('Criar'))
+                          child: Text('Criar'))
                     ])));
     name.dispose();
     if (result == true && mounted)
@@ -1752,30 +1759,31 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             _clearExpenseSelection();
             state.setPeriod(monthStart, now);
           }),
-      OutlinedButton.icon(
-          icon: const Icon(Icons.calendar_month_outlined),
-          label: Text(
-              '${DateFormat('dd/MM').format(state.from)} - ${DateFormat('dd/MM/yyyy').format(state.to)}'),
-          onPressed: () async {
-            final value = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2100),
-                initialDateRange:
-                    DateTimeRange(start: state.from, end: state.to));
-            if (value != null && mounted) {
-              _clearExpenseSelection();
-              state.setPeriod(value.start, value.end);
-            }
-          }),
+      Builder(
+          builder: (buttonContext) => OutlinedButton.icon(
+              icon: Icon(Icons.calendar_month_outlined),
+              label: Text(
+                  '${DateFormat('dd/MM').format(state.from)} - ${DateFormat('dd/MM/yyyy').format(state.to)}'),
+              onPressed: () async {
+                final value = await showGetCuttDateRangePickerPopover(
+                    context: buttonContext,
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2100),
+                    initialStart: state.from,
+                    initialEnd: state.to);
+                if (value != null && mounted) {
+                  _clearExpenseSelection();
+                  state.setPeriod(value.start, value.end);
+                }
+              })),
       SizedBox(
           width: 220,
           child: DropdownButtonFormField<int?>(
               initialValue: state.professionalId,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                   labelText: 'Profissional', isDense: true),
               items: [
-                const DropdownMenuItem(
+                DropdownMenuItem(
                     value: null, child: Text('Todos os profissionais')),
                 ...professionals.map((e) => DropdownMenuItem(
                     value: _int(e['id']), child: Text('${e['name']}')))
@@ -1789,9 +1797,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           child: DropdownButtonFormField<int?>(
               initialValue: state.serviceId,
               decoration:
-                  const InputDecoration(labelText: 'Servico', isDense: true),
+                  InputDecoration(labelText: 'Servico', isDense: true),
               items: [
-                const DropdownMenuItem(
+                DropdownMenuItem(
                     value: null, child: Text('Todos os servicos')),
                 ...services.map((e) => DropdownMenuItem(
                     value: _int(e['id']), child: Text('${e['name']}')))
@@ -1878,16 +1886,16 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                         hint: e.$5)))
                 .toList());
       }),
-      const SizedBox(height: 12),
+      SizedBox(height: 12),
       LayoutBuilder(builder: (_, c) {
         if (c.maxWidth < 1050)
           return Column(children: [
             FinancialChart(rows: evolution, money: money),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _latest(latest),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _appointments(appointments),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _professionals(professionals)
           ]);
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1895,15 +1903,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               flex: 9,
               child: Column(children: [
                 FinancialChart(rows: evolution, money: money),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _professionals(professionals)
               ])),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
               flex: 3,
               child: Column(children: [
                 _latest(latest),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _appointments(appointments)
               ])),
         ]);
@@ -1914,9 +1922,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _appointments(Map<String, dynamic> a) => PremiumSurface(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Atendimentos',
+        Text('Atendimentos',
             style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _metric('Confirmados', a['confirmed'], Icons.event_available_outlined,
             PremiumColors.success),
         _metric('Finalizados', a['completed'], Icons.content_cut_rounded,
@@ -1926,36 +1934,36 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       ]));
   Widget _metric(String label, dynamic value, IconData icon, Color color) =>
       Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(11),
+          margin: EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.all(11),
           decoration: BoxDecoration(
               color: PremiumColors.surfaceSecondary,
               borderRadius: BorderRadius.circular(9),
               border: Border.all(color: PremiumColors.border)),
           child: Row(children: [
             Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     color: color.withValues(alpha: .12),
                     borderRadius: BorderRadius.circular(8)),
                 child: Icon(icon, size: 18, color: color)),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             Expanded(
                 child: Text(label,
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: PremiumColors.textSecondary, fontSize: 12))),
             Text('${_int(value)}',
                 style:
-                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))
+                    TextStyle(fontWeight: FontWeight.w800, fontSize: 18))
           ]));
   Widget _latest(List<Map<String, dynamic>> rows) => PremiumSurface(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Ultimas movimentacoes',
+        Text('Ultimas movimentacoes',
             style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         if (rows.isEmpty)
-          const Text('Nenhuma movimentacao no periodo.')
+          Text('Nenhuma movimentacao no periodo.')
         else
           ...rows.map((e) => ListTile(
               dense: true,
@@ -1973,11 +1981,11 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _professionals(List<Map<String, dynamic>> rows) => PremiumSurface(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Desempenho por profissional',
+        Text('Desempenho por profissional',
             style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         if (rows.isEmpty)
-          const Text('Nenhum atendimento no periodo.')
+          Text('Nenhum atendimento no periodo.')
         else
           SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -2009,7 +2017,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               subtitle: 'Pagamentos e despesas pagas aparecerao aqui.')
           : ListView.separated(
               itemCount: state.movements.length,
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, __) => Divider(),
               itemBuilder: (_, i) {
                 final e = state.movements[i];
                 final income = e['type'] == 'income';
@@ -2066,16 +2074,16 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                   color: PremiumColors.gold,
                   hint: 'Ainda nao afetam o saldo.')),
         ]),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         Expanded(
             child: PremiumSurface(
                 padding: EdgeInsets.zero,
                 child: Column(children: [
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                      padding: EdgeInsets.fromLTRB(16, 14, 16, 10),
                       child: Column(children: [
                         Row(children: [
-                          const Expanded(
+                          Expanded(
                               child: Text('Contas a pagar',
                                   style: TextStyle(
                                       fontSize: 18,
@@ -2096,7 +2104,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   : 'Selecionar'))
                         ]),
                         if (_expenseSelectionMode)
-                          const Align(
+                          Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                   padding: EdgeInsets.only(top: 6),
@@ -2105,10 +2113,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                           color: PremiumColors.textSecondary,
                                           fontSize: 11)))),
                         if (_expenseSelectionMode && selectedCount > 0) ...[
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.all(10),
+                              padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                   color:
                                       PremiumColors.gold.withValues(alpha: .08),
@@ -2123,7 +2131,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   children: [
                                     Text(
                                         '$selectedCount de ${eligible.length} selecionadas',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontWeight: FontWeight.w700)),
                                     Text(
                                         'Total selecionado: ${money.format(totalSelectedCents / 100)}'),
@@ -2132,15 +2140,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                             ? null
                                             : () => _paySelectedExpenses(
                                                 state, selectedRows),
-                                        icon: const Icon(Icons.check_rounded),
-                                        label: const Text('Marcar como pagas')),
+                                        icon: Icon(Icons.check_rounded),
+                                        label: Text('Marcar como pagas')),
                                     OutlinedButton.icon(
                                         onPressed: state.submitting
                                             ? null
                                             : () => _cancelSelectedExpenses(
                                                 state, selectedRows),
-                                        icon: const Icon(Icons.delete_outline),
-                                        label: const Text('Excluir'))
+                                        icon: Icon(Icons.delete_outline),
+                                        label: Text('Excluir'))
                                   ]))
                         ]
                       ])),
@@ -2154,16 +2162,16 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           : compact
                               ? ListView.separated(
                                   padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                      EdgeInsets.fromLTRB(12, 0, 12, 12),
                                   itemCount: rows.length,
                                   separatorBuilder: (_, __) =>
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8),
                                   itemBuilder: (_, index) => _expenseCard(
                                       state, rows[index], eligibleIds),
                                 )
                               : ListView.builder(
                                   padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                      EdgeInsets.fromLTRB(12, 0, 12, 12),
                                   itemCount: rows.length + 1,
                                   itemBuilder: (_, index) {
                                     if (index == 0) {
@@ -2184,9 +2192,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _expenseTableHeader(FinancialController state, bool allSelected,
       bool someSelected, bool hasEligible) {
     return Container(
-        constraints: const BoxConstraints(minHeight: 48),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: const BoxDecoration(
+        constraints: BoxConstraints(minHeight: 48),
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: PremiumColors.border))),
         child: Row(children: [
           if (_expenseSelectionMode)
@@ -2210,29 +2218,29 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                     .map((e) => _int(e['id'])));
                               }
                             }))),
-          const Expanded(
+          Expanded(
               flex: 3,
               child: Text('Descricao',
                   style: TextStyle(fontWeight: FontWeight.w700))),
-          const Expanded(
+          Expanded(
               flex: 2,
               child: Text('Categoria',
                   style: TextStyle(fontWeight: FontWeight.w700))),
-          const Expanded(
+          Expanded(
               flex: 2,
               child: Text('Vencimento',
                   style: TextStyle(fontWeight: FontWeight.w700))),
-          const Expanded(
+          Expanded(
               flex: 2,
               child: Text('Status',
                   style: TextStyle(fontWeight: FontWeight.w700))),
-          const Expanded(
+          Expanded(
               flex: 2,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text('Valor',
                       style: TextStyle(fontWeight: FontWeight.w700)))),
-          const SizedBox(
+          SizedBox(
               width: 96,
               child: Align(
                   alignment: Alignment.centerRight,
@@ -2247,14 +2255,14 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final pending = eligibleIds.contains(id);
     final selected = _selectedExpenses.contains(id);
     return Container(
-        constraints: const BoxConstraints(minHeight: 64),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        constraints: BoxConstraints(minHeight: 64),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
             color: selected
                 ? PremiumColors.gold.withValues(alpha: .08)
                 : Colors.transparent,
             border:
-                const Border(bottom: BorderSide(color: PremiumColors.border))),
+                Border(bottom: BorderSide(color: PremiumColors.border))),
         child: Row(children: [
           if (_expenseSelectionMode)
             SizedBox(
@@ -2275,14 +2283,14 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           Expanded(
               flex: 2,
               child: Text(_dateLabel(expense['due_date']),
-                  style: const TextStyle(color: PremiumColors.textSecondary))),
+                  style: TextStyle(color: PremiumColors.textSecondary))),
           Expanded(flex: 2, child: _expenseStatus(expense['status'])),
           Expanded(
               flex: 2,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(money.format(_num(expense['amount'])),
-                      style: const TextStyle(fontWeight: FontWeight.w700)))),
+                      style: TextStyle(fontWeight: FontWeight.w700)))),
           SizedBox(width: 96, child: _expenseActions(state, expense))
         ]));
   }
@@ -2293,7 +2301,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final pending = eligibleIds.contains(id);
     final selected = _selectedExpenses.contains(id);
     return Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
             color: selected
                 ? PremiumColors.gold.withValues(alpha: .08)
@@ -2305,7 +2313,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (_expenseSelectionMode)
               Padding(
-                  padding: const EdgeInsets.only(right: 6),
+                  padding: EdgeInsets.only(right: 6),
                   child: Checkbox(
                       value: selected,
                       onChanged: !pending || state.submitting
@@ -2319,20 +2327,20 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               }))),
             Expanded(
                 child: Text('${expense['description']}',
-                    style: const TextStyle(fontWeight: FontWeight.w700))),
+                    style: TextStyle(fontWeight: FontWeight.w700))),
             Text(money.format(_num(expense['amount'])),
-                style: const TextStyle(fontWeight: FontWeight.w800))
+                style: TextStyle(fontWeight: FontWeight.w800))
           ]),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text('${expense['category'] ?? 'Outros'}',
-              style: const TextStyle(color: PremiumColors.textSecondary)),
-          const SizedBox(height: 4),
+              style: TextStyle(color: PremiumColors.textSecondary)),
+          SizedBox(height: 4),
           Row(children: [
             Expanded(
                 child: Text('Vencimento: ${_dateLabel(expense['due_date'])}')),
             _expenseStatus(expense['status'])
           ]),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Align(
               alignment: Alignment.centerRight,
               child: _expenseActions(state, expense))
@@ -2342,7 +2350,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _expenseActions(
       FinancialController state, Map<String, dynamic> expense) {
     final pending = expense['status'] == 'pending';
-    if (!pending) return const SizedBox.shrink();
+    if (!pending) return SizedBox.shrink();
     return Wrap(spacing: 8, children: [
       SizedBox(
           width: 40,
@@ -2351,7 +2359,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               tooltip: 'Marcar como paga',
               onPressed:
                   state.submitting ? null : () => _payExpense(state, expense),
-              icon: const Icon(Icons.check_rounded, size: 19),
+              icon: Icon(Icons.check_rounded, size: 19),
               color: PremiumColors.success)),
       SizedBox(
           width: 40,
@@ -2361,7 +2369,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
               onPressed: state.submitting
                   ? null
                   : () => _cancelExpense(state, expense),
-              icon: const Icon(Icons.delete_outline, size: 19),
+              icon: Icon(Icons.delete_outline, size: 19),
               color: PremiumColors.error))
     ]);
   }
@@ -2383,7 +2391,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     return Align(
         alignment: Alignment.centerLeft,
         child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
             decoration: BoxDecoration(
                 color: color.withValues(alpha: .12),
                 borderRadius: BorderRadius.circular(20),
@@ -2431,16 +2439,16 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-                title: const Text('Confirmar pagamento em lote'),
+                title: Text('Confirmar pagamento em lote'),
                 content: Text(
                     'Serão pagas ${selectedRows.length} contas no valor total de $total, usando a mesma conta financeira e a data de hoje.'),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Cancelar')),
+                      child: Text('Cancelar')),
                   FilledButton(
                       onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('Confirmar pagamento'))
+                      child: Text('Confirmar pagamento'))
                 ]));
     if (confirmed != true || !mounted) return;
     final error = await state.payExpenses(
@@ -2464,25 +2472,25 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-                title: const Text('Excluir contas selecionadas'),
+                title: Text('Excluir contas selecionadas'),
                 content: Column(mainAxisSize: MainAxisSize.min, children: [
                   Text(
                       'As ${selectedRows.length} contas serão canceladas e sairão dos totais pendentes.'),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextField(
                       controller: reason,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'Motivo', hintText: 'Informe o motivo'))
                 ]),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Cancelar')),
+                      child: Text('Cancelar')),
                   FilledButton(
                       onPressed: () => reason.text.trim().length < 3
                           ? null
                           : Navigator.pop(ctx, true),
-                      child: const Text('Excluir'))
+                      child: Text('Excluir'))
                 ]));
     final cleanReason = reason.text.trim();
     reason.dispose();
@@ -2514,9 +2522,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         padding: EdgeInsets.zero,
         child: Column(children: [
           Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+              padding: EdgeInsets.fromLTRB(16, 14, 16, 12),
               child: Row(children: [
-                const Expanded(
+                Expanded(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -2533,17 +2541,17 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                 Icon(Icons.receipt_long_outlined,
                     color: PremiumColors.gold, size: 24),
               ])),
-          const Divider(height: 1),
+          Divider(height: 1),
           Expanded(
               child: ListView.separated(
                   itemCount: rows.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, __) => Divider(height: 1),
                   itemBuilder: (_, index) {
                     final item = rows[index];
                     final id = _int(item['appointment_id']);
                     final canIssue = _canIssueReceipt(item);
                     return Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
                         child: Wrap(
                             alignment: WrapAlignment.spaceBetween,
@@ -2559,19 +2567,19 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       children: [
                                         Text(
                                             '#$id · ${item['client'] ?? 'Cliente'}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 fontWeight: FontWeight.w800)),
-                                        const SizedBox(height: 4),
+                                        SizedBox(height: 4),
                                         Text(
                                             '${item['service'] ?? 'Serviço'} · ${item['professional'] ?? 'Profissional'}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 color:
                                                     PremiumColors.textSecondary,
                                                 fontSize: 12)),
-                                        const SizedBox(height: 3),
+                                        SizedBox(height: 3),
                                         Text(
                                             '${_formatDate(item['service_date'])} · ${money.format(_num(item['total_amount']))}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 color: PremiumColors.textMuted,
                                                 fontSize: 11)),
                                       ])),
@@ -2582,15 +2590,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                         ? null
                                         : () => _issueServiceReceipt(item),
                                     icon: _issuingReceipts.contains(id)
-                                        ? const SizedBox(
+                                        ? SizedBox(
                                             width: 14,
                                             height: 14,
                                             child: CircularProgressIndicator(
                                                 strokeWidth: 2))
-                                        : const Icon(Icons.download_outlined),
-                                    label: const Text('Emitir nota de serviço'))
+                                        : Icon(Icons.download_outlined),
+                                    label: Text('Emitir nota de serviço'))
                               else
-                                const Text('Dados insuficientes',
+                                Text('Dados insuficientes',
                                     style: TextStyle(
                                         color: PremiumColors.textMuted,
                                         fontSize: 11)),
@@ -2635,20 +2643,20 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                         _selectedReceivables.addAll(visibleIds);
                       }
                     })),
-        const Text('Selecionar todos'),
-        const Spacer(),
+        Text('Selecionar todos'),
+        Spacer(),
         if (_selectedReceivables.isNotEmpty)
           FilledButton.icon(
               onPressed:
                   state.submitting ? null : () => _bulkReceivablesDialog(state),
-              icon: const Icon(Icons.playlist_add_check),
+              icon: Icon(Icons.playlist_add_check),
               label: Text('Ações (${_selectedReceivables.length})')),
       ]),
-      const Divider(height: 1),
+      Divider(height: 1),
       Expanded(
           child: ListView.separated(
               itemCount: state.receivables.length,
-              separatorBuilder: (_, __) => const Divider(),
+              separatorBuilder: (_, __) => Divider(),
               itemBuilder: (_, i) {
                 final e = state.receivables[i];
                 final id = _int(e['appointment_id']);
@@ -2668,14 +2676,14 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       spacing: 12,
                       children: [
                         Text(money.format(_num(e['outstanding_amount'])),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: PremiumColors.gold,
                                 fontWeight: FontWeight.w700)),
                         FilledButton(
                             onPressed: state.submitting
                                 ? null
                                 : () => _paymentDialogStable(state, e),
-                            child: const Text('Registrar pagamento')),
+                            child: Text('Registrar pagamento')),
                       ]),
                 );
               })),
@@ -2695,6 +2703,11 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         service.isNotEmpty;
   }
 
+  String _hexFromColor(Color color) =>
+      '#${color.red.toRadixString(16).padLeft(2, '0')}'
+      '${color.green.toRadixString(16).padLeft(2, '0')}'
+      '${color.blue.toRadixString(16).padLeft(2, '0')}';
+
   Future<void> _issueServiceReceipt(Map<String, dynamic> item) async {
     final appointmentId = _int(item['appointment_id']);
     if (!_canIssueReceipt(item) || appointmentId <= 0) {
@@ -2709,7 +2722,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         'name': item['barbearia_name'],
         'address': item['barbearia_address'],
         'phone': item['barbearia_phone'],
-      });
+      }, accentHex: _hexFromColor(context.read<BarbeariaThemeService>().corPrimaria));
       await downloadReportPdf(bytes, 'comprovante-servico-$appointmentId.pdf');
       if (mounted) {
         AppToast.show(context, 'Comprovante gerado com sucesso.',
@@ -2737,29 +2750,29 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         builder: (ctx) {
           return StatefulBuilder(
               builder: (ctx, setLocal) => AlertDialog(
-                    title: const Text('Ações em lote'),
+                    title: Text('Ações em lote'),
                     content: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                               '${_selectedReceivables.length} conta(s) selecionada(s).'),
-                          const SizedBox(height: 14),
-                          const Text(
+                          SizedBox(height: 14),
+                          Text(
                               'Escolha uma a??o para os pagamentos selecionados.'),
                         ]),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       OutlinedButton.icon(
                           onPressed: () => Navigator.pop(ctx, 'delete'),
-                          icon: const Icon(Icons.delete_outline),
-                          label: const Text('Excluir')),
+                          icon: Icon(Icons.delete_outline),
+                          label: Text('Excluir')),
                       FilledButton.icon(
                           onPressed: () => Navigator.pop(ctx, 'pay'),
-                          icon: const Icon(Icons.check_circle_outline),
-                          label: const Text('Dar baixa')),
+                          icon: Icon(Icons.check_circle_outline),
+                          label: Text('Dar baixa')),
                     ],
                   ));
         });
@@ -2773,16 +2786,16 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-                  title: const Text('Excluir contas selecionadas?'),
+                  title: Text('Excluir contas selecionadas?'),
                   content: Text(
                       'As ${current.length} conta(s) serão arquivadas e deixarão de aparecer em A receber.'),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Cancelar')),
+                        child: Text('Cancelar')),
                     FilledButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Excluir'))
+                        child: Text('Excluir'))
                   ]));
       if (confirmed == true) {
         final error = await state.excludeReceivables(
@@ -2841,7 +2854,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         context: context,
         builder: (ctx) => StatefulBuilder(
             builder: (ctx, setLocal) => AlertDialog(
-                    title: const Text('Nova despesa'),
+                    title: Text('Nova despesa'),
                     content: SizedBox(
                         width: 480,
                         child: Form(
@@ -2852,12 +2865,12 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                     children: [
                                   TextFormField(
                                       controller: description,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Descricao *'),
                                       validator: _required),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10),
                                   DropdownButtonFormField<int>(
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Categoria *'),
                                       items: _items(
                                               state.metadata['categories'])
@@ -2870,10 +2883,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       validator: (v) => v == null
                                           ? 'Selecione a categoria.'
                                           : null),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10),
                                   TextFormField(
                                       controller: amount,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Valor *',
                                           prefixText: 'R\$ '),
                                       keyboardType:
@@ -2882,9 +2895,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       validator: (v) => _money(v) <= 0
                                           ? 'Informe um valor valido.'
                                           : null),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10),
                                   DropdownButtonFormField<int>(
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText:
                                               'Conta (opcional ate pagar)'),
                                       items: _items(state.metadata['accounts'])
@@ -2893,9 +2906,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                               child: Text('${e['name']}')))
                                           .toList(),
                                       onChanged: (v) => account = v),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10),
                                   DropdownButtonFormField<int>(
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Responsavel *'),
                                       items:
                                           _items(state.metadata['responsibles'])
@@ -2907,25 +2920,25 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       validator: (v) => v == null
                                           ? 'Selecione o responsavel.'
                                           : null),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10),
                                   TextFormField(
                                       controller: notes,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Observacao'),
                                       maxLines: 2),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8),
                                   Text(
                                       'Competencia e vencimento: ${DateFormat('dd/MM/yyyy').format(competence)}')
                                 ])))),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: () => form.currentState!.validate()
                               ? Navigator.pop(ctx, true)
                               : null,
-                          child: const Text('Salvar despesa'))
+                          child: Text('Salvar despesa'))
                     ])));
     if (ok == true) {
       final error = await state.createExpense({
@@ -2964,17 +2977,17 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     final ok = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-                title: const Text('Cancelar despesa'),
+                title: Text('Cancelar despesa'),
                 content: TextField(
                     controller: reason,
-                    decoration: const InputDecoration(labelText: 'Motivo *')),
+                    decoration: InputDecoration(labelText: 'Motivo *')),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Voltar')),
+                      child: Text('Voltar')),
                   FilledButton(
                       onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('Cancelar despesa'))
+                      child: Text('Cancelar despesa'))
                 ]));
     if (ok == true) {
       final error = await state.cancelExpense(_int(e['id']), reason.text);
@@ -3002,15 +3015,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('${e['client']} · ${e['professional']}'),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Text(
                                   'Saldo: ${money.format(_num(e['outstanding_amount']))}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700)),
-                              const SizedBox(height: 14),
+                              SizedBox(height: 14),
                               DropdownButtonFormField<int>(
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Conta financeira *'),
                                   items: _items(state.metadata['accounts'])
                                       .map((x) => DropdownMenuItem(
@@ -3019,10 +3032,10 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       .toList(),
                                   onChanged: (v) =>
                                       setLocal(() => account = v)),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               DropdownButtonFormField<String>(
                                   initialValue: method,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Forma *'),
                                   items: const [
                                     DropdownMenuItem(
@@ -3040,21 +3053,21 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   ],
                                   onChanged: (v) =>
                                       setLocal(() => method = v!)),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               TextField(
                                   controller: notes,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Observacao'))
                             ])),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: account == null
                               ? null
                               : () => Navigator.pop(ctx, true),
-                          child: const Text('Confirmar pagamento'))
+                          child: Text('Confirmar pagamento'))
                     ])));
     if (ok == true) {
       final error = await state.registerPayment(_int(e['appointment_id']), {
@@ -3079,7 +3092,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             builder: (ctx, setLocal) => AlertDialog(
                     title: Text(title),
                     content: DropdownButtonFormField<int>(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Conta financeira'),
                         items: _items(state.metadata['accounts'])
                             .map((e) => DropdownMenuItem(
@@ -3090,12 +3103,12 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancelar')),
+                          child: Text('Cancelar')),
                       FilledButton(
                           onPressed: selected == null
                               ? null
                               : () => Navigator.pop(ctx, selected),
-                          child: const Text('Confirmar'))
+                          child: Text('Confirmar'))
                     ])));
   }
 
@@ -3149,10 +3162,10 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
     super.dispose();
   }
 
-  Future<void> pickDate(bool isDue) async {
+  Future<void> pickDate(bool isDue, BuildContext anchorContext) async {
     final current = isDue ? due : competence;
-    final value = await showDatePicker(
-        context: context,
+    final value = await showGetCuttDatePickerPopover(
+        context: anchorContext,
         initialDate: current,
         firstDate: DateTime(2020),
         lastDate: DateTime(2100));
@@ -3199,7 +3212,7 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
         .where((e) => e['type'] == 'expense')
         .toList();
     return AlertDialog(
-      title: const Text('Nova despesa'),
+      title: Text('Nova despesa'),
       content: SizedBox(
           width: 500,
           child: Form(
@@ -3209,14 +3222,14 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                 TextFormField(
                     controller: description,
                     enabled: !saving,
-                    decoration: const InputDecoration(labelText: 'Descricao *'),
+                    decoration: InputDecoration(labelText: 'Descricao *'),
                     validator: (v) => (v ?? '').trim().isEmpty
                         ? 'Informe a descricao.'
                         : null),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                     value: categoryId,
-                    decoration: const InputDecoration(labelText: 'Categoria *'),
+                    decoration: InputDecoration(labelText: 'Categoria *'),
                     items: categories
                         .map((e) => DropdownMenuItem(
                             value: id(e['id']), child: Text('${e['name']}')))
@@ -3225,21 +3238,21 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                         saving ? null : (v) => setState(() => categoryId = v),
                     validator: (v) =>
                         v == null ? 'Selecione a categoria.' : null),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 TextFormField(
                     controller: amount,
                     enabled: !saving,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: 'Valor *', prefixText: 'R\$ '),
                     validator: (_) => parsedAmount() <= 0
                         ? 'Informe um valor maior que zero.'
                         : null),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                     value: accountId,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: 'Conta financeira (opcional)'),
                     items: items(metadata['accounts'])
                         .map((e) => DropdownMenuItem(
@@ -3247,11 +3260,11 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                         .toList(),
                     onChanged:
                         saving ? null : (v) => setState(() => accountId = v)),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                     value: responsibleId,
                     decoration:
-                        const InputDecoration(labelText: 'Responsavel *'),
+                        InputDecoration(labelText: 'Responsavel *'),
                     items: items(metadata['responsibles'])
                         .map((e) => DropdownMenuItem(
                             value: id(e['id']), child: Text('${e['name']}')))
@@ -3261,47 +3274,53 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                         : (v) => setState(() => responsibleId = v),
                     validator: (v) =>
                         v == null ? 'Selecione o responsavel.' : null),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Row(children: [
                   Expanded(
-                      child: OutlinedButton.icon(
-                          onPressed: saving ? null : () => pickDate(false),
-                          icon: const Icon(Icons.event),
-                          label: Text(
-                              'Competencia ${DateFormat('dd/MM/yyyy').format(competence)}'))),
-                  const SizedBox(width: 10),
+                      child: Builder(
+                          builder: (buttonContext) => OutlinedButton.icon(
+                              onPressed: saving
+                                  ? null
+                                  : () => pickDate(false, buttonContext),
+                              icon: Icon(Icons.event),
+                              label: Text(
+                                  'Competencia ${DateFormat('dd/MM/yyyy').format(competence)}')))),
+                  SizedBox(width: 10),
                   Expanded(
-                      child: OutlinedButton.icon(
-                          onPressed: saving ? null : () => pickDate(true),
-                          icon: const Icon(Icons.event_available),
-                          label: Text(
-                              'Vencimento ${DateFormat('dd/MM/yyyy').format(due)}')))
+                      child: Builder(
+                          builder: (buttonContext) => OutlinedButton.icon(
+                              onPressed: saving
+                                  ? null
+                                  : () => pickDate(true, buttonContext),
+                              icon: Icon(Icons.event_available),
+                              label: Text(
+                                  'Vencimento ${DateFormat('dd/MM/yyyy').format(due)}'))))
                 ]),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 TextFormField(
                     controller: notes,
                     enabled: !saving,
                     maxLines: 2,
                     maxLength: 500,
-                    decoration: const InputDecoration(labelText: 'Observacao')),
+                    decoration: InputDecoration(labelText: 'Observacao')),
                 if (error != null)
                   Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: EdgeInsets.only(top: 8),
                       child: Text(error!,
-                          style: const TextStyle(color: PremiumColors.error))),
+                          style: TextStyle(color: PremiumColors.error))),
               ])))),
       actions: [
         TextButton(
             onPressed: saving ? null : () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar')),
+            child: Text('Cancelar')),
         FilledButton(
             onPressed: saving ? null : save,
             child: saving
-                ? const SizedBox(
+                ? SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Salvar despesa'))
+                : Text('Salvar despesa'))
       ],
     );
   }
@@ -3391,17 +3410,17 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                       children: [
                     Text(
                         '${widget.receivable['client']} - ${widget.receivable['professional']}'),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Text('${widget.receivable['service']}'),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Text(
                         'Saldo integral: ${widget.money.format(number(widget.receivable['outstanding_amount']))}',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     DropdownButtonFormField<int>(
                         value: accountId,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Conta financeira *'),
                         items: items(widget.controller.metadata['accounts'])
                             .map((e) => DropdownMenuItem(
@@ -3411,10 +3430,10 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                         onChanged: saving
                             ? null
                             : (v) => setState(() => accountId = v)),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                         value: method,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Forma de pagamento *'),
                         items: const [
                           DropdownMenuItem(
@@ -3430,47 +3449,49 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                         ],
                         onChanged:
                             saving ? null : (v) => setState(() => method = v!)),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                        onPressed: saving
-                            ? null
-                            : () async {
-                                final value = await showDatePicker(
-                                    context: context,
-                                    initialDate: paidAt,
-                                    firstDate: DateTime(2020),
-                                    lastDate: DateTime(2100));
-                                if (value != null && mounted)
-                                  setState(() => paidAt = value);
-                              },
-                        icon: const Icon(Icons.event_available),
-                        label: Text(
-                            'Recebido em ${DateFormat('dd/MM/yyyy').format(paidAt)}')),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
+                    Builder(
+                        builder: (buttonContext) => OutlinedButton.icon(
+                            onPressed: saving
+                                ? null
+                                : () async {
+                                    final value =
+                                        await showGetCuttDatePickerPopover(
+                                            context: buttonContext,
+                                            initialDate: paidAt,
+                                            firstDate: DateTime(2020),
+                                            lastDate: DateTime(2100));
+                                    if (value != null && mounted)
+                                      setState(() => paidAt = value);
+                                  },
+                            icon: Icon(Icons.event_available),
+                            label: Text(
+                                'Recebido em ${DateFormat('dd/MM/yyyy').format(paidAt)}'))),
+                    SizedBox(height: 12),
                     TextField(
                         controller: notes,
                         enabled: !saving,
                         maxLength: 500,
                         maxLines: 2,
                         decoration:
-                            const InputDecoration(labelText: 'Observacao')),
+                            InputDecoration(labelText: 'Observacao')),
                     if (error != null)
                       Text(error!,
-                          style: const TextStyle(color: PremiumColors.error))
+                          style: TextStyle(color: PremiumColors.error))
                   ]))),
           actions: [
             TextButton(
                 onPressed:
                     saving ? null : () => Navigator.of(context).pop(false),
-                child: const Text('Cancelar')),
+                child: Text('Cancelar')),
             FilledButton(
                 onPressed: saving ? null : save,
                 child: saving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text('Confirmar pagamento'))
+                    : Text('Confirmar pagamento'))
           ]);
 }
 
@@ -3537,7 +3558,7 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Dar baixa em lote'),
+        title: Text('Dar baixa em lote'),
         content: SizedBox(
             width: 470,
             child: SingleChildScrollView(
@@ -3547,14 +3568,14 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                     children: [
                   Text(
                       '${widget.receivables.length} atendimento(s) selecionado(s).'),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   Text('Total: ${widget.money.format(total)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 14),
+                  SizedBox(height: 14),
                   DropdownButtonFormField<int>(
                       value: accountId,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'Conta financeira *'),
                       items: items(widget.controller.metadata['accounts'])
                           .map((e) => DropdownMenuItem(
@@ -3562,10 +3583,10 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                           .toList(),
                       onChanged:
                           saving ? null : (v) => setState(() => accountId = v)),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                       value: method,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'Forma de pagamento *'),
                       items: const [
                         DropdownMenuItem(
@@ -3581,40 +3602,42 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                       ],
                       onChanged:
                           saving ? null : (v) => setState(() => method = v!)),
-                  const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                      onPressed: saving
-                          ? null
-                          : () async {
-                              final value = await showDatePicker(
-                                  context: context,
-                                  initialDate: paidAt,
-                                  firstDate: DateTime(2020),
-                                  lastDate: DateTime(2100));
-                              if (value != null && mounted)
-                                setState(() => paidAt = value);
-                            },
-                      icon: const Icon(Icons.event_available),
-                      label: Text(
-                          'Recebido em ${DateFormat('dd/MM/yyyy').format(paidAt)}')),
+                  SizedBox(height: 12),
+                  Builder(
+                      builder: (buttonContext) => OutlinedButton.icon(
+                          onPressed: saving
+                              ? null
+                              : () async {
+                                  final value =
+                                      await showGetCuttDatePickerPopover(
+                                          context: buttonContext,
+                                          initialDate: paidAt,
+                                          firstDate: DateTime(2020),
+                                          lastDate: DateTime(2100));
+                                  if (value != null && mounted)
+                                    setState(() => paidAt = value);
+                                },
+                          icon: Icon(Icons.event_available),
+                          label: Text(
+                              'Recebido em ${DateFormat('dd/MM/yyyy').format(paidAt)}'))),
                   if (error != null) ...[
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Text(error!,
-                        style: const TextStyle(color: PremiumColors.error))
+                        style: TextStyle(color: PremiumColors.error))
                   ],
                 ]))),
         actions: [
           TextButton(
               onPressed: saving ? null : () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar')),
+              child: Text('Cancelar')),
           FilledButton(
               onPressed: saving ? null : save,
               child: saving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Confirmar baixa'))
+                  : Text('Confirmar baixa'))
         ],
       );
 }
@@ -3633,9 +3656,9 @@ class _Kpi extends StatelessWidget {
   Widget build(BuildContext context) => Tooltip(
       message: hint,
       child: PremiumSurface(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 96),
+              constraints: BoxConstraints(minHeight: 96),
               child:
                   Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Container(
@@ -3646,7 +3669,7 @@ class _Kpi extends StatelessWidget {
                         color: color.withValues(alpha: .12),
                         borderRadius: BorderRadius.circular(11)),
                     child: Icon(icon, color: color)),
-                const SizedBox(width: 14),
+                SizedBox(width: 14),
                 Expanded(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -3659,19 +3682,19 @@ class _Kpi extends StatelessWidget {
                                 child: Text(label,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         color: PremiumColors.textSecondary,
                                         fontSize: 12))),
-                            const SizedBox(width: 5),
-                            const Icon(Icons.info_outline,
+                            SizedBox(width: 5),
+                            Icon(Icons.info_outline,
                                 size: 13, color: PremiumColors.textMuted)
                           ]),
-                      const SizedBox(height: 5),
+                      SizedBox(height: 5),
                       FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Text(value,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 21, fontWeight: FontWeight.w800)))
                     ]))
               ]))));
@@ -3693,7 +3716,7 @@ class _PeriodButton extends StatelessWidget {
               color: selected ? PremiumColors.gold : PremiumColors.border),
           foregroundColor:
               selected ? PremiumColors.gold : PremiumColors.textPrimary,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17)),
+          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 17)),
       child: Text(label,
           style: TextStyle(
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500)));
@@ -3720,17 +3743,17 @@ class FinancialChart extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                const Expanded(
+                Expanded(
                     child: Text('Evolucao financeira',
                         style: TextStyle(fontWeight: FontWeight.w700))),
                 _Legend(color: PremiumColors.success, label: 'Entradas'),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 _Legend(color: PremiumColors.error, label: 'Despesas')
               ]),
-              const SizedBox(height: 18),
+              SizedBox(height: 18),
               Expanded(
                   child: rows.isEmpty
-                      ? const Center(
+                      ? Center(
                           child: Text('Nenhuma movimentacao no periodo.',
                               style: TextStyle(color: PremiumColors.textMuted)))
                       : LineChart(LineChartData(
@@ -3740,19 +3763,19 @@ class FinancialChart extends StatelessWidget {
                               show: true,
                               drawVerticalLine: false,
                               horizontalInterval: ceiling / 4,
-                              getDrawingHorizontalLine: (_) => const FlLine(
+                              getDrawingHorizontalLine: (_) => FlLine(
                                   color: PremiumColors.border, strokeWidth: 1)),
                           borderData: FlBorderData(
                               show: true,
-                              border: const Border(
+                              border: Border(
                                   bottom:
                                       BorderSide(color: PremiumColors.border),
                                   left:
                                       BorderSide(color: PremiumColors.border))),
                           titlesData: FlTitlesData(
-                              topTitles: const AxisTitles(
+                              topTitles: AxisTitles(
                                   sideTitles: SideTitles(showTitles: false)),
-                              rightTitles: const AxisTitles(
+                              rightTitles: AxisTitles(
                                   sideTitles: SideTitles(showTitles: false)),
                               leftTitles: AxisTitles(
                                   sideTitles: SideTitles(
@@ -3763,7 +3786,7 @@ class FinancialChart extends StatelessWidget {
                                           v >= 1000
                                               ? 'R\$ ${(v / 1000).toStringAsFixed(0)}k'
                                               : money.format(v),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               fontSize: 9,
                                               color:
                                                   PremiumColors.textMuted)))),
@@ -3777,7 +3800,7 @@ class FinancialChart extends StatelessWidget {
                                       getTitlesWidget: (v, _) {
                                         final i = v.toInt();
                                         if (i < 0 || i >= rows.length)
-                                          return const SizedBox();
+                                          return SizedBox();
                                         final date = DateTime.tryParse(
                                             '${rows[i]['date']}');
                                         return Text(
@@ -3785,7 +3808,7 @@ class FinancialChart extends StatelessWidget {
                                                 ? ''
                                                 : DateFormat('dd/MM')
                                                     .format(date),
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 9,
                                                 color:
                                                     PremiumColors.textMuted));
@@ -3819,9 +3842,9 @@ class _Legend extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(children: [
         Container(width: 14, height: 2, color: color),
-        const SizedBox(width: 5),
+        SizedBox(width: 5),
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 10, color: PremiumColors.textSecondary))
       ]);
 }
@@ -3845,7 +3868,7 @@ String _ruleValidityLabel(Map<String, dynamic> rule) {
 }
 
 Widget _statusChip(String status) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
           color: status == 'Ativa'
               ? PremiumColors.success.withValues(alpha: .12)

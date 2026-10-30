@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../shared/widgets/app_toast.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/financial_controller.dart';
 import 'commission_rule_wizard_screen.dart';
@@ -64,18 +65,18 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
       final compact = constraints.maxWidth < 760;
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _header(state, compact),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         _tabs(state),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         if (_tab == 0) ...[
           _summary(state, compact),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           _filters(state, compact),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Expanded(child: _professionals(state, compact)),
         ] else ...[
           _historyFilters(state),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Expanded(child: _history(state)),
         ],
         if (_tab == 0 && _selected.isNotEmpty) _selectionBar(state, compact),
@@ -83,46 +84,34 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
     });
   }
 
-  Widget _header(FinancialController state, bool compact) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Comissões',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
-              SizedBox(height: 5),
-              Text('Acompanhe a liberação, compensação e pagamento da equipe.',
-                  style: TextStyle(
-                      color: PremiumColors.textSecondary, fontSize: 13)),
-            ]),
-          ),
-          if (!compact) ...[
+  Widget _header(FinancialController state, bool compact) => PremiumPageHeader(
+        title: 'Comissões',
+        subtitle: 'Acompanhe a liberação, compensação e pagamento da equipe.',
+        actions: [
+          if (!compact)
             OutlinedButton.icon(
-              onPressed: () => _openRules(context, state),
-              icon: const Icon(Icons.rule_outlined, size: 18),
-              label: const Text('Regras de comissão'),
+              onPressed: () => _openRules(context),
+              icon: Icon(Icons.rule_outlined, size: 18),
+              label: Text('Regras de comissão'),
             ),
-            const SizedBox(width: 8),
-          ],
           IconButton(
             tooltip: 'Atualizar comissões',
             onPressed: state.loading ? null : state.loadCurrent,
-            icon: const Icon(Icons.refresh_rounded),
+            icon: Icon(Icons.refresh_rounded),
           ),
         ],
       );
 
   Widget _tabs(FinancialController state) => Row(children: [
         _tabButton('A pagar', 0),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         _tabButton('Histórico', 1),
-        const Spacer(),
+        Spacer(),
         if (MediaQuery.sizeOf(context).width < 760)
           IconButton(
             tooltip: 'Regras de comissão',
-            onPressed: () => _openRules(context, state),
-            icon: const Icon(Icons.rule_outlined),
+            onPressed: () => _openRules(context),
+            icon: Icon(Icons.rule_outlined),
           ),
       ]);
 
@@ -138,7 +127,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
         style: TextButton.styleFrom(
           foregroundColor:
               _tab == value ? PremiumColors.gold : PremiumColors.textSecondary,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 10),
         ),
         child: Text(label,
             style: TextStyle(
@@ -155,15 +144,13 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
               : _number(totals['availableCents']) / 100),
           Icons.account_balance_wallet_outlined,
           PremiumColors.success,
-          'Saldo aprovado e ainda não liquidado.'),
+          'Saldo disponível e ainda não liquidado.'),
       _summaryCard(
           'Aguardando liberação',
-          _money(((_number(totals['pendingReleaseCents']) +
-                  _number(totals['pendingApprovalCents'])) /
-              100)),
+          _money(_number(totals['pendingReleaseCents']) / 100),
           Icons.hourglass_top_outlined,
           PremiumColors.gold,
-          'Inclui recebimento pendente e aprovação manual.'),
+          'Comissão calculada aguardando conclusão ou recebimento.'),
       _summaryCard(
           'Pago no período',
           _money(_number(totals['paidPeriodCents']) / 100),
@@ -191,30 +178,32 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
   Widget _summaryCard(String title, String value, IconData icon, Color color,
           String hint) =>
       PremiumSurface(
-          padding: const EdgeInsets.all(15),
+          padding: EdgeInsets.all(15),
           child: Row(children: [
             Icon(icon, color: color, size: 22),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                   Text(title,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PremiumColors.textSecondary, fontSize: 12)),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(value,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 19, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(hint,
-                      style: const TextStyle(
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
                           color: PremiumColors.textMuted, fontSize: 11)),
                 ])),
           ]));
 
   Widget _filters(FinancialController state, bool compact) => PremiumSurface(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         child: Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -235,7 +224,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                     },
                     decoration: InputDecoration(
                       labelText: 'Buscar profissional',
-                      prefixIcon: const Icon(Icons.search, size: 19),
+                      prefixIcon: Icon(Icons.search, size: 19),
                       suffixIcon: _search.text.isEmpty
                           ? null
                           : IconButton(
@@ -244,7 +233,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                                 state.loadCommissionBoard(status: _status);
                                 setState(() {});
                               },
-                              icon: const Icon(Icons.clear, size: 18)),
+                              icon: Icon(Icons.clear, size: 18)),
                     ),
                   )),
               _periodButton(state),
@@ -260,29 +249,31 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                       setState(() => _status = null);
                       state.loadCommissionBoard(search: _search.text);
                     },
-                    child: const Text('Limpar filtros')),
+                    child: Text('Limpar filtros')),
             ]),
       );
 
-  Widget _periodButton(FinancialController state) => OutlinedButton.icon(
-        onPressed: () async {
-          final picked = await showDateRangePicker(
-              context: context,
-              firstDate: DateTime(2020),
-              lastDate: DateTime(2100),
-              initialDateRange:
-                  DateTimeRange(start: state.from, end: state.to));
-          if (picked != null) await state.setPeriod(picked.start, picked.end);
-        },
-        icon: const Icon(Icons.date_range_outlined, size: 18),
-        label: Text(
-            '${DateFormat('dd/MM/yyyy').format(state.from)} – ${DateFormat('dd/MM/yyyy').format(state.to)}'),
+  Widget _periodButton(FinancialController state) => Builder(
+        builder: (buttonContext) => OutlinedButton.icon(
+          onPressed: () async {
+            final picked = await showGetCuttDateRangePickerPopover(
+                context: buttonContext,
+                firstDate: DateTime(2020),
+                lastDate: DateTime(2100),
+                initialStart: state.from,
+                initialEnd: state.to);
+            if (picked != null) await state.setPeriod(picked.start, picked.end);
+          },
+          icon: Icon(Icons.date_range_outlined, size: 18),
+          label: Text(
+              '${DateFormat('dd/MM/yyyy').format(state.from)} – ${DateFormat('dd/MM/yyyy').format(state.to)}'),
+        ),
       );
 
   String _statusLabel(String value) => switch (value) {
         'available' => 'Disponível',
-        'awaiting_approval' => 'Aguardando aprovação',
         'pending_release' => 'A liberar',
+        'settled' => 'Liquidada',
         _ => value
       };
 
@@ -292,12 +283,12 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
         builder: (context) => SafeArea(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               ListTile(
-                  title: const Text('Todas as situações'),
+                  title: Text('Todas as situações'),
                   onTap: () => Navigator.pop(context)),
               for (final item in const [
                 'available',
-                'awaiting_approval',
-                'pending_release'
+                'pending_release',
+                'settled'
               ])
                 ListTile(
                     title: Text(_statusLabel(item)),
@@ -333,7 +324,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
         padding: EdgeInsets.zero,
         child: Column(children: [
           Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+              padding: EdgeInsets.fromLTRB(14, 12, 14, 8),
               child: Row(children: [
                 Checkbox(
                     value: allSelected
@@ -353,32 +344,32 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                               }
                             });
                           }),
-                const SizedBox(width: 4),
-                const Expanded(
-                    child: Text('Profissional',
-                        style: TextStyle(fontWeight: FontWeight.w700))),
+                SizedBox(width: 4),
+                 Expanded(
+                     child: Text('Profissional · selecionar para pagamento',
+                         style: TextStyle(fontWeight: FontWeight.w700))),
                 if (!compact) ...const [
                   SizedBox(width: 85, child: Text('A liberar')),
                   SizedBox(width: 85, child: Text('Disponível')),
                   SizedBox(width: 95, child: Text('Adiantamentos')),
                   SizedBox(width: 90, child: Text('A pagar'))
                 ],
-                const SizedBox(width: 40),
+                SizedBox(width: 40),
               ])),
-          const Divider(height: 1),
+          Divider(height: 1),
           Expanded(
               child: ListView.separated(
                   itemCount: rows.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, __) => Divider(height: 1),
                   itemBuilder: (context, index) =>
                       _professionalRow(state, rows[index], compact))),
           Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                       'Totais do resultado: ${state.commissionPagination['totalItems'] ?? rows.length} profissional(is)',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PremiumColors.textSecondary, fontSize: 12)))),
         ]));
   }
@@ -392,7 +383,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
     return InkWell(
         onTap: () => _openDetails(state, row),
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(children: [
               Checkbox(
                   value: _selected.contains(id),
@@ -411,11 +402,11 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     Text(row['professional_name']?.toString() ?? 'Profissional',
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 3),
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    SizedBox(height: 3),
                     Text(
                         '${row['commission_count'] ?? 0} lançamento(s) · ${_statusLabel(row['status']?.toString() ?? '')}',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: PremiumColors.textSecondary, fontSize: 12))
                   ])),
               if (!compact) ...[
@@ -427,59 +418,59 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                     width: 85,
                     child: Text(_money(row['available']),
                         textAlign: TextAlign.right,
-                        style: const TextStyle(color: PremiumColors.success))),
+                        style: TextStyle(color: PremiumColors.success))),
                 SizedBox(
                     width: 95,
                     child: Text(_money(row['advance_balance']),
                         textAlign: TextAlign.right,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: PremiumColors.textSecondary))),
                 SizedBox(
                     width: 90,
                     child: Text(_money(row['payable']),
                         textAlign: TextAlign.right,
-                        style: const TextStyle(fontWeight: FontWeight.w700))),
+                        style: TextStyle(fontWeight: FontWeight.w700))),
               ] else
                 Padding(
-                    padding: const EdgeInsets.only(right: 8),
+                    padding: EdgeInsets.only(right: 8),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const Text('A pagar',
+                          Text('A pagar',
                               style: TextStyle(
                                   color: PremiumColors.textSecondary,
                                   fontSize: 11)),
                           Text(_money(row['payable']),
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontWeight: FontWeight.w700, fontSize: 16))
                         ])),
               IconButton(
                   tooltip: 'Ver detalhes',
                   onPressed: () => _openDetails(state, row),
-                  icon: const Icon(Icons.chevron_right_rounded)),
+                  icon: Icon(Icons.chevron_right_rounded)),
             ])));
   }
 
   Widget _selectionBar(FinancialController state, bool compact) => Material(
       color: PremiumColors.gold.withValues(alpha: .12),
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          padding: EdgeInsets.fromLTRB(14, 12, 14, 12),
           child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               crossAxisAlignment: WrapCrossAlignment.center,
               spacing: 12,
               runSpacing: 10,
               children: [
-                Text('${_selected.length} profissional(is) selecionado(s)',
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                 Text('${_selected.length} profissional(is) selecionado(s) para pagamento',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
                 TextButton(
                     onPressed: () => setState(_selected.clear),
-                    child: const Text('Limpar')),
+                    child: Text('Limpar')),
                 FilledButton.icon(
                     onPressed:
                         state.submitting ? null : () => _reviewPayment(state),
-                    icon: const Icon(Icons.fact_check_outlined),
-                    label: const Text('Revisar pagamentos')),
+                    icon: Icon(Icons.fact_check_outlined),
+                    label: Text('Revisar pagamentos')),
               ])));
 
   Future<void> _openDetails(
@@ -494,13 +485,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
         context: context,
         builder: (context) => _DetailsDialog(
             data: details,
-            money: _money,
-            onApprove: (ids) async {
-              final error = await state.approveCommissions(ids);
-              if (context.mounted) Navigator.pop(context);
-              if (error != null && mounted)
-                AppToast.show(this.context, error, type: AppToastType.error);
-            }));
+            money: _money));
   }
 
   Future<void> _reviewPayment(FinancialController state) async {
@@ -552,7 +537,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
       padding: EdgeInsets.zero,
       child: ListView.separated(
         itemCount: state.commissionHistory.length,
-        separatorBuilder: (_, __) => const Divider(height: 1),
+        separatorBuilder: (_, __) => Divider(height: 1),
         itemBuilder: (context, index) {
           final item = state.commissionHistory[index];
           final advance = item['type'] == 'advance';
@@ -576,30 +561,22 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
     );
   }
 
-  Future<void> _openRules(
-      BuildContext context, FinancialController state) async {
+  Future<void> _openRules(BuildContext context) async {
     await showDialog<void>(
-        context: context, builder: (context) => _RulesDialog(state: state));
+        context: context, builder: (context) => const _RulesDialog());
   }
 }
 
 class _DetailsDialog extends StatelessWidget {
   final Map<String, dynamic> data;
   final String Function(dynamic) money;
-  final Future<void> Function(List<int>) onApprove;
-  const _DetailsDialog(
-      {required this.data, required this.money, required this.onApprove});
+  const _DetailsDialog({required this.data, required this.money});
 
-  int _int(dynamic value) => int.tryParse(value.toString()) ?? 0;
   @override
   Widget build(BuildContext context) {
     final items = data['items'] is List
         ? data['items'].map((e) => Map<String, dynamic>.from(e)).toList()
         : <Map<String, dynamic>>[];
-    final pending = items
-        .where((item) =>
-            item['eligible'] == true && item['approval_status'] == 'pending')
-        .toList();
     return AlertDialog(
       title:
           Text(data['professionalName']?.toString() ?? 'Detalhes da comissão'),
@@ -607,17 +584,17 @@ class _DetailsDialog extends StatelessWidget {
           width: 680,
           height: 500,
           child: items.isEmpty
-              ? const Center(child: Text('Nenhum lançamento no período.'))
+              ? Center(child: Text('Nenhum lançamento no período.'))
               : ListView.separated(
                   itemCount: items.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, __) => Divider(height: 1),
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final rule = item['rule'] is Map
                         ? Map<String, dynamic>.from(item['rule'])
                         : <String, dynamic>{};
                     return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -626,14 +603,20 @@ class _DetailsDialog extends StatelessWidget {
                                     child: Text(
                                         item['service_name']?.toString() ??
                                             'Serviço',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontWeight: FontWeight.w700))),
-                                Text(item['completed_at']?.toString() ?? '',
-                                    style: const TextStyle(
-                                        color: PremiumColors.textSecondary,
-                                        fontSize: 12))
+                                Flexible(
+                                    child: Text(
+                                        item['completed_at']?.toString() ?? '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                            color:
+                                                PremiumColors.textSecondary,
+                                            fontSize: 12)))
                               ]),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Wrap(spacing: 14, runSpacing: 4, children: [
                                 Text(
                                     'Base ${money(item['base_amount'] ?? item['original_net_amount'])}'),
@@ -644,36 +627,38 @@ class _DetailsDialog extends StatelessWidget {
                                 Text(
                                     'Restante ${money(item['remaining_amount'])}')
                               ]),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Text(
                                   rule.isEmpty
                                       ? (item['reason']?.toString() ??
                                           'Regra não encontrada')
                                       : 'Regra: ${rule['type'] == 'fixed' ? 'fixa' : '${rule['value'] ?? rule['value_bps'] ?? ''}%'} · ${rule['base'] ?? 'por unidade'}',
-                                  style: const TextStyle(
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  style: TextStyle(
                                       color: PremiumColors.textSecondary,
                                       fontSize: 12)),
-                              if (item['approval_status'] != null)
-                                Text(
-                                    'Situação: ${item['approval_status'] == 'approved' ? 'Aprovada' : 'Aguardando aprovação'}',
-                                    style: TextStyle(
-                                        color: item['approval_status'] ==
-                                                'approved'
-                                            ? PremiumColors.success
-                                            : PremiumColors.gold,
-                                        fontSize: 12))
+                              Text(
+                                  item['entitlement_status'] == 'reversed'
+                                      ? 'Situação: Estornada'
+                                      : item['eligible'] == true
+                                          ? 'Situação: Comissão calculada automaticamente'
+                                          : 'Situação: Aguardando conclusão ou recebimento',
+                                  style: TextStyle(
+                                      color: item['entitlement_status'] ==
+                                              'reversed'
+                                          ? PremiumColors.error
+                                          : item['eligible'] == true
+                                              ? PremiumColors.success
+                                              : PremiumColors.gold,
+                                      fontSize: 12))
                             ]));
                   })),
       actions: [
-        if (pending.isNotEmpty)
-          OutlinedButton.icon(
-              onPressed: () => onApprove(
-                  pending.map((item) => _int(item['commission_id'])).toList()),
-              icon: const Icon(Icons.verified_outlined),
-              label: Text('Aprovar ${pending.length}')),
         TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar')),
+            child: Text('Fechar')),
       ],
     );
   }
@@ -724,17 +709,17 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
             .toList()
         : <Map<String, dynamic>>[];
     return AlertDialog(
-      title: const Text('Revisar pagamentos'),
+      title: Text('Revisar pagamentos'),
       content: SizedBox(
         width: 560,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
+              Text(
                 'Confira os valores antes de confirmar. A confirmação registra o pagamento realizado; não faz transferência bancária.',
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               ...items.map(
                 (item) => ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -745,24 +730,24 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
                   ),
                   trailing: Text(
                     widget.money((item['payableCents'] as num? ?? 0) / 100),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
-              const Divider(),
+              Divider(),
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
                   'Total líquido: ${widget.money(total / 100)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               if (total > 0)
                 DropdownButtonFormField<int>(
                   decoration:
-                      const InputDecoration(labelText: 'Conta de saída *'),
+                      InputDecoration(labelText: 'Conta de saída *'),
                   items: widget.accounts
                       .map(
                         (account) => DropdownMenuItem(
@@ -773,11 +758,11 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
                       .toList(),
                   onChanged: (value) => setState(() => accountId = value),
                 ),
-              if (total > 0) const SizedBox(height: 12),
+              if (total > 0) SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: method,
                 decoration:
-                    const InputDecoration(labelText: 'Forma de pagamento'),
+                    InputDecoration(labelText: 'Forma de pagamento'),
                 items: const [
                   DropdownMenuItem(value: 'pix', child: Text('PIX')),
                   DropdownMenuItem(value: 'cash', child: Text('Dinheiro')),
@@ -787,12 +772,12 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
                 ],
                 onChanged: (value) => setState(() => method = value ?? method),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               TextField(
                 controller: note,
                 maxLines: 2,
                 decoration:
-                    const InputDecoration(labelText: 'Observação (opcional)'),
+                    InputDecoration(labelText: 'Observação (opcional)'),
               ),
             ],
           ),
@@ -801,7 +786,7 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
       actions: [
         TextButton(
           onPressed: sending ? null : () => Navigator.pop(context, false),
-          child: const Text('Cancelar'),
+          child: Text('Cancelar'),
         ),
         FilledButton(
           onPressed: sending || (total > 0 && accountId == null)
@@ -830,78 +815,42 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
 }
 
 class _RulesDialog extends StatefulWidget {
-  final FinancialController state;
-  const _RulesDialog({required this.state});
+  const _RulesDialog();
 
   @override
   State<_RulesDialog> createState() => _RulesDialogState();
 }
 
 class _RulesDialogState extends State<_RulesDialog> {
-  late bool automatic;
-  bool saving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    automatic =
-        widget.state.commissionApprovalSettings['approvalMode'] == 'automatic';
-  }
-
   @override
   Widget build(BuildContext context) => AlertDialog(
-          title: const Text('Regras de comissão'),
+          title: Text('Regras de comissão'),
           content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                    'As regras de cálculo preservam o snapshot de cada comissão. A aprovação controla apenas a disponibilidade para pagamento.'),
-                const SizedBox(height: 16),
-                SwitchListTile(
+                Text(
+                    'As regras de cálculo preservam o snapshot de cada comissão. O lançamento é calculado automaticamente e fica disponível conforme a conclusão do atendimento e o recebimento.'),
+                SizedBox(height: 16),
+                ListTile(
                     contentPadding: EdgeInsets.zero,
-                    value: automatic,
-                    onChanged: saving
-                        ? null
-                        : (value) => setState(() => automatic = value),
-                    title: const Text('Aprovar comissões automaticamente'),
-                    subtitle: Text(automatic
-                        ? 'A aprovação será automática. O pagamento continuará sendo registrado separadamente.'
-                        : 'As comissões elegíveis precisarão ser aprovadas por um administrador antes do pagamento.')),
-                const SizedBox(height: 8),
+                    leading: Icon(Icons.auto_awesome_outlined,
+                        color: PremiumColors.success),
+                    title: Text('Aprovação automática ativa'),
+                    subtitle: Text(
+                        'Não é necessário aprovar cada comissão manualmente. O pagamento continua sendo registrado separadamente.')),
+                SizedBox(height: 8),
                 OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => const CommissionRuleWizardScreen()));
                     },
-                    icon: const Icon(Icons.tune_outlined),
-                    label: const Text('Editar regras de cálculo'))
+                    icon: Icon(Icons.tune_outlined),
+                    label: Text('Editar regras de cálculo'))
               ]),
           actions: [
             TextButton(
-                onPressed: saving ? null : () => Navigator.pop(context),
-                child: const Text('Cancelar')),
-            FilledButton(
-                onPressed: saving
-                    ? null
-                    : () async {
-                        setState(() => saving = true);
-                        final error = await widget.state
-                            .saveCommissionApprovalSettings(
-                                automatic ? 'automatic' : 'manual');
-                        if (!context.mounted) return;
-                        if (error != null) {
-                          setState(() => saving = false);
-                          AppToast.show(context, error,
-                              type: AppToastType.error);
-                          return;
-                        }
-                        Navigator.pop(context);
-                        AppToast.show(
-                            context, 'Configuração de aprovação salva.',
-                            type: AppToastType.success);
-                      },
-                child: Text(saving ? 'Salvando...' : 'Salvar alterações'))
+                onPressed: () => Navigator.pop(context), child: Text('Fechar'))
           ]);
 }

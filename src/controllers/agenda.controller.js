@@ -13,6 +13,21 @@ async function dashboard(req, res) {
     }
 
     const id = colaborador.id;
+    const dateOnly = (value) => {
+      const text = String(value || '').slice(0, 10);
+      return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : null;
+    };
+    const today = new Date();
+    const localToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const requestedFrom = dateOnly(req.query.from);
+    const requestedTo = dateOnly(req.query.to);
+    const fromDate = requestedFrom || localToday;
+    const defaultTo = new Date(`${fromDate}T00:00:00`);
+    defaultTo.setDate(defaultTo.getDate() + 29);
+    const toDate = requestedTo || (requestedFrom ? fromDate : defaultTo.toISOString().slice(0, 10));
+    if (toDate < fromDate) {
+      return res.status(400).json({ code: 'INVALID_DATE_RANGE', erro: 'Período de agenda inválido.' });
+    }
     const [[summaryRows], [appointments], [working], [blocked]] = await Promise.all([
       pool.query(
         `SELECT
@@ -31,11 +46,11 @@ async function dashboard(req, res) {
            JOIN servicos s ON s.id = a.servico_id
            JOIN usuarios u ON u.id = a.cliente_id
           WHERE a.colaborador_id = ?
-            AND a.data_hora >= CURDATE()
-            AND a.data_hora < DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+            AND a.data_hora >= ?
+            AND a.data_hora < DATE_ADD(?, INTERVAL 1 DAY)
             AND a.status IN ('confirmado','pendente','cliente_chegou','em_atendimento')
           ORDER BY a.data_hora ASC`,
-        [id],
+        [id, fromDate, toDate],
       ),
       pool.query(
         `SELECT hora_inicio, hora_fim

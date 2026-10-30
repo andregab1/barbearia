@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/services/barbearia_theme_service.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/agendamento_controller.dart';
 
@@ -24,6 +25,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<BarbeariaThemeService>();
     final ctrl = context.watch<AgendamentoController>();
     return PremiumPage(
       title: 'Histórico',
@@ -33,7 +35,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
           onPressed:
               ctrl.carregandoAgendamentos ? null : ctrl.carregarHistorico,
           tooltip: 'Atualizar histórico',
-          icon: const Icon(Icons.refresh_rounded),
+          icon: Icon(Icons.refresh_rounded),
           color: PremiumColors.textSecondary,
         ),
       ],
@@ -53,7 +55,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> {
                   child: ListView.separated(
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: ctrl.historico.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, __) => SizedBox(height: 10),
                     itemBuilder: (_, index) =>
                         _HistoryRow(item: ctrl.historico[index]),
                   ),
@@ -72,7 +74,7 @@ class _HistoryRow extends StatelessWidget {
     final completed = item['status'] == 'concluido';
     final statusColor = completed ? PremiumColors.success : PremiumColors.error;
     return PremiumSurface(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       color: PremiumColors.card,
       child: Row(
         children: [
@@ -90,7 +92,7 @@ class _HistoryRow extends StatelessWidget {
               size: 20,
             ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +107,7 @@ class _HistoryRow extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '${item['barbearia'] ?? 'Barbearia'} • ${item['barbeiro'] ?? ''}\n${DateFormat('dd/MM/yyyy • HH:mm').format(date)}',
                   maxLines: 2,
@@ -118,7 +120,7 @@ class _HistoryRow extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           PremiumStatusBadge(
             label: completed ? 'Concluído' : 'Cancelado',
             color: statusColor,

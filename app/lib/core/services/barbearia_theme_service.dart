@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 
 class BarbeariaThemeService extends ChangeNotifier {
   String? _logoUrl;
-  Color _corPrimaria = const Color(0xFFFFD000);
+  Color _corPrimaria = AppTheme.defaultGold;
   bool _modoClaro = false;
 
   String? get logoUrl => _logoUrl;
@@ -35,6 +35,7 @@ class BarbeariaThemeService extends ChangeNotifier {
     final claro = prefs.getBool('modo_claro') ?? false;
     if (logoUrl != null) _logoUrl = logoUrl;
     if (corHex != null) _corPrimaria = _hexParaCor(corHex);
+    AppTheme.setCorPrimaria(_corPrimaria);
     _modoClaro = claro;
     AppTheme.setModo(_modoClaro);
     notifyListeners();
@@ -57,6 +58,7 @@ class BarbeariaThemeService extends ChangeNotifier {
       }
       if (result['cor_primaria'] != null) {
         _corPrimaria = _hexParaCor(result['cor_primaria']);
+        AppTheme.setCorPrimaria(_corPrimaria);
         await prefs.setString('cor_primaria', result['cor_primaria']);
       }
       notifyListeners();
@@ -68,30 +70,40 @@ class BarbeariaThemeService extends ChangeNotifier {
     String? corPrimariaHex,
     String? logoUrlServidor,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    String? logoToPersist;
     if (logoUrlServidor != null && logoUrlServidor.isNotEmpty) {
       final toSave = logoUrlServidor.startsWith('data:') ||
               logoUrlServidor.startsWith('http')
           ? logoUrlServidor
           : '$_baseServer$logoUrlServidor';
-      await prefs.setString('logo_url', toSave);
+      logoToPersist = toSave;
       _logoUrl = logoUrlLocal ?? toSave;
     } else if (logoUrlLocal != null) {
       _logoUrl = logoUrlLocal;
     }
     if (corPrimariaHex != null) {
       _corPrimaria = _hexParaCor(corPrimariaHex);
+      AppTheme.setCorPrimaria(_corPrimaria);
+    }
+
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    if (logoToPersist != null) {
+      await prefs.setString('logo_url', logoToPersist);
+    }
+    if (corPrimariaHex != null) {
       await prefs.setString('cor_primaria', corPrimariaHex);
     }
-    notifyListeners();
   }
 
   Future<void> alternarTema() async {
     _modoClaro = !_modoClaro;
     AppTheme.setModo(_modoClaro);
+    notifyListeners();
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('modo_claro', _modoClaro);
-    notifyListeners();
   }
 
   Color _hexParaCor(String hex) {

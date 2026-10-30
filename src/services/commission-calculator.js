@@ -1,3 +1,5 @@
+// * Calculos monetarios de comissao usam BigInt em centavos para evitar perda
+// * de precisao de ponto flutuante em percentuais, descontos e arredondamentos.
 function parseCents(value, field = 'amount') {
   const text = String(value ?? '').trim();
   if (!/^\d+(?:\.\d{1,2})?$/.test(text)) throw new Error('invalid_amount');

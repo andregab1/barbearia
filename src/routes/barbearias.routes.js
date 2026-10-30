@@ -6,7 +6,14 @@
 const router = require('express').Router();
 const multer = require('multer');
 const { autenticar, autorizar } = require('../middlewares/auth.middleware');
-const { listarPublicas, cadastrar, buscar, personalizar, atualizar } = require('../controllers/barbearias.controller');
+const {
+  listarPublicas,
+  cadastrar,
+  buscar,
+  buscarPublicaPorSlug,
+  personalizar,
+  atualizar,
+} = require('../controllers/barbearias.controller');
 
 // Usa memoryStorage — imagem fica em buffer, não em disco
 const upload = multer({
@@ -18,9 +25,13 @@ const upload = multer({
   },
 });
 
+// * ADICIONAR: cadastra uma barbearia para usuario autorizado.
 router.post('/',                  autenticar, autorizar('admin'), cadastrar);
 router.get('/',                   listarPublicas);
+router.get('/slug/:slug',         buscarPublicaPorSlug);
 router.get('/:id',                buscar);
+// * EDITAR: atualiza dados e personalizacao; o upload fica em memoria e o
+// * controller decide como persistir a imagem sem criar arquivo temporario.
 router.put('/:id',                autenticar, autorizar('admin'), atualizar);
 router.patch('/:id/personalizar', autenticar, autorizar('admin'), upload.single('logo'), personalizar);
 

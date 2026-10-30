@@ -88,7 +88,11 @@ async function cadastrar(req, res) {
           'UPDATE colaboradores SET ativo = 1 WHERE id = ?',
           [u.colab_id]
         );
-        return res.status(201).json({ mensagem: 'Colaborador reativado!', id: u.id });
+        return res.status(201).json({
+          mensagem: 'Colaborador reativado!',
+          id: u.colab_id,
+          usuario_id: u.id,
+        });
       }
 
       // Usuário já existe, mas ainda não é colaborador desta barbearia →
@@ -97,11 +101,15 @@ async function cadastrar(req, res) {
       await pool.query(
         'UPDATE usuarios SET nome = ?, cpf = ?, senha_hash = ?, ativo = 1, role = ? WHERE id = ?', [nome, cpf || null, hash, 'barbeiro', u.id]
       );
-      await pool.query(
+      const [colaborador] = await pool.query(
         'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
         [barbearia_id, u.id]
       );
-      return res.status(201).json({ mensagem: 'Colaborador cadastrado!', id: u.id });
+      return res.status(201).json({
+        mensagem: 'Colaborador cadastrado!',
+        id: colaborador.insertId,
+        usuario_id: u.id,
+      });
     }
 
     // Novo colaborador — criar usuário e vínculo
@@ -109,12 +117,16 @@ async function cadastrar(req, res) {
     const [usuario] = await pool.query(
       'INSERT INTO usuarios (nome, telefone, cpf, senha_hash, role) VALUES (?, ?, ?, ?, ?)', [nome, telefone, cpf || null, hash, 'barbeiro']
     );
-    await pool.query(
+    const [colaborador] = await pool.query(
       'INSERT INTO colaboradores (barbearia_id, usuario_id) VALUES (?, ?)',
       [barbearia_id, usuario.insertId]
     );
 
-    return res.status(201).json({ mensagem: 'Colaborador cadastrado!', id: usuario.insertId });
+    return res.status(201).json({
+      mensagem: 'Colaborador cadastrado!',
+      id: colaborador.insertId,
+      usuario_id: usuario.insertId,
+    });
   } catch (err) {
     console.error('ERRO cadastrar colaborador:', err.message);
     return res.status(500).json({ erro: 'Erro interno ao cadastrar colaborador.' });

@@ -179,7 +179,7 @@ class _AssistenteAgendamentoScreenState
       subtitle: shop == null
           ? 'Selecione uma barbearia antes de conversar'
           : 'Agendando na ${shop['nome']} · em poucos segundos',
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
       child: shop == null
           ? const PremiumEmptyState(
               icon: Icons.storefront_outlined,
@@ -188,11 +188,11 @@ class _AssistenteAgendamentoScreenState
                   'Volte ao início, selecione onde deseja ser atendido e depois converse comigo aqui.',
             )
           : ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 860),
+              constraints: BoxConstraints(maxWidth: 860),
               child: Column(
                 children: [
                   _SuggestionRow(onSelect: _send),
-                  const SizedBox(height: 14),
+                  SizedBox(height: 14),
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -203,12 +203,12 @@ class _AssistenteAgendamentoScreenState
                       child: Column(
                         children: [
                           _AssistantHeader(shopName: shop['nome'].toString()),
-                          const Divider(height: 1),
+                          Divider(height: 1),
                           Expanded(
                             child: ListView(
                               controller: _scroll,
                               padding:
-                                  const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                                  EdgeInsets.fromLTRB(16, 20, 16, 12),
                               children: [
                                 for (final message in _messages)
                                   _MessageBubble(message: message),
@@ -251,13 +251,13 @@ class _AssistenteAgendamentoScreenState
                                                 _send(last.content);
                                               }
                                             },
-                                      child: const Text('Tentar novamente')),
+                                      child: Text('Tentar novamente')),
                                   TextButton(
                                       onPressed: () => Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (_) =>
                                                   const AgendarScreen())),
-                                      child: const Text(
+                                      child: Text(
                                           'Usar agendamento tradicional')),
                                 ],
                               ],
@@ -290,7 +290,7 @@ class _AssistantHeader extends StatelessWidget {
   const _AssistantHeader({required this.shopName});
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Row(children: [
           Container(
             width: 38,
@@ -299,10 +299,10 @@ class _AssistantHeader extends StatelessWidget {
               color: PremiumColors.gold.withValues(alpha: .13),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.auto_awesome_rounded,
+            child: Icon(Icons.auto_awesome_rounded,
                 color: PremiumColors.gold, size: 19),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,7 +316,7 @@ class _AssistantHeader extends StatelessWidget {
                     style: GoogleFonts.inter(
                         color: PremiumColors.textMuted, fontSize: 12)),
               ])),
-          const Icon(Icons.lock_outline_rounded,
+          Icon(Icons.lock_outline_rounded,
               size: 16, color: PremiumColors.textMuted),
         ]),
       );
@@ -348,14 +348,14 @@ class _Suggestion extends StatelessWidget {
   const _Suggestion({required this.label, required this.onTap});
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(right: 8),
+        padding: EdgeInsets.only(right: 8),
         child: OutlinedButton(
             onPressed: onTap,
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(0, 38),
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: EdgeInsets.symmetric(horizontal: 14),
               foregroundColor: PremiumColors.textSecondary,
-              side: const BorderSide(color: PremiumColors.border),
+              side: BorderSide(color: PremiumColors.border),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               textStyle:
@@ -374,14 +374,14 @@ class _MessageBubble extends StatelessWidget {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 540),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        constraints: BoxConstraints(maxWidth: 540),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
           color: isUser ? PremiumColors.gold : PremiumColors.surfaceSecondary,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(14),
-            topRight: const Radius.circular(14),
+            topLeft: Radius.circular(14),
+            topRight: Radius.circular(14),
             bottomLeft: Radius.circular(isUser ? 14 : 3),
             bottomRight: Radius.circular(isUser ? 3 : 14),
           ),
@@ -402,7 +402,7 @@ class _MessageBubble extends StatelessWidget {
 class _TypingBubble extends StatelessWidget {
   const _TypingBubble();
   @override
-  Widget build(BuildContext context) => const Align(
+  Widget build(BuildContext context) => Align(
         alignment: Alignment.centerLeft,
         child: Padding(
             padding: EdgeInsets.only(bottom: 12),
@@ -427,24 +427,24 @@ class _ProposalCard extends StatelessWidget {
         .map((item) => item['nome'])
         .join(' + ');
     return Container(
-      margin: const EdgeInsets.only(top: 4, bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(top: 4, bottom: 12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: PremiumColors.gold.withValues(alpha: .09),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: PremiumColors.gold.withValues(alpha: .32))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          const Icon(Icons.event_available_rounded,
+          Icon(Icons.event_available_rounded,
               color: PremiumColors.gold, size: 19),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text('Confira seu horário',
               style: GoogleFonts.inter(
                   color: PremiumColors.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 14))
         ]),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         _Detail(icon: Icons.content_cut_rounded, text: services),
         _Detail(
             icon: Icons.person_outline_rounded,
@@ -456,24 +456,24 @@ class _ProposalCard extends StatelessWidget {
         _Detail(
             icon: Icons.payments_outlined,
             text: premiumCurrency(proposal['total'])),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: confirming ? null : onConfirm,
               icon: confirming
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: PremiumColors.background))
-                  : const Icon(Icons.check_rounded, size: 18),
+                  : Icon(Icons.check_rounded, size: 18),
               label:
                   Text(confirming ? 'Confirmando...' : 'Confirmar agendamento'),
             )),
         TextButton(
             onPressed: confirming ? null : onEdit,
-            child: const Text('Editar pedido')),
+            child: Text('Editar pedido')),
       ]),
     );
   }
@@ -485,10 +485,10 @@ class _Detail extends StatelessWidget {
   const _Detail({required this.icon, required this.text});
   @override
   Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8),
       child: Row(children: [
         Icon(icon, color: PremiumColors.textMuted, size: 16),
-        const SizedBox(width: 9),
+        SizedBox(width: 9),
         Expanded(
             child: Text(text,
                 style: GoogleFonts.inter(
@@ -520,8 +520,8 @@ class _InlineError extends StatelessWidget {
   const _InlineError({required this.message});
   @override
   Widget build(BuildContext context) => Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: PremiumColors.error.withValues(alpha: .12),
           borderRadius: BorderRadius.circular(10)),
@@ -537,8 +537,8 @@ class _Composer extends StatelessWidget {
       {required this.controller, required this.enabled, required this.onSend});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-        decoration: const BoxDecoration(
+        padding: EdgeInsets.fromLTRB(12, 10, 12, 12),
+        decoration: BoxDecoration(
             border: Border(top: BorderSide(color: PremiumColors.border))),
         child: Row(children: [
           Expanded(
@@ -549,16 +549,16 @@ class _Composer extends StatelessWidget {
                   maxLines: 3,
                   textInputAction: TextInputAction.send,
                   onSubmitted: onSend,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       hintText: 'Ex.: corte + barba na terça às 15h com André',
                       border: InputBorder.none,
                       filled: false,
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10)))),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           IconButton(
               onPressed: enabled ? () => onSend(controller.text) : null,
-              icon: const Icon(Icons.arrow_upward_rounded),
+              icon: Icon(Icons.arrow_upward_rounded),
               style: IconButton.styleFrom(
                   backgroundColor: PremiumColors.gold,
                   foregroundColor: PremiumColors.background)),

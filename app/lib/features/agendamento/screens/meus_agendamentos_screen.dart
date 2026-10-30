@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/barbearia_theme_service.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/agendamento_controller.dart';
 
@@ -42,12 +43,12 @@ class _MeusAgendamentosScreenState extends State<MeusAgendamentosScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Voltar'),
+            child: Text('Voltar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: PremiumColors.error),
-            child: const Text('Cancelar agendamento'),
+            child: Text('Cancelar agendamento'),
           ),
         ],
       ),
@@ -66,6 +67,7 @@ class _MeusAgendamentosScreenState extends State<MeusAgendamentosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<BarbeariaThemeService>();
     final ctrl = context.watch<AgendamentoController>();
     return PremiumPage(
       title: 'Minha agenda',
@@ -76,7 +78,7 @@ class _MeusAgendamentosScreenState extends State<MeusAgendamentosScreen> {
               ? null
               : ctrl.carregarMeusAgendamentos,
           tooltip: 'Atualizar agenda',
-          icon: const Icon(Icons.refresh_rounded),
+          icon: Icon(Icons.refresh_rounded),
           color: PremiumColors.textSecondary,
         ),
       ],
@@ -129,7 +131,7 @@ class _AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final date = DateTime.parse(appointment['data_hora']);
     return PremiumSurface(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18),
       color: PremiumColors.card,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,13 +146,13 @@ class _AppointmentCard extends StatelessWidget {
                   color: PremiumColors.gold.withValues(alpha: .1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.content_cut_rounded,
                   color: PremiumColors.gold,
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +167,7 @@ class _AppointmentCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(
                       DateFormat('dd/MM/yyyy • HH:mm').format(date),
                       style: GoogleFonts.inter(
@@ -183,18 +185,18 @@ class _AppointmentCard extends StatelessWidget {
               ),
             ],
           ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1, color: PremiumColors.border),
           ),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.person_outline_rounded,
                 color: PremiumColors.textMuted,
                 size: 17,
               ),
-              const SizedBox(width: 7),
+              SizedBox(width: 7),
               Expanded(
                 child: Text(
                   appointment['barbeiro']?.toString() ?? '',
@@ -215,13 +217,13 @@ class _AppointmentCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
               onPressed: onCancel,
-              icon: const Icon(Icons.close_rounded, size: 17),
-              label: const Text('Cancelar'),
+              icon: Icon(Icons.close_rounded, size: 17),
+              label: Text('Cancelar'),
               style: TextButton.styleFrom(
                 foregroundColor: PremiumColors.error,
                 minimumSize: const Size(104, 44),

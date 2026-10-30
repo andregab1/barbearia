@@ -25,6 +25,12 @@ class ResponsiveBreakpoints {
       of(context) == ResponsiveSize.expanded;
 }
 
+double responsivePageHorizontalPadding(double width) {
+  if (width < ResponsiveBreakpoints.compact) return 16.0;
+  if (width < ResponsiveBreakpoints.medium) return 24.0;
+  return 40.0;
+}
+
 class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, ResponsiveSize size) builder;
 
@@ -50,21 +56,26 @@ class ResponsivePagePadding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final horizontal = horizontalPadding ??
-        (width < ResponsiveBreakpoints.compact
-            ? 16.0
-            : width < ResponsiveBreakpoints.medium
-                ? 24.0
-                : 32.0);
+    final horizontal =
+        horizontalPadding ?? responsivePageHorizontalPadding(width);
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontal),
-          child: child,
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth =
+            constraints.hasBoundedWidth ? constraints.maxWidth : width;
+        final frameWidth = availableWidth.clamp(0.0, maxWidth).toDouble();
+
+        return Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: frameWidth,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontal),
+              child: child,
+            ),
+          ),
+        );
+      },
     );
   }
 }

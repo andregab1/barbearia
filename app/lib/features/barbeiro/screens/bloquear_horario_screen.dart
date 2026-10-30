@@ -7,6 +7,7 @@ import '../../../shared/widgets/premium_ui.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
 import '../../../shared/widgets/app_toast.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
 
 class BloquearHorarioScreen extends StatefulWidget {
   final bool embedded;
@@ -119,20 +120,12 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
     });
   }
 
-  Future<void> _selecionarData() async {
-    final cor = Theme.of(context).colorScheme.primary;
-    final data = await showDatePicker(
-      context: context,
+  Future<void> _selecionarData(BuildContext anchorContext) async {
+    final data = await showGetCuttDatePickerPopover(
+      context: anchorContext,
       initialDate: _dataIni ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 60)),
-      builder: (_, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme:
-              ColorScheme.dark(primary: cor, surface: AppTheme.surfaceElev),
-        ),
-        child: child!,
-      ),
     );
     if (data != null && mounted) setState(() => _dataIni = data);
   }
@@ -304,7 +297,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
               Tab(icon: Icon(Icons.list_alt), text: 'Bloqueios Ativos'),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Expanded(
             child: PremiumSurface(
               padding: EdgeInsets.zero,
@@ -314,21 +307,22 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   LayoutBuilder(builder: (context, constraints) {
                     final desktop = constraints.maxWidth >= 900;
                     final editor = SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text('Data',
                                 style: GoogleFonts.inter(
                                     color: AppTheme.corTextoSecundario,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 8),
-                            GestureDetector(
-                              onTap: _selecionarData,
+                            SizedBox(height: 8),
+                            Builder(
+                              builder: (buttonContext) => GestureDetector(
+                              onTap: () => _selecionarData(buttonContext),
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: _dataIni != null
                                       ? cor.withValues(alpha: 0.1)
@@ -341,7 +335,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 ),
                                 child: Row(children: [
                                   Icon(Icons.calendar_today, color: cor),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12),
                                   Text(
                                     _dataIni != null
                                         ? DateFormat('dd/MM/yyyy')
@@ -358,20 +352,21 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                   ),
                                 ]),
                               ),
+                              ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Text('Horário',
                                 style: GoogleFonts.inter(
                                     color: AppTheme.corTextoSecundario,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Row(children: [
                               Expanded(
                                   child: _timeChip(_horaIni, 'Início', cor,
                                       () => _selecionarHora(true))),
                               Padding(
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                       horizontal: 10),
                                   child: Text('até',
                                       style: GoogleFonts.inter(
@@ -382,10 +377,10 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                       () => _selecionarHora(false))),
                             ]),
                             if (_duracaoMinutos > 0) ...[
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.all(14),
+                                padding: EdgeInsets.all(14),
                                 decoration: BoxDecoration(
                                   color: PremiumColors.surfaceSecondary,
                                   borderRadius: BorderRadius.circular(12),
@@ -393,14 +388,14 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                       Border.all(color: PremiumColors.border),
                                 ),
                                 child: Row(children: [
-                                  const Icon(Icons.timelapse_rounded,
+                                  Icon(Icons.timelapse_rounded,
                                       color: PremiumColors.gold, size: 18),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8),
                                   Text('Duração',
                                       style: GoogleFonts.inter(
                                           color: PremiumColors.textSecondary,
                                           fontSize: 12)),
-                                  const Spacer(),
+                                  Spacer(),
                                   Text(
                                       '${_duracaoMinutos ~/ 60}h ${(_duracaoMinutos % 60).toString().padLeft(2, '0')}min',
                                       style: GoogleFonts.inter(
@@ -410,7 +405,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 ]),
                               ),
                             ],
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
 
                             // Repetir todos os dias
                             Material(
@@ -445,7 +440,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 ),
                                 if (_repetirTodosDias)
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(
+                                    padding: EdgeInsets.fromLTRB(
                                         16, 0, 16, 14),
                                     child: Column(
                                         crossAxisAlignment:
@@ -479,14 +474,14 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                   ),
                               ]),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
 
                             Text('Motivo',
                                 style: GoogleFonts.inter(
                                     color: AppTheme.corTextoSecundario,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
@@ -495,7 +490,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 return GestureDetector(
                                   onTap: () => setState(() => _motivo = m),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                         horizontal: 14, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: sel ? cor : AppTheme.surfaceElev,
@@ -514,21 +509,21 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                               }).toList(),
                             ),
                             if (_motivo == 'Outro...') ...[
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               TextField(
                                   controller: _motivoCtrl,
                                   style: GoogleFonts.inter(
                                       color: AppTheme.corTexto),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                       labelText: 'Descreva o motivo')),
                             ],
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24),
 
                             Center(
                               child: ElevatedButton(
                                 onPressed: _salvando ? null : _bloquear,
                                 child: _salvando
-                                    ? const SizedBox(
+                                    ? SizedBox(
                                         height: 18,
                                         width: 18,
                                         child: CircularProgressIndicator(
@@ -547,7 +542,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                         child: Column(children: [
                           SizedBox(height: 620, child: editor),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                             child: summary,
                           ),
                         ]),
@@ -557,12 +552,12 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(flex: 2, child: editor),
-                        const VerticalDivider(
+                        VerticalDivider(
                             width: 1, color: PremiumColors.border),
                         SizedBox(
                           width: 330,
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16),
                             child: summary,
                           ),
                         ),
@@ -581,7 +576,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                   Icon(Icons.check_circle_outline,
                                       color: cor.withValues(alpha: 0.3),
                                       size: 64),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16),
                                   Text('Nenhum bloqueio ativo.',
                                       style: GoogleFonts.inter(
                                           color: AppTheme.corTextoSecundario)),
@@ -589,11 +584,11 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                           : Column(children: [
                               Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                                    EdgeInsets.fromLTRB(16, 12, 16, 4),
                                 child: Center(
                                   child: OutlinedButton.icon(
                                     onPressed: _excluirTodos,
-                                    icon: const Icon(Icons.delete_sweep,
+                                    icon: Icon(Icons.delete_sweep,
                                         color: AppTheme.erro),
                                     label: Text(
                                         'Excluir todos (${_bloqueios.length})',
@@ -605,7 +600,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                           color: AppTheme.erro
                                               .withValues(alpha: 0.4)),
                                       minimumSize: const Size(0, 44),
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           horizontal: 24, vertical: 12),
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -619,7 +614,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                   color: cor,
                                   onRefresh: _carregarBloqueios,
                                   child: ListView.builder(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(16),
                                     itemCount: _bloqueios.length,
                                     itemBuilder: (_, i) {
                                       final b = _bloqueios[i];
@@ -629,18 +624,18 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                           DateTime.parse(b['data_hora_fim']);
                                       return Container(
                                         margin:
-                                            const EdgeInsets.only(bottom: 10),
+                                            EdgeInsets.only(bottom: 10),
                                         decoration: BoxDecoration(
                                           color: AppTheme.surfaceElev,
                                           borderRadius:
                                               BorderRadius.circular(14),
-                                          border: const Border(
+                                          border: Border(
                                               left: BorderSide(
                                                   color: AppTheme.erro,
                                                   width: 4)),
                                         ),
                                         child: ListTile(
-                                          leading: const Icon(Icons.block,
+                                          leading: Icon(Icons.block,
                                               color: AppTheme.erro),
                                           title: Text(
                                             '${DateFormat('dd/MM/yy').format(ini)}  ${DateFormat('HH:mm').format(ini)} – ${DateFormat('HH:mm').format(fim)}',
@@ -656,7 +651,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                                       fontSize: 12))
                                               : null,
                                           trailing: IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                                 Icons.delete_outline,
                                                 color: AppTheme.erro),
                                             onPressed: () async {
@@ -726,7 +721,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
     return PremiumSurface(
       padding: EdgeInsets.zero,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -743,7 +738,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   ),
                   child: Icon(Icons.block_outlined, color: cor, size: 20),
                 ),
-                const SizedBox(width: 11),
+                SizedBox(width: 11),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -756,7 +751,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 3),
+                      SizedBox(height: 3),
                       Text(
                         'Reserve um período sem sair da sua agenda.',
                         style: GoogleFonts.inter(
@@ -769,7 +764,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 ),
               ],
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             if (!canEdit)
               _embeddedInfo(
                 Icons.person_search_outlined,
@@ -778,14 +773,14 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
               )
             else ...[
               Text('Novo bloqueio', style: _embeddedLabel()),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               InkWell(
-                onTap: _selecionarData,
+                onTap: () => _selecionarData(context),
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   width: double.infinity,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     color: PremiumColors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(10),
@@ -797,7 +792,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   child: Row(
                     children: [
                       Icon(Icons.calendar_today_outlined, color: cor, size: 17),
-                      const SizedBox(width: 9),
+                      SizedBox(width: 9),
                       Expanded(
                         child: Text(
                           _dataIni == null
@@ -820,22 +815,22 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                       child: _timeChip(_horaIni, 'Início', cor,
                           () => _selecionarHora(true))),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Expanded(
                       child: _timeChip(
                           _horaFim, 'Fim', cor, () => _selecionarHora(false))),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
+                    EdgeInsets.symmetric(horizontal: 11, vertical: 3),
                 decoration: BoxDecoration(
                   color: PremiumColors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(10),
@@ -844,7 +839,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 child: Row(
                   children: [
                     Icon(Icons.repeat_rounded, color: cor, size: 17),
-                    const SizedBox(width: 9),
+                    SizedBox(width: 9),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -868,12 +863,12 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 ),
               ),
               if (_repetirTodosDias) ...[
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 DropdownButtonFormField<int>(
                   value: _diasRepeticao,
                   dropdownColor: AppTheme.surfaceElev,
                   decoration:
-                      const InputDecoration(labelText: 'Quantidade de dias'),
+                      InputDecoration(labelText: 'Quantidade de dias'),
                   items: [7, 14, 30, 60]
                       .map((days) => DropdownMenuItem(
                           value: days, child: Text('$days dias')))
@@ -882,9 +877,9 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                       setState(() => _diasRepeticao = value ?? 30),
                 ),
               ],
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Text('Motivo', style: _embeddedLabel()),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -909,18 +904,18 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 }).toList(),
               ),
               if (_motivo == 'Outro...') ...[
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextField(
                   controller: _motivoCtrl,
                   style: GoogleFonts.inter(
                       color: PremiumColors.textPrimary, fontSize: 12),
                   decoration:
-                      const InputDecoration(labelText: 'Descreva o motivo'),
+                      InputDecoration(labelText: 'Descreva o motivo'),
                 ),
               ],
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Container(
-                padding: const EdgeInsets.all(11),
+                padding: EdgeInsets.all(11),
                 decoration: BoxDecoration(
                   color: cor.withValues(alpha: .08),
                   borderRadius: BorderRadius.circular(10),
@@ -929,7 +924,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 child: Row(
                   children: [
                     Icon(Icons.info_outline_rounded, color: cor, size: 17),
-                    const SizedBox(width: 9),
+                    SizedBox(width: 9),
                     Expanded(
                       child: Text(
                         'O período ficará indisponível para novos agendamentos.',
@@ -940,22 +935,22 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: _salvando ? null : _bloquear,
                   icon: _salvando
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 15,
                           height: 15,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: AppTheme.blackPure))
-                      : const Icon(Icons.lock_outline_rounded, size: 16),
+                      : Icon(Icons.lock_outline_rounded, size: 16),
                   label: Text(_salvando ? 'Salvando...' : 'Bloquear período'),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
@@ -971,9 +966,9 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                     ),
                 ],
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               if (_carregandoBloqueios)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 18),
                   child:
                       Center(child: CircularProgressIndicator(strokeWidth: 2)),
@@ -994,10 +989,10 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
   Widget _embeddedBlockItem(Map<String, dynamic> bloqueio, Color cor) {
     final inicio = DateTime.tryParse('${bloqueio['data_hora_ini']}');
     final fim = DateTime.tryParse('${bloqueio['data_hora_fim']}');
-    if (inicio == null || fim == null) return const SizedBox.shrink();
+    if (inicio == null || fim == null) return SizedBox.shrink();
     return Container(
-      margin: const EdgeInsets.only(bottom: 7),
-      padding: const EdgeInsets.fromLTRB(10, 9, 6, 9),
+      margin: EdgeInsets.only(bottom: 7),
+      padding: EdgeInsets.fromLTRB(10, 9, 6, 9),
       decoration: BoxDecoration(
         color: PremiumColors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
@@ -1013,7 +1008,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   '${DateFormat('dd/MM').format(inicio)} · ${DateFormat('HH:mm').format(inicio)}–${DateFormat('HH:mm').format(fim)}',
                   style: _embeddedText(fontWeight: FontWeight.w700),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text('${bloqueio['motivo'] ?? 'Indisponibilidade'}',
                     style: _embeddedText(
                         color: PremiumColors.textMuted, size: 10)),
@@ -1023,7 +1018,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
           IconButton(
             tooltip: 'Remover bloqueio',
             onPressed: () => _remover(int.tryParse('${bloqueio['id']}') ?? 0),
-            icon: const Icon(Icons.delete_outline_rounded,
+            icon: Icon(Icons.delete_outline_rounded,
                 color: AppTheme.erro, size: 17),
           ),
         ],
@@ -1033,7 +1028,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
 
   Widget _embeddedInfo(IconData icon, String text, Color cor) => Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: PremiumColors.surfaceSecondary,
           borderRadius: BorderRadius.circular(10),
@@ -1042,7 +1037,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
         child: Row(
           children: [
             Icon(icon, color: cor, size: 18),
-            const SizedBox(width: 9),
+            SizedBox(width: 9),
             Expanded(
                 child: Text(text,
                     style: _embeddedText(
@@ -1078,8 +1073,8 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
 
     Widget item(IconData icon, String title, String value) => Container(
           width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(13),
+          margin: EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.all(13),
           decoration: BoxDecoration(
             color: PremiumColors.surfaceSecondary,
             borderRadius: BorderRadius.circular(9),
@@ -1087,7 +1082,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
           ),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Icon(icon, color: PremiumColors.textSecondary, size: 18),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1095,7 +1090,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                     Text(title,
                         style: GoogleFonts.inter(
                             color: PremiumColors.textSecondary, fontSize: 11)),
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(value,
                         style: GoogleFonts.inter(
                             color: PremiumColors.textPrimary,
@@ -1107,33 +1102,33 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
         );
 
     return PremiumSurface(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Icon(Icons.bookmark_border_rounded, color: cor, size: 19),
-          const SizedBox(width: 9),
+          SizedBox(width: 9),
           Text('Resumo do bloqueio',
               style: GoogleFonts.inter(
                   color: PremiumColors.textPrimary,
                   fontSize: 17,
                   fontWeight: FontWeight.w600)),
         ]),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         item(Icons.calendar_today_outlined, 'Data', dateLabel),
         item(Icons.schedule_outlined, 'Horário', '$timeLabel$duration'),
         item(Icons.repeat_rounded, 'Repetição',
             _repetirTodosDias ? 'Por $_diasRepeticao dias' : 'Não repetir'),
         item(Icons.sell_outlined, 'Motivo', _motivo ?? 'Não selecionado'),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text('Impacto na agenda',
             style: GoogleFonts.inter(
                 color: PremiumColors.textPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w600)),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Container(
           height: 58,
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: PremiumColors.surfaceSecondary,
             borderRadius: BorderRadius.circular(9),
@@ -1154,12 +1149,12 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
             Expanded(child: Container(height: 10, color: PremiumColors.border)),
           ]),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: _salvando ? null : _bloquear,
-            icon: const Icon(Icons.lock_outline, size: 17),
+            icon: Icon(Icons.lock_outline, size: 17),
             label: Text(_salvando ? 'Salvando...' : 'Bloquear período'),
           ),
         ),
@@ -1172,7 +1167,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color:
               hora != null ? cor.withValues(alpha: 0.1) : AppTheme.surfaceElev,
@@ -1184,7 +1179,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
         ),
         child: Row(children: [
           Icon(Icons.access_time, color: cor, size: 18),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
             hora?.format(context) ?? label,
             style: GoogleFonts.inter(

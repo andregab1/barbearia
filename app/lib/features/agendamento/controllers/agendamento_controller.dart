@@ -15,6 +15,8 @@ class AgendamentoController extends ChangeNotifier {
   List<Map<String, dynamic>> _horariosDisp = [];
   List<Map<String, dynamic>> _meusAgendamentos = [];
   List<Map<String, dynamic>> _historico = [];
+  Map<String, dynamic>? _servicoPendente;
+  Map<String, dynamic>? _colaboradorPendente;
 
   bool _carregandoServicos = false;
   bool _carregandoBarbearias = false;
@@ -40,6 +42,69 @@ class AgendamentoController extends ChangeNotifier {
   bool get salvando => _salvando;
   String get erro => _erro;
 
+  Future<void> prepararIntencaoAgendamento({
+    Map<String, dynamic>? servico,
+    Map<String, dynamic>? colaborador,
+  }) async {
+    _servicoPendente = servico;
+    _colaboradorPendente = colaborador;
+
+    final prefs = await SharedPreferences.getInstance();
+    final servicoId = int.tryParse(servico?['id']?.toString() ?? '');
+    final colaboradorId = int.tryParse(colaborador?['id']?.toString() ?? '');
+    if (servicoId != null && servicoId > 0) {
+      await prefs.setInt(AppConstants.keyServicoDescobertoId, servicoId);
+    } else {
+      await prefs.remove(AppConstants.keyServicoDescobertoId);
+    }
+    if (colaboradorId != null && colaboradorId > 0) {
+      await prefs.setInt(
+          AppConstants.keyColaboradorDescobertoId, colaboradorId);
+    } else {
+      await prefs.remove(AppConstants.keyColaboradorDescobertoId);
+    }
+  }
+
+  Future<Map<String, dynamic>?> consumirIntencaoAgendamento() async {
+    final prefs = await SharedPreferences.getInstance();
+    final servicoPendente = _servicoPendente;
+    final colaboradorPendente = _colaboradorPendente;
+    _servicoPendente = null;
+    _colaboradorPendente = null;
+
+    final savedServicoId = prefs.getInt(AppConstants.keyServicoDescobertoId);
+    final savedColaboradorId =
+        prefs.getInt(AppConstants.keyColaboradorDescobertoId);
+    await prefs.remove(AppConstants.keyServicoDescobertoId);
+    await prefs.remove(AppConstants.keyColaboradorDescobertoId);
+
+    final servicoId = int.tryParse(servicoPendente?['id']?.toString() ?? '') ??
+        savedServicoId;
+    final colaboradorId =
+        int.tryParse(colaboradorPendente?['id']?.toString() ?? '') ??
+            savedColaboradorId;
+    final servico = servicoId == null
+        ? null
+        : _servicos.cast<Map<String, dynamic>?>().firstWhere(
+              (item) =>
+                  int.tryParse(item?['id']?.toString() ?? '') == servicoId,
+              orElse: () => null,
+            );
+    final colaborador = colaboradorId == null
+        ? null
+        : _colaboradores.cast<Map<String, dynamic>?>().firstWhere(
+              (item) =>
+                  int.tryParse(item?['id']?.toString() ?? '') == colaboradorId,
+              orElse: () => null,
+            );
+
+    if (servico == null && colaborador == null) return null;
+    return {
+      if (servico != null) 'servico': servico,
+      if (colaborador != null) 'colaborador': colaborador,
+    };
+  }
+
   Future<void> carregarBarbearias({String busca = ''}) async {
     _carregandoBarbearias = true;
     notifyListeners();
@@ -55,7 +120,7 @@ class AgendamentoController extends ChangeNotifier {
 
     if (_barbeariaSelecionada == null) {
       final prefs = await SharedPreferences.getInstance();
-      final savedId = prefs.getInt(AppConstants.keyBarbeariaId);
+      final savedId = prefs.getInt(AppConstants.keyBarbeariaDescobertaId);
       if (savedId != null) {
         final matches = _barbearias.where((item) => item['id'] == savedId);
         if (matches.isNotEmpty) _barbeariaSelecionada = matches.first;
@@ -78,7 +143,8 @@ class AgendamentoController extends ChangeNotifier {
     _colaboradores = [];
     _horariosDisp = [];
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(AppConstants.keyBarbeariaId, barbearia['id'] as int);
+    await prefs.setInt(
+        AppConstants.keyBarbeariaDescobertaId, barbearia['id'] as int);
     notifyListeners();
     await Future.wait([
       carregarServicos(barbeariaId: barbearia['id']),
@@ -88,11 +154,15 @@ class AgendamentoController extends ChangeNotifier {
 
   Future<void> trocarBarbearia() async {
     _barbeariaSelecionada = null;
+    _servicoPendente = null;
+    _colaboradorPendente = null;
     _servicos = [];
     _colaboradores = [];
     _horariosDisp = [];
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(AppConstants.keyBarbeariaId);
+    await prefs.remove(AppConstants.keyBarbeariaDescobertaId);
+    await prefs.remove(AppConstants.keyServicoDescobertoId);
+    await prefs.remove(AppConstants.keyColaboradorDescobertoId);
     notifyListeners();
   }
 

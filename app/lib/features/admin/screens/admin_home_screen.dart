@@ -20,6 +20,8 @@ import '../../../features/barbeiro/screens/horarios_schedule_screen.dart';
 import '../../../shared/widgets/perfil_screen.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/app_modal.dart';
+import '../../../shared/widgets/getcutt_calendar.dart';
+import '../../../shared/widgets/premium_ui.dart';
 import '../../../shared/widgets/responsive_nav_shell.dart';
 import '../controllers/admin_controller.dart';
 import '../widgets/chart_card.dart';
@@ -52,8 +54,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
     final paginas = [
-      const _RelatorioTab(),
       const AgendaAdminScreen(),
+      const _RelatorioTab(),
       const FinanceiroScreen(),
       const ContabilidadeScreen(),
       const _EquipeTab(),
@@ -145,19 +147,19 @@ class _RelatorioTabState extends State<_RelatorioTab> {
   String _label(DateTime value) => DateFormat('dd/MM/yyyy').format(value);
   int get _dias => _fim.difference(_inicio).inDays + 1;
 
-  Future<void> _pick(bool start) async {
-    final selected = await showDatePicker(
-        context: context,
-        initialDate: start ? _inicio : _fim,
-        firstDate: DateTime(2020),
-        lastDate: DateTime.now());
+  Future<void> _pickRange(BuildContext anchorContext) async {
+    final selected = await showGetCuttDateRangePickerPopover(
+      context: anchorContext,
+      initialStart: _inicio,
+      initialEnd: _fim,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 3650)),
+      title: 'Selecionar período do relatório',
+    );
     if (selected == null || !mounted) return;
     setState(() {
-      if (start) {
-        _inicio = selected;
-      } else {
-        _fim = selected;
-      }
+      _inicio = selected.start;
+      _fim = selected.end;
     });
   }
 
@@ -176,42 +178,6 @@ class _RelatorioTabState extends State<_RelatorioTab> {
           status: _status,
         );
     if (mounted) setState(() => _gerando = false);
-  }
-
-  String _money(dynamic value) {
-    final amount = double.tryParse(value?.toString() ?? '') ?? 0;
-    return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(amount);
-  }
-
-  Widget _metric(String label, dynamic value, IconData icon, Color color) {
-    return SizedBox(
-        width: 210,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              color: AppTheme.surfaceElev,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border)),
-          child: Row(children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: 10),
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text(label,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                          color: AppTheme.corTextoSecundario, fontSize: 11)),
-                  const SizedBox(height: 4),
-                  Text(value.toString(),
-                      style: GoogleFonts.inter(
-                          color: AppTheme.corTexto,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700))
-                ]))
-          ]),
-        ));
   }
 
   List<Map<String, dynamic>> _mapList(dynamic value) {
@@ -286,9 +252,9 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                 ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(
+                  topTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(
+                  rightTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
@@ -310,11 +276,11 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                       getTitlesWidget: (value, _) {
                         final index = value.toInt();
                         if (index < 0 || index >= services.length)
-                          return const SizedBox.shrink();
+                          return SizedBox.shrink();
                         final label =
                             services[index]['servico']?.toString() ?? 'Serviço';
                         return Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                          padding: EdgeInsets.only(top: 8),
                           child: Text(
                             label.length > 12
                                 ? '${label.substring(0, 12)}…'
@@ -339,7 +305,7 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                         toY: value,
                         width: 24,
                         color: color,
-                        borderRadius: const BorderRadius.vertical(
+                        borderRadius: BorderRadius.vertical(
                             top: Radius.circular(6)),
                       ),
                     ],
@@ -377,14 +343,14 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: statuses.map((item) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding: EdgeInsets.symmetric(vertical: 5),
                         child: Row(
                           children: [
                             Container(
@@ -395,7 +361,7 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                                 shape: BoxShape.circle,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 '${item['label']}: ${item['value']}',
@@ -426,10 +392,10 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                   ChartCard(title: 'Status dos atendimentos', child: pieChart)),
         ];
         return constraints.maxWidth < 760
-            ? Column(children: [cards[0], const SizedBox(height: 16), cards[1]])
+            ? Column(children: [cards[0], SizedBox(height: 16), cards[1]])
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [cards[0], const SizedBox(width: 16), cards[1]]);
+                children: [cards[0], SizedBox(width: 16), cards[1]]);
       },
     );
   }
@@ -449,7 +415,8 @@ class _RelatorioTabState extends State<_RelatorioTab> {
     final rawItems = (rel['atendimentos'] as List? ?? const []);
     final items =
         rawItems.map((item) => Map<String, dynamic>.from(item as Map)).toList();
-    final gold = pdf.PdfColor.fromInt(0xFFD99B00);
+    final gold = pdf.PdfColor.fromInt(
+        context.read<BarbeariaThemeService>().corPrimaria.value);
     final reportAssets = await Future.wait<Uint8List?>([
       _loadOptionalReportAsset('assets/logo_getcutt_mark.png'),
       _loadOptionalReportAsset('assets/logo_getcutt_wordmark.png'),
@@ -590,7 +557,7 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                                   color: pdf.PdfColors.grey700,
                                   lineSpacing: 1.2)),
                           pw.SizedBox(height: 4),
-                          pw.Text('MODELO 1 - ESPELHO CLÁSSICO',
+                          pw.Text('MODELO 1 - ESPELHO CLÃSSICO',
                               style: pw.TextStyle(
                                   fontSize: 8,
                                   color: gold,
@@ -828,10 +795,6 @@ class _RelatorioTabState extends State<_RelatorioTab> {
     }
   }
 
-  Future<void> _download() async {
-    await _downloadModeloClassico();
-  }
-
   @override
   Widget build(BuildContext context) {
     final ctrl = context.watch<AdminController>();
@@ -839,251 +802,198 @@ class _RelatorioTabState extends State<_RelatorioTab> {
     final cor = Theme.of(context).colorScheme.primary;
     final items = (rel['atendimentos'] as List? ?? const []);
     return _TabShell(
-        child: Center(
-            child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 28),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Relatório',
+        child: SingleChildScrollView(
+            child: PremiumPageFrame(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+          const PremiumPageHeader(
+            title: 'Relatório',
+            subtitle:
+                'Consulte atendimentos e faturamento em períodos de até 90 dias.',
+          ),
+          SizedBox(height: 24),
+          Wrap(spacing: 12, runSpacing: 12, children: [
+            Builder(
+                builder: (buttonContext) => OutlinedButton.icon(
+                    onPressed: () => _pickRange(buttonContext),
+                    icon: Icon(Icons.date_range_outlined),
+                    label: Text('Período: ' +
+                        _label(_inicio) +
+                        ' a ' +
+                        _label(_fim)))),
+            DropdownButton<String?>(
+                value: _status,
+                hint: Text('Todos os status'),
+                items: [
+                  DropdownMenuItem<String?>(
+                      value: null, child: Text('Todos os status')),
+                  ..._statusLabels.entries.map((entry) =>
+                      DropdownMenuItem<String?>(
+                          value: entry.key, child: Text(entry.value)))
+                ],
+                onChanged: (value) => setState(() => _status = value)),
+            DropdownButton<int?>(
+                value: _profissionalId,
+                hint: Text('Todos os profissionais'),
+                items: [
+                  DropdownMenuItem<int?>(
+                      value: null, child: Text('Todos os profissionais')),
+                  ...context.read<AdminController>().colaboradores.map((item) =>
+                      DropdownMenuItem<int?>(
+                          value: int.tryParse(item['id'].toString()),
+                          child: Text(item['nome']?.toString() ?? '-')))
+                ],
+                onChanged: (value) => setState(() => _profissionalId = value)),
+            DropdownButton<int?>(
+                value: _servicoId,
+                hint: Text('Todos os serviços'),
+                items: [
+                  DropdownMenuItem<int?>(
+                      value: null, child: Text('Todos os serviços')),
+                  ...context.read<AdminController>().servicos.map((item) =>
+                      DropdownMenuItem<int?>(
+                          value: int.tryParse(item['id'].toString()),
+                          child: Text(item['nome']?.toString() ?? '-')))
+                ],
+                onChanged: (value) => setState(() => _servicoId = value)),
+            FilledButton.icon(
+                onPressed: _gerando ? null : _load,
+                icon: _gerando
+                    ? SizedBox(
+                        width: 17,
+                        height: 17,
+                        child: CircularProgressIndicator(strokeWidth: 2))
+                    : Icon(Icons.assessment_outlined),
+                label: Text(_gerando ? 'Gerando...' : 'Gerar relatório')),
+            OutlinedButton.icon(
+                onPressed: _downloadModeloClassico,
+                icon: Icon(Icons.download_outlined),
+                label: Text('Baixar PDF')),
+          ]),
+          SizedBox(height: 10),
+          Text(
+              'Período selecionado: ' +
+                  _dias.toString() +
+                  ' dia(s) • limite máximo de 90 dias',
+              style: GoogleFonts.inter(
+                  color:
+                      _dias > 90 ? AppTheme.erro : AppTheme.corTextoSecundario,
+                  fontSize: 12)),
+          SizedBox(height: 28),
+          Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    cor.withValues(alpha: .16),
+                    cor.withValues(alpha: .03)
+                  ]),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: cor.withValues(alpha: .25))),
+              child: ctrl.carregandoRelatorio
+                  ? Center(child: CircularProgressIndicator())
+                  : Row(children: [
+                      Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            Text('Faturamento do período',
+                                style: GoogleFonts.inter(
+                                    color: AppTheme.corTextoSecundario,
+                                    fontSize: 13)),
+                            SizedBox(height: 10),
+                            Text(
+                                'R\$ ' +
+                                    (rel['total_geral']?.toString() ?? '0.00'),
+                                style: GoogleFonts.inter(
+                                    color: AppTheme.corTexto,
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.w700))
+                          ])),
+                      Text(items.length.toString() + ' atendimentos',
+                          style: GoogleFonts.inter(
+                              color: AppTheme.corTextoSecundario, fontSize: 14))
+                    ])),
+          if (ctrl.erro.isNotEmpty) ...[
+            SizedBox(height: 12),
+            Text(
+              ctrl.erro,
+              style: GoogleFonts.inter(
+                color: AppTheme.erro,
+                fontSize: 13,
+              ),
+            ),
+          ],
+          SizedBox(height: 20),
+          _buildCharts(rel, cor),
+          SizedBox(height: 28),
+          Text('Atendimentos do período',
+              style: GoogleFonts.inter(
+                  color: AppTheme.corTexto,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600)),
+          SizedBox(height: 12),
+          if (items.isEmpty)
+            Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                    color: AppTheme.surfaceElev,
+                    borderRadius: BorderRadius.circular(14)),
+                child: Center(
+                    child: Text('Nenhum atendimento concluído no período.',
+                        style: GoogleFonts.inter(
+                            color: AppTheme.corTextoSecundario, fontSize: 14))))
+          else
+            ...items.map((raw) {
+              final item = Map<String, dynamic>.from(raw as Map);
+              final when =
+                  DateTime.tryParse(item['data_hora']?.toString() ?? '');
+              final value =
+                  double.tryParse(item['valor_cobrado']?.toString() ?? '0') ??
+                      0;
+              return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  decoration: BoxDecoration(
+                      color: AppTheme.surfaceElev,
+                      borderRadius: BorderRadius.circular(14)),
+                  child: Row(children: [
+                    Text(
+                        when == null
+                            ? '-'
+                            : DateFormat('dd/MM/yyyy').format(when),
+                        style: GoogleFonts.inter(
+                            color: cor, fontWeight: FontWeight.w700)),
+                    SizedBox(width: 14),
+                    Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          Text(item['servico']?.toString() ?? 'Serviço',
                               style: GoogleFonts.inter(
                                   color: AppTheme.corTexto,
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 6),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14)),
+                          SizedBox(height: 2),
                           Text(
-                              'Consulte atendimentos e faturamento em períodos de até 90 dias.',
+                              (item['barbeiro']?.toString() ?? '-') +
+                                  ' • ' +
+                                  (item['cliente']?.toString() ?? '-'),
                               style: GoogleFonts.inter(
                                   color: AppTheme.corTextoSecundario,
-                                  fontSize: 13)),
-                          const SizedBox(height: 24),
-                          Wrap(spacing: 12, runSpacing: 12, children: [
-                            OutlinedButton.icon(
-                                onPressed: () => _pick(true),
-                                icon: const Icon(Icons.calendar_month_outlined),
-                                label: Text('De ' + _label(_inicio))),
-                            DropdownButton<String?>(
-                                value: _status,
-                                hint: const Text('Todos os status'),
-                                items: [
-                                  const DropdownMenuItem<String?>(
-                                      value: null,
-                                      child: Text('Todos os status')),
-                                  ..._statusLabels.entries.map((entry) =>
-                                      DropdownMenuItem<String?>(
-                                          value: entry.key,
-                                          child: Text(entry.value)))
-                                ],
-                                onChanged: (value) =>
-                                    setState(() => _status = value)),
-                            DropdownButton<int?>(
-                                value: _profissionalId,
-                                hint: const Text('Todos os profissionais'),
-                                items: [
-                                  const DropdownMenuItem<int?>(
-                                      value: null,
-                                      child: Text('Todos os profissionais')),
-                                  ...context
-                                      .read<AdminController>()
-                                      .colaboradores
-                                      .map((item) => DropdownMenuItem<int?>(
-                                          value: int.tryParse(
-                                              item['id'].toString()),
-                                          child: Text(
-                                              item['nome']?.toString() ?? '-')))
-                                ],
-                                onChanged: (value) =>
-                                    setState(() => _profissionalId = value)),
-                            DropdownButton<int?>(
-                                value: _servicoId,
-                                hint: const Text('Todos os serviços'),
-                                items: [
-                                  const DropdownMenuItem<int?>(
-                                      value: null,
-                                      child: Text('Todos os serviços')),
-                                  ...context
-                                      .read<AdminController>()
-                                      .servicos
-                                      .map((item) => DropdownMenuItem<int?>(
-                                          value: int.tryParse(
-                                              item['id'].toString()),
-                                          child: Text(
-                                              item['nome']?.toString() ?? '-')))
-                                ],
-                                onChanged: (value) =>
-                                    setState(() => _servicoId = value)),
-                            OutlinedButton.icon(
-                                onPressed: () => _pick(false),
-                                icon: const Icon(Icons.calendar_month_outlined),
-                                label: Text('Até ' + _label(_fim))),
-                            FilledButton.icon(
-                                onPressed: _gerando ? null : _load,
-                                icon: _gerando
-                                    ? const SizedBox(
-                                        width: 17,
-                                        height: 17,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2))
-                                    : const Icon(Icons.assessment_outlined),
-                                label: Text(_gerando
-                                    ? 'Gerando...'
-                                    : 'Gerar relatório')),
-                            OutlinedButton.icon(
-                                onPressed: _downloadModeloClassico,
-                                icon: const Icon(Icons.download_outlined),
-                                label: const Text('Baixar PDF')),
-                          ]),
-                          const SizedBox(height: 10),
-                          Text(
-                              'Período selecionado: ' +
-                                  _dias.toString() +
-                                  ' dia(s) • limite máximo de 90 dias',
-                              style: GoogleFonts.inter(
-                                  color: _dias > 90
-                                      ? AppTheme.erro
-                                      : AppTheme.corTextoSecundario,
-                                  fontSize: 12)),
-                          const SizedBox(height: 28),
-                          Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(28),
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    cor.withValues(alpha: .16),
-                                    cor.withValues(alpha: .03)
-                                  ]),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: cor.withValues(alpha: .25))),
-                              child: ctrl.carregandoRelatorio
-                                  ? const Center(
-                                      child: CircularProgressIndicator())
-                                  : Row(children: [
-                                      Expanded(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                            Text('Faturamento do período',
-                                                style: GoogleFonts.inter(
-                                                    color: AppTheme
-                                                        .corTextoSecundario,
-                                                    fontSize: 13)),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                                'R\$ ' +
-                                                    (rel['total_geral']
-                                                            ?.toString() ??
-                                                        '0.00'),
-                                                style: GoogleFonts.inter(
-                                                    color: AppTheme.corTexto,
-                                                    fontSize: 36,
-                                                    fontWeight:
-                                                        FontWeight.w700))
-                                          ])),
-                                      Text(
-                                          items.length.toString() +
-                                              ' atendimentos',
-                                          style: GoogleFonts.inter(
-                                              color:
-                                                  AppTheme.corTextoSecundario,
-                                              fontSize: 14))
-                                    ])),
-                          if (ctrl.erro.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              ctrl.erro,
-                              style: GoogleFonts.inter(
-                                color: AppTheme.erro,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 20),
-                          _buildCharts(rel, cor),
-                          const SizedBox(height: 28),
-                          Text('Atendimentos do período',
-                              style: GoogleFonts.inter(
-                                  color: AppTheme.corTexto,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 12),
-                          if (items.isEmpty)
-                            Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(24),
-                                decoration: BoxDecoration(
-                                    color: AppTheme.surfaceElev,
-                                    borderRadius: BorderRadius.circular(14)),
-                                child: Center(
-                                    child: Text(
-                                        'Nenhum atendimento concluído no período.',
-                                        style: GoogleFonts.inter(
-                                            color: AppTheme.corTextoSecundario,
-                                            fontSize: 14))))
-                          else
-                            ...items.map((raw) {
-                              final item =
-                                  Map<String, dynamic>.from(raw as Map);
-                              final when = DateTime.tryParse(
-                                  item['data_hora']?.toString() ?? '');
-                              final value = double.tryParse(
-                                      item['valor_cobrado']?.toString() ??
-                                          '0') ??
-                                  0;
-                              return Container(
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 16),
-                                  decoration: BoxDecoration(
-                                      color: AppTheme.surfaceElev,
-                                      borderRadius: BorderRadius.circular(14)),
-                                  child: Row(children: [
-                                    Text(
-                                        when == null
-                                            ? '-'
-                                            : DateFormat('dd/MM/yyyy')
-                                                .format(when),
-                                        style: GoogleFonts.inter(
-                                            color: cor,
-                                            fontWeight: FontWeight.w700)),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                          Text(
-                                              item['servico']?.toString() ??
-                                                  'Serviço',
-                                              style: GoogleFonts.inter(
-                                                  color: AppTheme.corTexto,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 14)),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                              (item['barbeiro']?.toString() ??
-                                                      '-') +
-                                                  ' • ' +
-                                                  (item['cliente']
-                                                          ?.toString() ??
-                                                      '-'),
-                                              style: GoogleFonts.inter(
-                                                  color: AppTheme
-                                                      .corTextoSecundario,
-                                                  fontSize: 12))
-                                        ])),
-                                    Text('R\$ ' + value.toStringAsFixed(2),
-                                        style: GoogleFonts.inter(
-                                            color: cor,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 15))
-                                  ]));
-                            }),
-                        ])))));
+                                  fontSize: 12))
+                        ])),
+                    Text('R\$ ' + value.toStringAsFixed(2),
+                        style: GoogleFonts.inter(
+                            color: cor,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15))
+                  ]));
+            }),
+        ]))));
   }
 }
 
@@ -1211,7 +1121,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                 color: AppTheme.corTexto,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         TextField(
             controller: controller,
             keyboardType: keyboardType,
@@ -1224,17 +1134,17 @@ class _ServicosTabState extends State<_ServicosTab> {
                 filled: true,
                 fillColor: AppTheme.surface,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 17),
+                    EdgeInsets.symmetric(horizontal: 20, vertical: 17),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppTheme.border)),
+                    borderSide: BorderSide(color: AppTheme.border)),
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppTheme.border)),
+                    borderSide: BorderSide(color: AppTheme.border)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide:
-                        const BorderSide(color: AppTheme.gold, width: 1.2)))),
+                        BorderSide(color: AppTheme.gold, width: 1.2)))),
       ]);
 
   Future<Map<String, dynamic>?> _newCategory(BuildContext context) {
@@ -1253,7 +1163,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   AppModalCancelButton(
                       onPressed: () => Navigator.pop(panelContext)),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   AppModalPrimaryButton(
                       label: 'Criar categoria',
                       isLoading: ctrl.salvando,
@@ -1303,13 +1213,13 @@ class _ServicosTabState extends State<_ServicosTab> {
                         controller: name,
                         label: 'Nome do serviço',
                         hint: 'Ex.: Corte masculino'),
-                    const SizedBox(height: 28),
+                    SizedBox(height: 28),
                     Text('Categoria',
                         style: GoogleFonts.inter(
                             color: AppTheme.corTexto,
                             fontSize: 15,
                             fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Row(children: [
                       Expanded(
                           child: DropdownButtonFormField<int>(
@@ -1325,25 +1235,25 @@ class _ServicosTabState extends State<_ServicosTab> {
                                       fontSize: 15),
                                   filled: true,
                                   fillColor: AppTheme.surface,
-                                  contentPadding: const EdgeInsets.symmetric(
+                                  contentPadding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 17),
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
+                                      borderSide: BorderSide(
                                           color: AppTheme.border)),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
+                                      borderSide: BorderSide(
                                           color: AppTheme.border)),
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
+                                      borderSide: BorderSide(
                                           color: AppTheme.gold, width: 1.2))),
                               items: controller.categorias
                                   .map((category) => DropdownMenuItem<int>(value: int.tryParse(category['id'].toString()), child: Text(category['nome']?.toString() ?? '')))
                                   .toList(),
                               onChanged: (value) => setModalState(() => selectedCategoryId = value))),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16),
                       TextButton(
                           onPressed: () async {
                             final created = await _newCategory(modalContext);
@@ -1353,9 +1263,9 @@ class _ServicosTabState extends State<_ServicosTab> {
                                     int.tryParse(created['id'].toString());
                               });
                           },
-                          child: const Text('+ Nova categoria')),
+                          child: Text('+ Nova categoria')),
                     ]),
-                    const SizedBox(height: 28),
+                    SizedBox(height: 28),
                     Row(children: [
                       Expanded(
                           child: _modalInput(
@@ -1363,7 +1273,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                               label: 'Preço',
                               hint: 'R\$ 0,00',
                               keyboardType: TextInputType.number)),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16),
                       Expanded(
                           child: _modalInput(
                               controller: duration,
@@ -1371,7 +1281,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                               hint: 'Em minutos',
                               keyboardType: TextInputType.number))
                     ]),
-                    const SizedBox(height: 28),
+                    SizedBox(height: 28),
                     _modalInput(
                         controller: description,
                         label: 'Descrição',
@@ -1384,7 +1294,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   AppModalCancelButton(
                       onPressed: () => Navigator.pop(modalContext)),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   AppModalPrimaryButton(
                       label: editing ? 'Salvar serviço' : 'Criar serviço',
                       isLoading: ctrl.salvando,
@@ -1440,7 +1350,7 @@ class _ServicosTabState extends State<_ServicosTab> {
             }),
         child: Container(
             height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
                 color: active
                     ? AppTheme.gold.withValues(alpha: .12)
@@ -1453,7 +1363,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                       : Icons.radio_button_unchecked,
                   size: 20,
                   color: active ? AppTheme.gold : AppTheme.corTextoSecundario),
-              const SizedBox(width: 9),
+              SizedBox(width: 9),
               Expanded(
                   child: Text(label,
                       style: GoogleFonts.inter(
@@ -1481,7 +1391,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                   _page = 1;
                 }),
         child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
                 color: active
                     ? AppTheme.gold.withValues(alpha: .14)
@@ -1494,7 +1404,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                   size: 14,
                   color:
                       disabled ? AppTheme.corTextoSecundario : AppTheme.gold),
-              const SizedBox(width: 5),
+              SizedBox(width: 5),
               Text(label,
                   style: GoogleFonts.inter(
                       color: disabled
@@ -1504,71 +1414,74 @@ class _ServicosTabState extends State<_ServicosTab> {
             ])));
   }
 
-  Widget _sidebar(List<Map<String, dynamic>> all) {
+  Widget _sidebar(List<Map<String, dynamic>> all, {bool scrollable = false}) {
     final cats = _categories(all);
     final active = all.where(_active).length;
+    final content =
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Icon(Icons.filter_alt_outlined, color: AppTheme.gold, size: 20),
+        SizedBox(width: 9),
+        Expanded(
+            child: Text('Filtros',
+                style: GoogleFonts.inter(
+                    color: AppTheme.corTexto,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700))),
+        InkWell(
+            onTap: _clear,
+            child: Text('Limpar tudo',
+                style: GoogleFonts.inter(
+                    color: AppTheme.gold,
+                    fontSize: 11,
+                    decoration: TextDecoration.underline)))
+      ]),
+      Divider(color: AppTheme.border),
+      SizedBox(height: 6),
+      Text('Categoria',
+          style: GoogleFonts.inter(
+              color: AppTheme.corTexto,
+              fontWeight: FontWeight.w700,
+              fontSize: 13)),
+      _option('all', 'Todas', all.length, 'category'),
+      for (final c in cats)
+        _option(c, c, all.where((s) => _serviceCategory(s) == c).length,
+            'category'),
+      Divider(color: AppTheme.border),
+      SizedBox(height: 6),
+      Text('Status',
+          style: GoogleFonts.inter(
+              color: AppTheme.corTexto,
+              fontWeight: FontWeight.w700,
+              fontSize: 13)),
+      _option('all', 'Todos', all.length, 'status'),
+      _option('active', 'Ativo', active, 'status'),
+      _option('inactive', 'Inativo', all.length - active, 'status'),
+      Divider(color: AppTheme.border),
+      SizedBox(height: 6),
+      Text('Filtros rápidos',
+          style: GoogleFonts.inter(
+              color: AppTheme.corTexto,
+              fontWeight: FontWeight.w700,
+              fontSize: 13)),
+      SizedBox(height: 8),
+      Wrap(spacing: 6, runSpacing: 7, children: [
+        _chip('Mais procurados', 'popular', Icons.star_border),
+        _chip('Menor preço', 'price-asc', Icons.arrow_downward),
+        _chip('Maior preço', 'price-desc', Icons.arrow_upward),
+        _chip('Menor duração', 'duration-asc', Icons.schedule),
+        _chip('Maior duração', 'duration-desc', Icons.schedule)
+      ])
+    ]);
     return Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
             color: AppTheme.surface,
             border: Border.all(color: AppTheme.border),
             borderRadius: BorderRadius.circular(10)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            const Icon(Icons.filter_alt_outlined,
-                color: AppTheme.gold, size: 20),
-            const SizedBox(width: 9),
-            Expanded(
-                child: Text('Filtros',
-                    style: GoogleFonts.inter(
-                        color: AppTheme.corTexto,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700))),
-            InkWell(
-                onTap: _clear,
-                child: Text('Limpar tudo',
-                    style: GoogleFonts.inter(
-                        color: AppTheme.gold,
-                        fontSize: 11,
-                        decoration: TextDecoration.underline)))
-          ]),
-          const Divider(color: AppTheme.border),
-          const SizedBox(height: 6),
-          Text('Categoria',
-              style: GoogleFonts.inter(
-                  color: AppTheme.corTexto,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13)),
-          _option('all', 'Todas', all.length, 'category'),
-          for (final c in cats)
-            _option(c, c, all.where((s) => _serviceCategory(s) == c).length,
-                'category'),
-          const Divider(color: AppTheme.border),
-          const SizedBox(height: 6),
-          Text('Status',
-              style: GoogleFonts.inter(
-                  color: AppTheme.corTexto,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13)),
-          _option('all', 'Todos', all.length, 'status'),
-          _option('active', 'Ativo', active, 'status'),
-          _option('inactive', 'Inativo', all.length - active, 'status'),
-          const Divider(color: AppTheme.border),
-          const SizedBox(height: 6),
-          Text('Filtros rápidos',
-              style: GoogleFonts.inter(
-                  color: AppTheme.corTexto,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13)),
-          const SizedBox(height: 8),
-          Wrap(spacing: 6, runSpacing: 7, children: [
-            _chip('Mais procurados', 'popular', Icons.star_border),
-            _chip('Menor preço', 'price-asc', Icons.arrow_downward),
-            _chip('Maior preço', 'price-desc', Icons.arrow_upward),
-            _chip('Menor duração', 'duration-asc', Icons.schedule),
-            _chip('Maior duração', 'duration-desc', Icons.schedule)
-          ])
-        ]));
+        child: scrollable
+            ? SingleChildScrollView(primary: false, child: content)
+            : content);
   }
 
   Widget _searchBox() => Container(
@@ -1585,7 +1498,7 @@ class _ServicosTabState extends State<_ServicosTab> {
               }),
           decoration: InputDecoration(
               border: InputBorder.none,
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Icon(Icons.search),
               hintText: 'Buscar serviços por nome...',
               suffixIcon: _search.isEmpty
                   ? null
@@ -1594,12 +1507,12 @@ class _ServicosTabState extends State<_ServicosTab> {
                         _searchController.clear();
                         setState(() => _search = '');
                       },
-                      icon: const Icon(Icons.close, size: 17)))));
+                      icon: Icon(Icons.close, size: 17)))));
   Widget _sorter() => Row(mainAxisSize: MainAxisSize.min, children: [
         Text('Ordenar por',
             style: GoogleFonts.inter(
                 color: AppTheme.corTextoSecundario, fontSize: 12)),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         DropdownButton<String>(
             value: _sort,
             dropdownColor: AppTheme.surfaceElev,
@@ -1634,11 +1547,11 @@ class _ServicosTabState extends State<_ServicosTab> {
     final ok = _active(s);
     final color = ok ? AppTheme.sucesso : AppTheme.corTextoSecundario;
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
         decoration: BoxDecoration(
             color: color.withValues(alpha: .12),
             borderRadius: BorderRadius.circular(16)),
-        child: Text(ok ? '● ATIVO' : '● INATIVO',
+        child: Text(ok ? '? ATIVO' : '? INATIVO',
             style: GoogleFonts.inter(
                 color: color, fontSize: 10, fontWeight: FontWeight.w700)));
   }
@@ -1647,7 +1560,7 @@ class _ServicosTabState extends State<_ServicosTab> {
       Row(mainAxisSize: MainAxisSize.min, children: [
         IconButton(
             onPressed: () => _form(context, service: s),
-            icon: const Icon(Icons.edit_outlined, size: 18),
+            icon: Icon(Icons.edit_outlined, size: 18),
             color: AppTheme.corTextoSecundario),
         PopupMenuButton<String>(
             color: AppTheme.surfaceElev,
@@ -1657,7 +1570,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                 await context.read<AdminController>().desativarServico(s['id']);
             },
             itemBuilder: (_) => [
-                  const PopupMenuItem(value: 'editar', child: Text('Editar')),
+                  PopupMenuItem(value: 'editar', child: Text('Editar')),
                   PopupMenuItem(
                       value: 'desativar',
                       child: Text('Desativar',
@@ -1668,7 +1581,7 @@ class _ServicosTabState extends State<_ServicosTab> {
       ]);
   Widget _row(BuildContext context, Map<String, dynamic> s) => Container(
       height: 76,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: AppTheme.border))),
       child: Row(children: [
@@ -1681,9 +1594,9 @@ class _ServicosTabState extends State<_ServicosTab> {
                   decoration: BoxDecoration(
                       color: AppTheme.gold.withValues(alpha: .12),
                       borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(Icons.content_cut,
+                  child: Icon(Icons.content_cut,
                       color: AppTheme.gold, size: 20)),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1726,7 +1639,7 @@ class _ServicosTabState extends State<_ServicosTab> {
             borderRadius: BorderRadius.circular(10)),
         child: Column(children: [
           Padding(
-              padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+              padding: EdgeInsets.fromLTRB(16, 18, 16, 18),
               child: LayoutBuilder(builder: (context, constraints) {
                 final narrow = constraints.maxWidth < 620;
                 final viewToggle = Container(
@@ -1741,18 +1654,18 @@ class _ServicosTabState extends State<_ServicosTab> {
                   return Column(children: [
                     Row(children: [
                       Expanded(child: _searchBox()),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       viewToggle,
                     ]),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Align(alignment: Alignment.centerLeft, child: _sorter()),
                   ]);
                 }
                 return Row(children: [
                   Expanded(child: _searchBox()),
-                  const SizedBox(width: 14),
+                  SizedBox(width: 14),
                   _sorter(),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   viewToggle,
                 ]);
               })),
@@ -1761,14 +1674,14 @@ class _ServicosTabState extends State<_ServicosTab> {
                   ? Column(children: [
                       Container(
                           height: 47,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16),
                           color: AppTheme.surfaceElev,
                           child: Row(children: [
                             Expanded(flex: 5, child: Text('SERVIÇO')),
                             Expanded(flex: 2, child: Text('DURAÇÃO')),
                             Expanded(flex: 2, child: Text('PREÇO')),
                             Expanded(flex: 2, child: Text('STATUS')),
-                            const SizedBox(width: 76, child: Text('AÇÕES'))
+                            SizedBox(width: 76, child: Text('AÇÕES'))
                           ])),
                       Expanded(
                           child: visible.isEmpty
@@ -1781,7 +1694,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                                       _row(context, visible[index]))),
                     ])
                   : GridView.builder(
-                      padding: const EdgeInsets.all(14),
+                      padding: EdgeInsets.all(14),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -1794,28 +1707,28 @@ class _ServicosTabState extends State<_ServicosTab> {
           SizedBox(
               height: 64,
               child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Row(children: [
                     Text('Mostrando ' +
                         visible.length.toString() +
                         ' de ' +
                         result.length.toString() +
                         ' serviços'),
-                    const Spacer(),
+                    Spacer(),
                     IconButton(
                         onPressed:
                             page > 1 ? () => setState(() => _page--) : null,
-                        icon: const Icon(Icons.chevron_left)),
+                        icon: Icon(Icons.chevron_left)),
                     Text(page.toString()),
                     IconButton(
                         onPressed:
                             page < pages ? () => setState(() => _page++) : null,
-                        icon: const Icon(Icons.chevron_right))
+                        icon: Icon(Icons.chevron_right))
                   ]))),
         ]),
       );
   Widget _grid(BuildContext context, Map<String, dynamic> s) => Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
           color: AppTheme.surface,
           border: Border.all(color: AppTheme.border),
@@ -1828,25 +1741,25 @@ class _ServicosTabState extends State<_ServicosTab> {
                       color: AppTheme.corTexto, fontWeight: FontWeight.w700))),
           _actions(context, s)
         ]),
-        const Spacer(),
+        Spacer(),
         Text((s['descricao'] ?? '').toString(),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
                 color: AppTheme.corTextoSecundario, fontSize: 11)),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Row(children: [
           Text(_duration(s).toString() + ' min',
               style: GoogleFonts.inter(
                   color: AppTheme.corTextoSecundario, fontSize: 11)),
-          const Spacer(),
+          Spacer(),
           Text(_money(s['preco']),
               style: GoogleFonts.inter(
                   color: AppTheme.gold,
                   fontWeight: FontWeight.w700,
                   fontSize: 12))
         ]),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         _badge(s)
       ]));
   @override
@@ -1861,58 +1774,47 @@ class _ServicosTabState extends State<_ServicosTab> {
     final visible =
         result.skip((page - 1) * _pageSize).take(_pageSize).toList();
     return _TabShell(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 28),
+        child: PremiumPageFrame(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Text('Serviços',
-                          style: GoogleFonts.inter(
-                              color: AppTheme.corTexto,
-                              fontSize: 27,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 5),
-                      Text(
-                          'Gerencie os serviços oferecidos pela sua barbearia.',
-                          style: GoogleFonts.inter(
-                              color: AppTheme.corTextoSecundario, fontSize: 13))
-                    ])),
-                _PrimaryButton(
-                    label: '+ Novo serviço',
-                    icon: Icons.add,
-                    onPressed: () => _form(context))
-              ]),
-              const SizedBox(height: 20),
-              Expanded(
-                  child: ctrl.carregandoServicos
-                      ? const Center(
-                          child:
-                              CircularProgressIndicator(color: AppTheme.gold))
-                      : narrow
-                          ? SingleChildScrollView(
-                              child: Column(children: [
-                                _sidebar(all),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                    height: 560,
-                                    child: _main(
-                                        context, visible, result, page, pages)),
-                              ]),
-                            )
-                          : Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                  SizedBox(width: 270, child: _sidebar(all)),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                      child: _main(context, visible, result,
-                                          page, pages))
-                                ]))
-            ])));
+      PremiumPageHeader(
+        title: 'Serviços',
+        subtitle: 'Gerencie os serviços oferecidos pela sua barbearia.',
+        actions: [
+          _PrimaryButton(
+              label: '+ Novo serviço',
+              icon: Icons.add,
+              onPressed: () => _form(context)),
+        ],
+      ),
+      SizedBox(height: 20),
+      Expanded(
+          child: ctrl.carregandoServicos
+              ? Center(
+                  child: CircularProgressIndicator(color: AppTheme.gold))
+              : narrow
+                  ? SingleChildScrollView(
+                      child: Column(children: [
+                        _sidebar(all),
+                        SizedBox(height: 16),
+                        SizedBox(
+                            height: 560,
+                            child:
+                                _main(context, visible, result, page, pages)),
+                      ]),
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                          SizedBox(
+                              width: 270,
+                              child: _sidebar(all, scrollable: true)),
+                          SizedBox(width: 16),
+                          Expanded(
+                              child:
+                                  _main(context, visible, result, page, pages))
+                        ]))
+    ])));
   }
 }
 
@@ -1969,40 +1871,40 @@ class _ColaboradoresTab extends StatelessWidget {
                   TextFormField(
                       controller: nomeCtrl,
                       decoration:
-                          const InputDecoration(labelText: 'Nome completo'),
+                          InputDecoration(labelText: 'Nome completo'),
                       validator: (value) => (value ?? '').trim().length < 2
                           ? 'Informe o nome.'
                           : null),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                       controller: telefoneCtrl,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(labelText: 'Telefone'),
+                      decoration: InputDecoration(labelText: 'Telefone'),
                       validator: (value) => (value ?? '').trim().length < 8
                           ? 'Informe um telefone valido.'
                           : null),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                       controller: cpfCtrl,
                       keyboardType: TextInputType.number,
                       decoration:
-                          const InputDecoration(labelText: 'CPF (opcional)'),
+                          InputDecoration(labelText: 'CPF (opcional)'),
                       validator: (value) {
                         final cpf = (value ?? '').replaceAll(RegExp(r'\D'), '');
                         return cpf.isNotEmpty && cpf.length != 11
                             ? 'Informe um CPF valido.'
                             : null;
                       }),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                       controller: emailCtrl,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'E-mail (opcional)')),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Profissional ativo'),
+                      title: Text('Profissional ativo'),
                       subtitle: Text(ativo
                           ? 'Pode acessar o sistema e receber agendamentos.'
                           : 'Nao pode acessar o sistema nem receber novos agendamentos.'),
@@ -2016,7 +1918,7 @@ class _ColaboradoresTab extends StatelessWidget {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancelar')),
+                child: Text('Cancelar')),
             FilledButton(
               onPressed: () async {
                 if (!(formKey.currentState?.validate() ?? false)) return;
@@ -2036,7 +1938,7 @@ class _ColaboradoresTab extends StatelessWidget {
                       type: AppToastType.error);
                 }
               },
-              child: const Text('Salvar alteracoes'),
+              child: Text('Salvar alteracoes'),
             ),
           ],
         ),
@@ -2060,12 +1962,12 @@ class _ColaboradoresTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppTheme.surfaceElev,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (sheetCtx) => Padding(
         padding: MediaQuery.of(sheetCtx).viewInsets,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2078,47 +1980,47 @@ class _ColaboradoresTab extends StatelessWidget {
                       color: AppTheme.border,
                       borderRadius: BorderRadius.circular(2)),
                 )),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text('Novo Colaborador',
                     style: GoogleFonts.inter(
                         color: AppTheme.corTexto,
                         fontSize: 20,
                         fontWeight: FontWeight.w700)),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 TextField(
                     controller: nomeCtrl,
                     style: GoogleFonts.inter(color: AppTheme.corTexto),
                     textCapitalization: TextCapitalization.words,
                     decoration:
-                        const InputDecoration(labelText: 'Nome completo')),
-                const SizedBox(height: 12),
+                        InputDecoration(labelText: 'Nome completo')),
+                SizedBox(height: 12),
                 TextField(
                     controller: telefoneCtrl,
                     keyboardType: TextInputType.phone,
                     style: GoogleFonts.inter(color: AppTheme.corTexto),
-                    decoration: const InputDecoration(labelText: 'Telefone')),
-                const SizedBox(height: 12),
+                    decoration: InputDecoration(labelText: 'Telefone')),
+                SizedBox(height: 12),
                 TextField(
                   controller: cpfCtrl,
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.inter(color: AppTheme.corTexto),
                   decoration:
-                      const InputDecoration(labelText: 'CPF (opcional)'),
+                      InputDecoration(labelText: 'CPF (opcional)'),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 TextField(
                     controller: senhaCtrl,
                     obscureText: true,
                     style: GoogleFonts.inter(color: AppTheme.corTexto),
                     decoration:
-                        const InputDecoration(labelText: 'Senha inicial')),
-                const SizedBox(height: 20),
+                        InputDecoration(labelText: 'Senha inicial')),
+                SizedBox(height: 20),
                 ValueListenableBuilder<String>(
                   valueListenable: erroMsg,
                   builder: (_, msg, __) => msg.isEmpty
-                      ? const SizedBox.shrink()
+                      ? SizedBox.shrink()
                       : Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: EdgeInsets.only(bottom: 12),
                           child: Text(msg,
                               style: GoogleFonts.inter(
                                   color: AppTheme.corErro, fontSize: 13))),
@@ -2135,7 +2037,7 @@ class _ColaboradoresTab extends StatelessWidget {
                             style: GoogleFonts.inter(
                                 color: AppTheme.corTextoSecundario)),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       ElevatedButton(
                         onPressed: isLoading
                             ? null
@@ -2173,7 +2075,7 @@ class _ColaboradoresTab extends StatelessWidget {
                               },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(0, 44),
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 24),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -2183,7 +2085,7 @@ class _ColaboradoresTab extends StatelessWidget {
                                 width: 18,
                                 child: CircularProgressIndicator(
                                     color: AppTheme.corTexto, strokeWidth: 2))
-                            : const Text('Cadastrar'),
+                            : Text('Cadastrar'),
                       ),
                     ],
                   ),
@@ -2212,7 +2114,7 @@ class _ColaboradoresTab extends StatelessWidget {
               style: GoogleFonts.inter(
                   color: cor, fontSize: 16, fontWeight: FontWeight.w700)),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -2223,14 +2125,14 @@ class _ColaboradoresTab extends StatelessWidget {
                   color: AppTheme.corTexto,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
-          const SizedBox(height: 3),
+          SizedBox(height: 3),
           Text(telefone,
               style: GoogleFonts.inter(
                   color: AppTheme.corTextoSecundario, fontSize: 13)),
         ])),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(
             color: AppTheme.surface,
             borderRadius: BorderRadius.circular(6),
@@ -2242,9 +2144,9 @@ class _ColaboradoresTab extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5)),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
           decoration: BoxDecoration(
             color: (c['ativo'] == 1 ? AppTheme.corSucesso : AppTheme.corErro)
                 .withValues(alpha: .12),
@@ -2257,17 +2159,17 @@ class _ColaboradoresTab extends StatelessWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w700)),
         ),
-        const SizedBox(width: 12),
-        const SizedBox(width: 8),
+        SizedBox(width: 12),
+        SizedBox(width: 8),
         IconButton(
           tooltip: 'Editar profissional',
           onPressed: () => _mostrarEdicaoColaborador(context, c),
-          icon: const Icon(Icons.edit_outlined),
+          icon: Icon(Icons.edit_outlined),
         ),
         IconButton(
           tooltip: 'Configurar horários',
           onPressed: onHorarios,
-          icon: const Icon(Icons.schedule_outlined),
+          icon: Icon(Icons.schedule_outlined),
         ),
         _CardMenuButton(
           items: [
@@ -2322,34 +2224,20 @@ class _ColaboradoresTab extends StatelessWidget {
     final cor = Theme.of(context).colorScheme.primary;
 
     return _TabShell(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 28),
+      child: PremiumPageFrame(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text('Equipe',
-                      style: GoogleFonts.inter(
-                          color: AppTheme.corTexto,
-                          fontSize: 27,
-                          fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 6),
-                  Text('Gerencie os membros da sua equipe.',
-                      style: GoogleFonts.inter(
-                          color: AppTheme.corTextoSecundario,
-                          fontSize: 13,
-                          letterSpacing: 0.3)),
-                ])),
-            const SizedBox(width: 16),
-            _PrimaryButton(
-              label: '+ Adicionar membro',
-              icon: Icons.person_add,
-              onPressed: () => _mostrarFormColaborador(context),
-            ),
-          ]),
-          const SizedBox(height: 28),
+          PremiumPageHeader(
+            title: 'Equipe',
+            subtitle: 'Gerencie os membros da sua equipe.',
+            actions: [
+              _PrimaryButton(
+                label: '+ Adicionar membro',
+                icon: Icons.person_add,
+                onPressed: () => _mostrarFormColaborador(context),
+              ),
+            ],
+          ),
+          SizedBox(height: 28),
           Expanded(
             child: ctrl.carregandoColaboradores
                 ? Center(child: CircularProgressIndicator(color: cor))
@@ -2363,7 +2251,7 @@ class _ColaboradoresTab extends StatelessWidget {
                             icon: Icons.group_outlined,
                             message: 'Nenhum colaborador cadastrado.')
                         : ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 8),
+                            padding: EdgeInsets.only(bottom: 8),
                             itemCount: ctrl.colaboradores.length,
                             itemBuilder: (context, i) => _buildColaboradorCard(
                                 context, ctrl.colaboradores[i]),
@@ -2472,10 +2360,10 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
             borderRadius: BorderRadius.circular(12),
             onTap: widget.onPressed,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 Icon(widget.icon, color: AppTheme.corTexto, size: 18),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(widget.label,
                     style: GoogleFonts.inter(
                         color: AppTheme.corTexto,
@@ -2515,8 +2403,8 @@ class _HoverCardState extends State<_HoverCard> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           color: AppTheme.surfaceElev,
           borderRadius: BorderRadius.circular(18),
@@ -2582,38 +2470,6 @@ class _CardMenuButtonState extends State<_CardMenuButton> {
 }
 
 // ==========================================
-// BADGE: Status "Ativo"
-// ==========================================
-class _BadgeAtivo extends StatelessWidget {
-  const _BadgeAtivo();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppTheme.sucesso.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-                color: AppTheme.sucesso, shape: BoxShape.circle)),
-        const SizedBox(width: 6),
-        Text('ATIVO',
-            style: GoogleFonts.inter(
-                color: AppTheme.sucesso,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5)),
-      ]),
-    );
-  }
-}
-
-// ==========================================
 // EMPTY STATE: Nenhum registro
 // ==========================================
 class _EmptyState extends StatelessWidget {
@@ -2627,7 +2483,7 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(icon, color: cor.withValues(alpha: 0.3), size: 48),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(message,
             style: GoogleFonts.inter(
                 color: AppTheme.corTextoSecundario, fontSize: 14)),

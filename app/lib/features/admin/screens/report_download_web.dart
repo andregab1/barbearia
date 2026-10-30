@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 Future<Uint8List> loadReportAsset(String assetPath) async {
   final logicalPath =
       assetPath.startsWith('assets/') ? assetPath : 'assets/$assetPath';
-  final response = await http.get(Uri.base.resolve(logicalPath));
+  final response = await http.get(Uri.base.resolve('assets/$logicalPath'));
   if (response.statusCode != 200) {
     throw StateError('Asset do relatório indisponível: $assetPath');
   }

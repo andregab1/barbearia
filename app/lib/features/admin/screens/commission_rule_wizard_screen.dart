@@ -329,25 +329,25 @@ class _CommissionRuleWizardScreenState
             _header(compact),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+                padding: EdgeInsets.fromLTRB(24, 8, 24, 32),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1540),
+                    constraints: BoxConstraints(maxWidth: 1540),
                     child: compact
                         ? Column(children: [
                             _steps(),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             _content(),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             _summary(),
                           ])
                         : Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(width: 210, child: _steps()),
-                              const SizedBox(width: 24),
+                              SizedBox(width: 24),
                               Expanded(child: _content()),
-                              const SizedBox(width: 24),
+                              SizedBox(width: 24),
                               SizedBox(width: 320, child: _summary()),
                             ],
                           ),
@@ -362,14 +362,14 @@ class _CommissionRuleWizardScreenState
   }
 
   Widget _header(bool compact) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 18, 24, 10),
+        padding: EdgeInsets.fromLTRB(24, 18, 24, 10),
         child: Row(children: [
           IconButton(
             tooltip: 'Sair sem publicar',
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close, color: PremiumColors.textSecondary),
+            icon: Icon(Icons.close, color: PremiumColors.textSecondary),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,7 +379,7 @@ class _CommissionRuleWizardScreenState
                         color: PremiumColors.gold,
                         fontSize: compact ? 12 : 14,
                         fontWeight: FontWeight.w700)),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                     _step == 3
                         ? 'Confira antes de salvar'
@@ -393,17 +393,17 @@ class _CommissionRuleWizardScreenState
           ),
           if (!compact)
             Text('Etapa ${_step + 1} de 4',
-                style: const TextStyle(color: PremiumColors.textSecondary)),
-          const SizedBox(width: 18),
+                style: TextStyle(color: PremiumColors.textSecondary)),
+          SizedBox(width: 18),
           OutlinedButton(
             onPressed: _savingDraft ? null : () => Navigator.of(context).pop(),
-            child: const Text('Sair'),
+            child: Text('Sair'),
           ),
         ]),
       );
 
   Widget _steps() => PremiumSurface(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           _stepItem(0, 'Aplicação', 'Onde a regra será aplicada',
@@ -424,7 +424,7 @@ class _CommissionRuleWizardScreenState
       onTap: done ? () => setState(() => _step = index) : null,
       borderRadius: BorderRadius.circular(10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
             width: 36,
@@ -439,14 +439,14 @@ class _CommissionRuleWizardScreenState
                       : PremiumColors.border),
             ),
             child: done
-                ? const Icon(Icons.check, color: Colors.black, size: 20)
+                ? Icon(Icons.check, color: Colors.black, size: 20)
                 : Text('${index + 1}',
                     style: TextStyle(
                         color:
                             active ? Colors.black : PremiumColors.textPrimary,
                         fontWeight: FontWeight.w800)),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -457,9 +457,9 @@ class _CommissionRuleWizardScreenState
                           : PremiumColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w800)),
-              const SizedBox(height: 3),
+              SizedBox(height: 3),
               Text(subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: PremiumColors.textSecondary, fontSize: 11)),
             ]),
           ),
@@ -479,35 +479,35 @@ class _CommissionRuleWizardScreenState
       if (_error != null) _banner(_error!, PremiumColors.error),
       if (_message != null) _banner(_message!, PremiumColors.success),
       content,
-      const SizedBox(height: 16),
+      SizedBox(height: 16),
       Row(children: [
         if (_step > 0)
           OutlinedButton.icon(
               onPressed: _savingDraft ? null : _previous,
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Anterior')),
-        const Spacer(),
+              icon: Icon(Icons.arrow_back),
+              label: Text('Anterior')),
+        Spacer(),
         if (_step < 3)
           FilledButton.icon(
               onPressed: _savingDraft ? null : _next,
-              icon: const Icon(Icons.arrow_forward),
-              label: const Text('Próximo'))
+              icon: Icon(Icons.arrow_forward),
+              label: Text('Próximo'))
         else
           FilledButton.icon(
               onPressed: _savingDraft ? null : _publish,
               icon: _savingDraft
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.check),
+                  : Icon(Icons.check),
               label: Text(_savingDraft ? 'Salvando...' : 'Salvar regra')),
       ]),
     ]);
   }
 
   Widget _selectionSummary(Set<int> ids, String label) => Padding(
-        padding: const EdgeInsets.only(top: 8),
+        padding: EdgeInsets.only(top: 8),
         child: Text(
             ids.isEmpty
                 ? 'Nenhum ' + label + ' selecionado.'
@@ -515,7 +515,7 @@ class _CommissionRuleWizardScreenState
                     ' ' +
                     label +
                     (ids.length == 1 ? ' selecionado' : 's selecionados'),
-            style: const TextStyle(color: PremiumColors.gold, fontSize: 12)),
+            style: TextStyle(color: PremiumColors.gold, fontSize: 12)),
       );
 
   Future<void> _selectProfessionals() async {
@@ -564,13 +564,13 @@ class _CommissionRuleWizardScreenState
           content: SizedBox(
             width: 440,
             child: items.isEmpty
-                ? const Text('Nenhum item ativo encontrado.')
+                ? Text('Nenhum item ativo encontrado.')
                 : SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: items.map((item) {
                         final itemId = int.tryParse('${item['id']}');
-                        if (itemId == null) return const SizedBox.shrink();
+                        if (itemId == null) return SizedBox.shrink();
                         return CheckboxListTile(
                           value: selected.contains(itemId),
                           activeColor: PremiumColors.gold,
@@ -591,10 +591,10 @@ class _CommissionRuleWizardScreenState
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancelar')),
+                child: Text('Cancelar')),
             FilledButton(
                 onPressed: () => Navigator.pop(dialogContext, selected),
-                child: const Text('Aplicar seleção')),
+                child: Text('Aplicar seleção')),
           ],
         ),
       ),
@@ -611,8 +611,8 @@ class _CommissionRuleWizardScreenState
               controller: _name,
               onChanged: (_) => _scheduleDraftSave(),
               decoration:
-                  const InputDecoration(hintText: 'Ex.: Equipe padrão')),
-          const SizedBox(height: 18),
+                  InputDecoration(hintText: 'Ex.: Equipe padrão')),
+          SizedBox(height: 18),
           _label('Profissionais'),
           _choiceRow(
               selected: _allProfessionals,
@@ -632,7 +632,7 @@ class _CommissionRuleWizardScreenState
               }),
           if (!_allProfessionals)
             _selectionSummary(_selectedProfessionalIds, 'profissional'),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           _label('Serviços'),
           _choiceRow(
               selected: _allServices,
@@ -651,25 +651,25 @@ class _CommissionRuleWizardScreenState
                 _scheduleDraftSave();
               }),
           if (!_allServices) _selectionSummary(_selectedServiceIds, 'serviço'),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           _label('Produtos'),
           SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               value: _productsEnabled,
               activeColor: PremiumColors.gold,
               onChanged: null,
-              title: const Text('Incluir vendas de produtos'),
-              subtitle: const Text(
+              title: Text('Incluir vendas de produtos'),
+              subtitle: Text(
                   'Indisponível: o schema atual não possui vendas e vendedor registrados.')),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _label('Vigência'),
           TextField(
               controller: _date,
               onChanged: (_) => _scheduleDraftSave(),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                   prefixIcon: Icon(Icons.calendar_today_outlined),
                   labelText: 'Começa em (DD/MM/AAAA)')),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           _info(
               'Regras específicas têm prioridade sobre a regra padrão. Alterações valem apenas para novos fatos geradores a partir da vigência.'),
         ]),
@@ -684,12 +684,12 @@ class _CommissionRuleWizardScreenState
             Expanded(
                 child: _modelChoice(true, Icons.percent, 'Percentual',
                     'Um percentual sobre o valor')),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
                 child: _modelChoice(false, Icons.currency_exchange,
                     'Valor fixo', 'Um valor fixo por serviço')),
           ]),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           if (_percentage)
             Row(children: [
               Expanded(
@@ -698,15 +698,15 @@ class _CommissionRuleWizardScreenState
                       onChanged: (_) => _scheduleDraftSave(),
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'Comissão sobre serviços',
                           suffixText: '%'))),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                   child: DropdownButtonFormField<String>(
                       value: _afterDiscounts ? 'AFTER_DISCOUNTS' : 'GROSS',
                       decoration:
-                          const InputDecoration(labelText: 'Base de cálculo'),
+                          InputDecoration(labelText: 'Base de cálculo'),
                       items: const [
                         DropdownMenuItem(
                             value: 'AFTER_DISCOUNTS',
@@ -726,18 +726,18 @@ class _CommissionRuleWizardScreenState
                 onChanged: (_) => _scheduleDraftSave(),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     labelText: 'Valor por unidade concluída',
                     prefixText: 'R\$ ')),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               value: _productsEnabled,
               activeColor: PremiumColors.gold,
               onChanged: null,
-              title: const Text('Comissão sobre produtos'),
+              title: Text('Comissão sobre produtos'),
               subtitle:
-                  const Text('Aguardando integração do catálogo de vendas.')),
+                  Text('Aguardando integração do catálogo de vendas.')),
           if (_productsEnabled)
             SizedBox(
                 width: 260,
@@ -746,9 +746,9 @@ class _CommissionRuleWizardScreenState
                     onChanged: (_) => _scheduleDraftSave(),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: 'Percentual de produtos', suffixText: '%'))),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           _actionTile(
               Icons.settings_outlined,
               'Exceções por serviço',
@@ -756,7 +756,7 @@ class _CommissionRuleWizardScreenState
                   ? 'Personalize percentuais ou valores fixos sem somar com a regra padrão.'
                   : '${_exceptions.length} exceção(ões) configurada(s).',
               () => _exceptionDialog()),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           _actionTile(
               Icons.track_changes_outlined,
               'Metas e faixas',
@@ -764,7 +764,7 @@ class _CommissionRuleWizardScreenState
                   ? 'Meta mensal ativa: faixas progressivas sobre receita líquida.'
                   : 'Opcional. Ative faixas progressivas ou taxa sobre o total.',
               () => _goalDialog()),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           _calculationPreview(),
         ]),
       );
@@ -782,10 +782,10 @@ class _CommissionRuleWizardScreenState
                 setState(() => _requiresFulfillment = value ?? true);
                 _scheduleDraftSave();
               },
-              title: const Text('Serviço concluído ou produto entregue'),
-              subtitle: const Text(
+              title: Text('Serviço concluído ou produto entregue'),
+              subtitle: Text(
                   'Agendamento confirmado não equivale a serviço concluído.')),
-          const Divider(color: PremiumColors.border),
+          Divider(color: PremiumColors.border),
           _label('Tipo de recebimento'),
           RadioListTile<bool>(
               contentPadding: EdgeInsets.zero,
@@ -796,8 +796,8 @@ class _CommissionRuleWizardScreenState
                 setState(() => _proportionalReceipt = false);
                 _scheduleDraftSave();
               },
-              title: const Text('Recebimento integral'),
-              subtitle: const Text(
+              title: Text('Recebimento integral'),
+              subtitle: Text(
                   'Libera 100% apenas quando o valor devido for recebido.')),
           RadioListTile<bool>(
               contentPadding: EdgeInsets.zero,
@@ -808,16 +808,16 @@ class _CommissionRuleWizardScreenState
                 setState(() => _proportionalReceipt = true);
                 _scheduleDraftSave();
               },
-              title: const Text('Proporcional ao valor recebido'),
-              subtitle: const Text(
+              title: Text('Proporcional ao valor recebido'),
+              subtitle: Text(
                   'Recebimentos parciais liberam a mesma proporção da comissão.')),
           _info(
               'Cancelamentos e estornos geram movimentos compensatórios. O histórico original nunca é apagado.'),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           _label('Frequência de acerto'),
           DropdownButtonFormField<String>(
               value: _frequency,
-              decoration: const InputDecoration(labelText: 'Fechamento'),
+              decoration: InputDecoration(labelText: 'Fechamento'),
               items: const [
                 DropdownMenuItem(
                     value: 'WEEKLY', child: Text('Fechamento semanal')),
@@ -831,7 +831,7 @@ class _CommissionRuleWizardScreenState
                 setState(() => _frequency = value ?? 'MONTHLY');
                 _scheduleDraftSave();
               }),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _info(
               'Fechar o período consolida os lançamentos, mas não registra pagamento nem transfere dinheiro.'),
         ]),
@@ -850,7 +850,7 @@ class _CommissionRuleWizardScreenState
           ],
           ['Início da vigência', _date.text],
         ]),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _reviewCard(Icons.percent_outlined, 'Cálculo', [
           [
             'Serviços',
@@ -872,7 +872,7 @@ class _CommissionRuleWizardScreenState
           ],
           ['Metas e faixas', _goalsEnabled ? 'Ativadas' : 'Desativadas'],
         ]),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _reviewCard(Icons.schedule_outlined, 'Liberação', [
           [
             'Momento',
@@ -884,7 +884,7 @@ class _CommissionRuleWizardScreenState
           ],
           ['Acerto', _frequencyLabel],
         ]),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _info(
             'Alterações futuras criarão uma nova versão. Lançamentos anteriores continuam com a regra e o snapshot originais.'),
       ]);
@@ -899,12 +899,12 @@ class _CommissionRuleWizardScreenState
   Widget _summary() => PremiumSurface(
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Resumo da regra',
+          Text('Resumo da regra',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 4),
-          const Text('Confira o impacto da configuração.',
+          SizedBox(height: 4),
+          Text('Confira o impacto da configuração.',
               style: TextStyle(color: PremiumColors.textSecondary)),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           _summaryRow(Icons.badge_outlined, 'Nome da regra', _name.text),
           _summaryRow(
               Icons.groups_outlined,
@@ -925,14 +925,14 @@ class _CommissionRuleWizardScreenState
               _proportionalReceipt
                   ? 'Conclusão e recebimento proporcional'
                   : 'Conclusão e recebimento integral'),
-          const Divider(color: PremiumColors.border, height: 30),
-          const Text('Simulação de cálculo',
+          Divider(color: PremiumColors.border, height: 30),
+          Text('Simulação de cálculo',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 4),
-          const Text('Exemplo baseado na configuração atual.',
+          SizedBox(height: 4),
+          Text('Exemplo baseado na configuração atual.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           _simulationBox(),
         ]),
       );
@@ -948,7 +948,7 @@ class _CommissionRuleWizardScreenState
         ? Map<String, dynamic>.from(_simulation!['memory'] as Map)
         : null;
     return Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
             color: PremiumColors.card,
             borderRadius: BorderRadius.circular(10),
@@ -957,7 +957,7 @@ class _CommissionRuleWizardScreenState
           _amountLine('Serviço', gross),
           _amountLine('Desconto', -discount),
           _amountLine('Base de cálculo', base),
-          const Divider(color: PremiumColors.border),
+          Divider(color: PremiumColors.border),
           _amountLine('Comissão (${_percentage ? '${_rate.text}%' : 'fixa'})',
               commission,
               highlight: true),
@@ -966,7 +966,7 @@ class _CommissionRuleWizardScreenState
                 alignment: Alignment.centerLeft,
                 child: Text(
                     'Backend: regra ${_simulation?['rule']?['version'] ?? '-'} · liberado ${backendMemory['released_amount'] ?? '0.00'}',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: PremiumColors.success, fontSize: 12))),
         ]));
   }
@@ -1012,39 +1012,39 @@ class _CommissionRuleWizardScreenState
 
   Widget _calculationPreview() =>
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Text('Simulador de cálculo',
+        Text('Simulador de cálculo',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Row(children: [
           Expanded(
               child: TextField(
                   controller: _simulationGross,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       labelText: 'Valor do serviço', prefixText: 'R\$ '))),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
               child: TextField(
                   controller: _simulationDiscount,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       labelText: 'Desconto', prefixText: 'R\$ '))),
         ]),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Align(
             alignment: Alignment.centerRight,
             child: FilledButton.tonalIcon(
                 onPressed: _simulationLoading ? null : _runBackendSimulation,
                 icon: _simulationLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.cloud_done_outlined),
+                    : Icon(Icons.cloud_done_outlined),
                 label: Text(_simulationLoading
                     ? 'Simulando...'
                     : 'Validar no motor do backend'))),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         _simulationBox(),
       ]);
 
@@ -1054,19 +1054,19 @@ class _CommissionRuleWizardScreenState
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
           Icon(icon, color: PremiumColors.gold),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))
         ]),
-        const Divider(color: PremiumColors.border, height: 24),
+        Divider(color: PremiumColors.border, height: 24),
         ...rows.map((row) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            padding: EdgeInsets.symmetric(vertical: 5),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(
                   width: 170,
                   child: Text(row[0],
                       style:
-                          const TextStyle(color: PremiumColors.textSecondary))),
+                          TextStyle(color: PremiumColors.textSecondary))),
               Expanded(child: Text(row[1]))
             ]))),
       ]));
@@ -1082,7 +1082,7 @@ class _CommissionRuleWizardScreenState
           required VoidCallback secondOnTap}) =>
       Row(children: [
         Expanded(child: _choice(selected, icon, title, subtitle, onTap)),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
             child: _choice(!selected, secondIcon, secondTitle,
                 'Selecione os itens específicos.', secondOnTap)),
@@ -1095,7 +1095,7 @@ class _CommissionRuleWizardScreenState
       borderRadius: BorderRadius.circular(10),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: selected
               ? PremiumColors.gold.withValues(alpha: .12)
@@ -1111,7 +1111,7 @@ class _CommissionRuleWizardScreenState
                 color: selected
                     ? PremiumColors.gold
                     : PremiumColors.textSecondary),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1122,9 +1122,9 @@ class _CommissionRuleWizardScreenState
                               ? PremiumColors.gold
                               : PremiumColors.textPrimary,
                           fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PremiumColors.textSecondary, fontSize: 11)),
                 ],
               ),
@@ -1148,25 +1148,25 @@ class _CommissionRuleWizardScreenState
           onTap: onTap,
           borderRadius: BorderRadius.circular(10),
           child: Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: PremiumColors.border)),
               child: Row(children: [
                 Icon(icon, color: PremiumColors.gold),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                       Text(title,
-                          style: const TextStyle(fontWeight: FontWeight.w800)),
-                      const SizedBox(height: 3),
+                          style: TextStyle(fontWeight: FontWeight.w800)),
+                      SizedBox(height: 3),
                       Text(subtitle,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: PremiumColors.textSecondary, fontSize: 12))
                     ])),
-                const Icon(Icons.chevron_right,
+                Icon(Icons.chevron_right,
                     color: PremiumColors.textSecondary)
               ])));
 
@@ -1176,26 +1176,26 @@ class _CommissionRuleWizardScreenState
     final result = await showDialog<Map<String, dynamic>>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-              title: const Text('Exceções por serviço'),
+              title: Text('Exceções por serviço'),
               content: SizedBox(
                   width: 430,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     TextField(
                         controller: service,
                         decoration:
-                            const InputDecoration(labelText: 'Serviço')),
-                    const SizedBox(height: 12),
+                            InputDecoration(labelText: 'Serviço')),
+                    SizedBox(height: 12),
                     TextField(
                         controller: rate,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Percentual', suffixText: '%'))
                   ])),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(dialogContext),
-                    child: const Text('Cancelar')),
+                    child: Text('Cancelar')),
                 FilledButton(
                     onPressed: () => Navigator.pop(dialogContext, {
                           'itemType': 'SERVICE',
@@ -1206,7 +1206,7 @@ class _CommissionRuleWizardScreenState
                             'basis': 'AFTER_DISCOUNTS'
                           }
                         }),
-                    child: const Text('Aplicar à configuração'))
+                    child: Text('Aplicar à configuração'))
               ],
             ));
     if (!mounted || result == null) return;
@@ -1221,15 +1221,15 @@ class _CommissionRuleWizardScreenState
         context: context,
         builder: (dialogContext) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
-                  title: const Text('Metas e faixas'),
+                  title: Text('Metas e faixas'),
                   content: Column(mainAxisSize: MainAxisSize.min, children: [
                     SwitchListTile.adaptive(
                         value: enabled,
                         activeColor: PremiumColors.gold,
                         onChanged: (value) =>
                             setDialogState(() => enabled = value),
-                        title: const Text('Ativar metas')),
-                    const SizedBox(height: 8),
+                        title: Text('Ativar metas')),
+                    SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                         value: method,
                         items: const [
@@ -1242,20 +1242,20 @@ class _CommissionRuleWizardScreenState
                         ],
                         onChanged: (value) =>
                             setDialogState(() => method = value ?? method),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             labelText: 'Método de aplicação'))
                   ]),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
-                        child: const Text('Cancelar')),
+                        child: Text('Cancelar')),
                     FilledButton(
                         onPressed: () {
                           _goalsEnabled = enabled;
                           _goalMethod = method;
                           Navigator.pop(dialogContext, true);
                         },
-                        child: const Text('Aplicar à configuração'))
+                        child: Text('Aplicar à configuração'))
                   ],
                 )));
     if (result == true && mounted) {
@@ -1265,62 +1265,62 @@ class _CommissionRuleWizardScreenState
   }
 
   Widget _sectionTitle(String title, String subtitle) => Padding(
-      padding: const EdgeInsets.only(bottom: 18),
+      padding: EdgeInsets.only(bottom: 18),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
-            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 4),
+            style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800)),
+        SizedBox(height: 4),
         Text(subtitle,
-            style: const TextStyle(color: PremiumColors.textSecondary))
+            style: TextStyle(color: PremiumColors.textSecondary))
       ]));
   Widget _label(String text) => Padding(
-      padding: const EdgeInsets.only(bottom: 7),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w700)));
+      padding: EdgeInsets.only(bottom: 7),
+      child: Text(text, style: TextStyle(fontWeight: FontWeight.w700)));
   Widget _info(String text) => Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: PremiumColors.card,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: PremiumColors.border)),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Icon(Icons.info_outline,
+        Icon(Icons.info_outline,
             size: 18, color: PremiumColors.textSecondary),
-        const SizedBox(width: 9),
+        SizedBox(width: 9),
         Expanded(
             child: Text(text,
-                style: const TextStyle(
+                style: TextStyle(
                     color: PremiumColors.textSecondary, fontSize: 12)))
       ]));
   Widget _banner(String text, Color color) => Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: color.withValues(alpha: .12),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: color.withValues(alpha: .4))),
       child: Row(children: [
         Icon(Icons.info_outline, color: color, size: 18),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Expanded(child: Text(text, style: TextStyle(color: color)))
       ]));
   Widget _summaryRow(IconData icon, String label, String value) => Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(icon, size: 19, color: PremiumColors.textSecondary),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
-              style: const TextStyle(
+              style: TextStyle(
                   color: PremiumColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 3),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w700))
+          SizedBox(height: 3),
+          Text(value, style: TextStyle(fontWeight: FontWeight.w700))
         ]))
       ]));
   Widget _amountLine(String label, double value, {bool highlight = false}) =>
       Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: EdgeInsets.symmetric(vertical: 4),
           child: Row(children: [
             Expanded(
                 child: Text(label,

@@ -177,9 +177,9 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done)
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           if (snapshot.hasError)
-            return const Center(
+            return Center(
                 child: Text('Não foi possível carregar suas comissões.'));
           final data = snapshot.data ?? <String, dynamic>{};
           final overview = Map<String, dynamic>.from(
@@ -192,16 +192,16 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
                 setState(() => _future = _load());
                 await _future;
               },
-              child: ListView(padding: const EdgeInsets.all(20), children: [
+              child: ListView(padding: EdgeInsets.all(20), children: [
                 Text('Minhas comissões',
                     style: GoogleFonts.inter(
                         fontSize: 22, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(
                     'Acompanhe o que foi calculado, liberado, pago e ainda será compensado.',
                     style:
                         GoogleFonts.inter(color: AppTheme.corTextoSecundario)),
-                const SizedBox(height: 18),
+                SizedBox(height: 18),
                 Wrap(spacing: 12, runSpacing: 12, children: [
                   _ownCard('A liberar', _money(overview['to_release']),
                       AppTheme.gold),
@@ -214,16 +214,16 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
                       _money(overview['advances_to_compensate']),
                       AppTheme.erro),
                 ]),
-                const SizedBox(height: 18),
+                SizedBox(height: 18),
                 if (items.isEmpty)
-                  const Card(
+                  Card(
                       child: Padding(
                           padding: EdgeInsets.all(20),
                           child:
                               Text('Nenhuma comissão calculada no período.')))
                 else
                   ...items.map((item) => ListTile(
-                        leading: const Icon(Icons.receipt_long_outlined),
+                        leading: Icon(Icons.receipt_long_outlined),
                         title: Text(
                             '${item['service_name'] ?? 'Serviço'} · Atendimento #${item['appointment_id'] ?? ''}'),
                         subtitle: Text(
@@ -233,10 +233,10 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(_money(item['total_commission']),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.w700)),
                               Text('Pendente ${_money(item['pending_amount'])}',
-                                  style: const TextStyle(fontSize: 11))
+                                  style: TextStyle(fontSize: 11))
                             ]),
                       )),
               ]));
@@ -247,14 +247,14 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
       width: 190,
       child: Card(
           child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label,
                         style: GoogleFonts.inter(
                             color: AppTheme.corTextoSecundario)),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(value,
                         style: GoogleFonts.inter(
                             fontSize: 20,
@@ -397,7 +397,7 @@ class _AgendaTab extends StatelessWidget {
       actions: [
         _IconButton(
             icon: Icons.refresh_rounded, cor: cor, onTap: onCarregarAgenda),
-        const SizedBox(width: 4),
+        SizedBox(width: 4),
         _IconButton(
             icon: Icons.logout_rounded,
             cor: AppTheme.corTextoSecundario,
@@ -405,20 +405,20 @@ class _AgendaTab extends StatelessWidget {
       ],
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(28, 20, 28, 12),
+          padding: EdgeInsets.fromLTRB(28, 20, 28, 12),
           child: Row(children: [
             _ResumoCard(
                 label: 'Hoje',
                 valor: agHoje.toString(),
                 icone: Icons.today,
                 cor: cor),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             _ResumoCard(
                 label: 'Próximos',
                 valor: confirmados.toString(),
                 icone: Icons.calendar_month,
                 cor: cor),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             _ResumoCard(
                 label: 'Total',
                 valor: agendamentos.length.toString(),
@@ -436,14 +436,14 @@ class _AgendaTab extends StatelessWidget {
                           children: [
                             Icon(Icons.calendar_month_outlined,
                                 color: cor.withValues(alpha: 0.3), size: 64),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Text('Nenhum agendamento nos próximos dias.',
                                 style: _inter(AppTheme.corTextoSecundario, 14,
                                     FontWeight.w400)),
                           ]),
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                      padding: EdgeInsets.fromLTRB(20, 8, 20, 28),
                       itemCount: dias.length,
                       itemBuilder: (context, diaIndex) {
                         final dia = dias[diaIndex];
@@ -455,10 +455,10 @@ class _AgendaTab extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
+                                padding: EdgeInsets.fromLTRB(4, 16, 4, 8),
                                 child: Row(children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 5),
                                     decoration: BoxDecoration(
                                       color: isHoje
@@ -474,7 +474,7 @@ class _AgendaTab extends StatelessWidget {
                                           letterSpacing: isHoje ? 1.2 : 0,
                                         )),
                                   ),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8),
                                   Text(
                                       '${lista.length} atendimento${lista.length > 1 ? 's' : ''}',
                                       style: _inter(AppTheme.corTextoSecundario,
@@ -487,7 +487,7 @@ class _AgendaTab extends StatelessWidget {
                                 final status = ag['status'] as String;
 
                                 return Container(
-                                  margin: const EdgeInsets.only(bottom: 10),
+                                  margin: EdgeInsets.only(bottom: 10),
                                   decoration: BoxDecoration(
                                     color: AppTheme.surfaceElev,
                                     borderRadius: BorderRadius.circular(14),
@@ -497,7 +497,7 @@ class _AgendaTab extends StatelessWidget {
                                             width: 4)),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(16),
                                     child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -512,14 +512,14 @@ class _AgendaTab extends StatelessWidget {
                                                       Icons.access_time_rounded,
                                                       color: cor,
                                                       size: 16),
-                                                  const SizedBox(width: 6),
+                                                  SizedBox(width: 6),
                                                   Text(hora,
                                                       style: GoogleFonts.inter(
                                                           color: cor,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontSize: 18)),
-                                                  const SizedBox(width: 8),
+                                                  SizedBox(width: 8),
                                                   Text(
                                                       '${ag['duracao_min']} min',
                                                       style: _inter(
@@ -529,7 +529,7 @@ class _AgendaTab extends StatelessWidget {
                                                           FontWeight.w400)),
                                                 ]),
                                                 Container(
-                                                  padding: const EdgeInsets
+                                                  padding: EdgeInsets
                                                       .symmetric(
                                                       horizontal: 10,
                                                       vertical: 4),
@@ -550,7 +550,7 @@ class _AgendaTab extends StatelessWidget {
                                                               FontWeight.w600)),
                                                 ),
                                               ]),
-                                          const SizedBox(height: 10),
+                                          SizedBox(height: 10),
                                           Text(
                                             (ag['observacao'] != null &&
                                                     ag['observacao']
@@ -563,13 +563,13 @@ class _AgendaTab extends StatelessWidget {
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 15),
                                           ),
-                                          const SizedBox(height: 6),
+                                          SizedBox(height: 6),
                                           Row(children: [
                                             Icon(Icons.person_outline,
                                                 color:
                                                     AppTheme.corTextoSecundario,
                                                 size: 14),
-                                            const SizedBox(width: 4),
+                                            SizedBox(width: 4),
                                             Text(ag['cliente'] ?? '',
                                                 style: _inter(
                                                     AppTheme.corTextoSecundario,
@@ -579,12 +579,12 @@ class _AgendaTab extends StatelessWidget {
                                                     null &&
                                                 ag['cliente_telefone'] !=
                                                     '') ...[
-                                              const SizedBox(width: 12),
+                                              SizedBox(width: 12),
                                               Icon(Icons.phone_outlined,
                                                   color: AppTheme
                                                       .corTextoSecundario,
                                                   size: 14),
-                                              const SizedBox(width: 4),
+                                              SizedBox(width: 4),
                                               Text(ag['cliente_telefone'],
                                                   style: _inter(
                                                       AppTheme
@@ -600,7 +600,7 @@ class _AgendaTab extends StatelessWidget {
                                                   fontWeight: FontWeight.w700,
                                                   fontSize: 13)),
                                           if (status == 'confirmado') ...[
-                                            const SizedBox(height: 12),
+                                            SizedBox(height: 12),
                                             Builder(builder: (context) {
                                               final dataAg = DateTime.parse(
                                                   ag['data_hora']);
@@ -645,7 +645,7 @@ class _AgendaTab extends StatelessWidget {
                                                                         .w600)),
                                                   ),
                                                 )),
-                                                const SizedBox(width: 8),
+                                                SizedBox(width: 8),
                                                 Expanded(
                                                     child: SizedBox(
                                                   height: 44,
@@ -681,7 +681,7 @@ class _AgendaTab extends StatelessWidget {
                                                                         .circular(
                                                                             8)),
                                                         padding:
-                                                            const EdgeInsets
+                                                            EdgeInsets
                                                                 .symmetric(
                                                                 horizontal: 8),
                                                         minimumSize: Size.zero,
@@ -758,11 +758,11 @@ class _GestaoTabState extends State<_GestaoTab> {
       title: 'Gestão',
       subtitle: 'Acompanhe resultados e administre serviços e equipe.',
       child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 28),
+        padding: EdgeInsets.only(bottom: 28),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // ===== Financeiro =====
           _buildRelatorioSection(ctrl, cor),
-          const SizedBox(height: 36),
+          SizedBox(height: 36),
 
           // ===== Serviços =====
           _headerSecao(
@@ -772,10 +772,10 @@ class _GestaoTabState extends State<_GestaoTab> {
             botaoIcon: Icons.add,
             onBotao: () => _mostrarFormServico(context),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           if (ctrl.carregandoServicos)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48),
+              padding: EdgeInsets.symmetric(vertical: 48),
               child: Center(child: CircularProgressIndicator(color: cor)),
             )
           else if (ctrl.servicos.isEmpty)
@@ -784,7 +784,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                 message: 'Nenhum serviço cadastrado.')
           else
             ...ctrl.servicos.map((s) => _buildServicoCard(context, ctrl, s)),
-          const SizedBox(height: 36),
+          SizedBox(height: 36),
 
           // ===== Equipe =====
           _headerSecao(
@@ -794,10 +794,10 @@ class _GestaoTabState extends State<_GestaoTab> {
             botaoIcon: Icons.person_add,
             onBotao: () => _mostrarFormColaborador(context),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           if (ctrl.carregandoColaboradores)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48),
+              padding: EdgeInsets.symmetric(vertical: 48),
               child: Center(child: CircularProgressIndicator(color: cor)),
             )
           else if (ctrl.colaboradores.isEmpty)
@@ -831,7 +831,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                     color: AppTheme.corTexto,
                     fontSize: 26,
                     fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Text(subtitulo,
                 style: GoogleFonts.inter(
                     color: AppTheme.corTextoSecundario,
@@ -840,14 +840,14 @@ class _GestaoTabState extends State<_GestaoTab> {
                     letterSpacing: 0.3)),
           ]),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         ElevatedButton.icon(
           onPressed: onBotao,
           style: ElevatedButton.styleFrom(
             backgroundColor: cor,
             foregroundColor: Colors.white,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             minimumSize: const Size(0, 0),
@@ -887,7 +887,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                 ),
                 child: Icon(Icons.content_cut, color: cor, size: 20),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -899,11 +899,11 @@ class _GestaoTabState extends State<_GestaoTab> {
                               color: AppTheme.corTexto,
                               fontSize: 15,
                               fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 5),
+                      SizedBox(height: 5),
                       Row(children: [
                         Icon(Icons.schedule,
                             color: AppTheme.corTextoSecundario, size: 13),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(duracao,
                             style: _inter(AppTheme.corTextoSecundario, 13,
                                 FontWeight.w400)),
@@ -912,7 +912,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                                 FontWeight.w400)),
                         Icon(Icons.attach_money,
                             color: AppTheme.corTextoSecundario, size: 13),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(preco,
                             style: _inter(AppTheme.corTextoSecundario, 13,
                                 FontWeight.w400)),
@@ -923,7 +923,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                                   FontWeight.w400)),
                           Icon(Icons.person_outline,
                               color: AppTheme.corTextoSecundario, size: 13),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Flexible(
                             child: Text(categoria.toString(),
                                 maxLines: 1,
@@ -937,9 +937,9 @@ class _GestaoTabState extends State<_GestaoTab> {
               ),
             ]),
             if (tag != null) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: cor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -954,14 +954,14 @@ class _GestaoTabState extends State<_GestaoTab> {
             ],
           ]),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           const _BadgeAtivo(),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Text(preco,
               style: GoogleFonts.inter(
                   color: cor, fontSize: 15, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           _CardMenuButton(
             items: [
               PopupMenuItem(
@@ -1001,7 +1001,7 @@ class _GestaoTabState extends State<_GestaoTab> {
               style: GoogleFonts.inter(
                   color: cor, fontSize: 16, fontWeight: FontWeight.w700)),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14),
         Expanded(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1012,15 +1012,15 @@ class _GestaoTabState extends State<_GestaoTab> {
                     color: AppTheme.corTexto,
                     fontSize: 15,
                     fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
+            SizedBox(height: 3),
             Text(telefone,
                 style: GoogleFonts.inter(
                     color: AppTheme.corTextoSecundario, fontSize: 13)),
           ]),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(
             color: AppTheme.surface,
             borderRadius: BorderRadius.circular(6),
@@ -1032,9 +1032,9 @@ class _GestaoTabState extends State<_GestaoTab> {
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5)),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         const _BadgeAtivo(),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Switch(
           value: c['ativo'] == 1,
           activeThumbColor: cor,
@@ -1045,7 +1045,7 @@ class _GestaoTabState extends State<_GestaoTab> {
             ctrl.carregarColaboradores();
           },
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         _CardMenuButton(
           items: [
             PopupMenuItem(
@@ -1130,7 +1130,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   label: 'Nome do serviço',
                   prefixIcon: Icons.content_cut_outlined,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Row(children: [
                   Expanded(
                       child: AppModalInput(
@@ -1140,7 +1140,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                   )),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                       child: AppModalInput(
                     controller: duracaoCtrl,
@@ -1149,11 +1149,11 @@ class _GestaoTabState extends State<_GestaoTab> {
                     keyboardType: TextInputType.number,
                   )),
                 ]),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (ctrl.erro.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
                       color: AppTheme.erro.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
@@ -1164,7 +1164,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   ),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   const AppModalCancelButton(),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   AppModalPrimaryButton(
                     label: editando ? 'Salvar' : 'Criar Serviço',
                     icon: editando ? Icons.save_outlined : Icons.add,
@@ -1245,24 +1245,24 @@ class _GestaoTabState extends State<_GestaoTab> {
                   label: 'Nome completo',
                   prefixIcon: Icons.person_outline,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 AppModalInput(
                   controller: telefoneCtrl,
                   label: 'Telefone com DDD',
                   prefixIcon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 AppModalInput(
                   controller: senhaCtrl,
                   label: 'Senha inicial',
                   prefixIcon: Icons.lock_outline,
                   obscureText: true,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   const AppModalCancelButton(),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   AppModalPrimaryButton(
                     label: 'Cadastrar',
                     icon: Icons.person_add,
@@ -1358,10 +1358,10 @@ class _GestaoTabState extends State<_GestaoTab> {
         titulo: 'Relatório',
         subtitulo: 'Acompanhe o faturamento e os atendimentos do dia.',
       ),
-      const SizedBox(height: 20),
+      SizedBox(height: 20),
       if (ctrl.carregandoRelatorio)
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+          padding: EdgeInsets.symmetric(vertical: 24),
           child: Center(child: CircularProgressIndicator(color: cor)),
         )
       else ...[
@@ -1377,7 +1377,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   label: 'Faturado',
                   color: cor,
                 )),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             SizedBox(
                 width: 200,
                 child: KpiCard(
@@ -1386,7 +1386,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   label: 'Previsto',
                   color: AppTheme.sucesso,
                 )),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             SizedBox(
                 width: 200,
                 child: KpiCard(
@@ -1395,7 +1395,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   label: 'Atendimentos',
                   color: const Color(0xFF3B82F6),
                 )),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             SizedBox(
                 width: 200,
                 child: KpiCard(
@@ -1406,7 +1406,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                 )),
           ]),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
 
         // ===== 2. Bar Chart — Receita dos últimos 7 dias =====
         ChartCard(
@@ -1430,16 +1430,16 @@ class _GestaoTabState extends State<_GestaoTab> {
                     ),
                     borderData: FlBorderData(show: false),
                     titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(
+                      topTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: const AxisTitles(
+                      rightTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false)),
                       leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 56,
                         getTitlesWidget: (value, meta) => Padding(
-                          padding: const EdgeInsets.only(right: 8),
+                          padding: EdgeInsets.only(right: 8),
                           child: Text('R\$${fmtCompact.format(value)}',
                               style: GoogleFonts.inter(
                                   color: corSec,
@@ -1454,11 +1454,11 @@ class _GestaoTabState extends State<_GestaoTab> {
                         getTitlesWidget: (value, meta) {
                           final i = value.toInt();
                           if (i < 0 || i >= ultimos7.length)
-                            return const SizedBox.shrink();
+                            return SizedBox.shrink();
                           final dt =
                               DateTime.parse(ultimos7[i]['dia'].toString());
                           return Padding(
-                            padding: const EdgeInsets.only(top: 8),
+                            padding: EdgeInsets.only(top: 8),
                             child: Text(diasSemana[dt.weekday - 1],
                                 style: GoogleFonts.inter(
                                     color: corSec,
@@ -1494,7 +1494,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                           toY: v,
                           color: cor,
                           width: 18,
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(6),
                             topRight: Radius.circular(6),
                           ),
@@ -1517,7 +1517,7 @@ class _GestaoTabState extends State<_GestaoTab> {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
 
         // ===== 3. Pie Chart — Serviços mais solicitados =====
         ChartCard(
@@ -1577,7 +1577,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     Text('${servicosList[i].key} (${servicosList[i].value})',
                         style: GoogleFonts.inter(
                             color: corSec,
@@ -1589,20 +1589,20 @@ class _GestaoTabState extends State<_GestaoTab> {
             return horizontal
                 ? Row(children: [
                     pie,
-                    const SizedBox(width: 24),
+                    SizedBox(width: 24),
                     Expanded(child: legend)
                   ])
-                : Column(children: [pie, const SizedBox(height: 16), legend]);
+                : Column(children: [pie, SizedBox(height: 16), legend]);
           }),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
 
         // ===== 4. Mês atual =====
         _tituloSecao('${meses[now.month - 1]}/${now.year}', cor,
             trailing: IconButton(
                 icon: Icon(Icons.refresh, color: cor, size: 18),
                 onPressed: () => ctrl.carregarRelatorioMensal())),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Row(children: [
           Expanded(
               child: _cardFaturamento(
@@ -1611,7 +1611,7 @@ class _GestaoTabState extends State<_GestaoTab> {
                   sub: '${relMes['total_atendimentos'] ?? 0} atendimentos',
                   cor: cor,
                   icone: Icons.calendar_month)),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
               child: _cardFaturamento(
                   titulo: 'Previsto no mês',
@@ -1645,7 +1645,7 @@ class _GestaoTabState extends State<_GestaoTab> {
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -1668,7 +1668,7 @@ class _GestaoTabState extends State<_GestaoTab> {
           ),
           child: Icon(icone, color: cor, size: 20),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1679,14 +1679,14 @@ class _GestaoTabState extends State<_GestaoTab> {
                     color: AppTheme.corTextoSecundario,
                     fontSize: 12,
                     fontWeight: FontWeight.w500)),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(valor,
                 style: GoogleFonts.inter(
                     color: cor,
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3)),
-            const SizedBox(height: 2),
+            SizedBox(height: 2),
             Text(sub,
                 style: GoogleFonts.inter(
                     color: AppTheme.corTextoSecundario,
@@ -1724,8 +1724,8 @@ class _HoverCardState extends State<_HoverCard> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           color: AppTheme.surfaceElev,
           borderRadius: BorderRadius.circular(18),
@@ -1799,7 +1799,7 @@ class _BadgeAtivo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: AppTheme.sucesso.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -1808,9 +1808,9 @@ class _BadgeAtivo extends StatelessWidget {
         Container(
             width: 6,
             height: 6,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
                 color: AppTheme.sucesso, shape: BoxShape.circle)),
-        const SizedBox(width: 6),
+        SizedBox(width: 6),
         Text('Ativo',
             style: GoogleFonts.inter(
                 color: AppTheme.sucesso,
@@ -1834,10 +1834,10 @@ class _EmptyState extends StatelessWidget {
     final cor = Theme.of(context).colorScheme.primary;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
+        padding: EdgeInsets.symmetric(vertical: 48),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(icon, color: cor.withValues(alpha: 0.3), size: 48),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(message,
               style: GoogleFonts.inter(
                   color: AppTheme.corTextoSecundario, fontSize: 14)),
@@ -1916,7 +1916,7 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: ctrl.colaboradores.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, __) => SizedBox(width: 8),
             itemBuilder: (_, index) {
               final item = ctrl.colaboradores[index];
               final selected = _barbeiro?['id'] == item['id'];
@@ -1931,7 +1931,7 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
             },
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Expanded(
           child: _carregando
               ? const PremiumLoadingState(label: 'Carregando agenda da equipe')
@@ -1984,13 +1984,13 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
       subtitle: 'Consulte os próximos atendimentos de cada profissional.',
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.all(28),
+          padding: EdgeInsets.all(28),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Agenda por profissional',
                 style: _playfair(AppTheme.corTexto, 26, FontWeight.w600,
                     letterSpacing: -0.6)),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             ctrl.colaboradores.isEmpty
                 ? Center(child: CircularProgressIndicator(color: cor))
                 : SingleChildScrollView(
@@ -1999,14 +1999,14 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                       children: ctrl.colaboradores.map((c) {
                         final sel = _barbeiro?['id'] == c['id'];
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8),
+                          padding: EdgeInsets.only(right: 8),
                           child: GestureDetector(
                             onTap: () async {
                               setState(() => _barbeiro = c);
                               await _carregarAgenda();
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 10),
                               decoration: BoxDecoration(
                                 color: sel ? cor : AppTheme.surfaceElev,
@@ -2040,7 +2040,7 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                           children: [
                           Icon(Icons.calendar_month_outlined,
                               color: cor.withValues(alpha: 0.3), size: 64),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           Text(
                             _barbeiro == null
                                 ? 'Selecione um profissional'
@@ -2053,7 +2053,7 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                       color: cor,
                       onRefresh: _carregarAgenda,
                       child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
                         itemCount: _agendamentos.length,
                         itemBuilder: (context, i) {
                           final ag = _agendamentos[i];
@@ -2063,8 +2063,8 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                               ? ag['observacao']
                               : ag['servico'];
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(16),
+                            margin: EdgeInsets.only(bottom: 10),
+                            padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: AppTheme.surfaceElev,
                               borderRadius: BorderRadius.circular(14),
@@ -2080,7 +2080,7 @@ class _AgendaAdminTabState extends State<_AgendaAdminTab> {
                                         color: cor,
                                         fontWeight: FontWeight.w700),
                                   ),
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
                                   Text(servico ?? '',
                                       style: GoogleFonts.inter(
                                           color: AppTheme.corTexto,
@@ -2122,13 +2122,13 @@ class _ResumoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
             color: AppTheme.surfaceElev,
             borderRadius: BorderRadius.circular(14)),
         child: Column(children: [
           Icon(icone, color: cor, size: 20),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(valor,
               style: GoogleFonts.inter(
                   color: AppTheme.corTexto,
@@ -2159,7 +2159,7 @@ class _IconButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(10),
           child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(10),
               child: Icon(icon, color: cor, size: 20))),
     );
   }

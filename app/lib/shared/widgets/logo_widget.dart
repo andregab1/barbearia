@@ -3,7 +3,10 @@
 // O endereço recebido continua na API do widget por compatibilidade, mas a
 // marca exibida no sistema é sempre o asset oficial versionado.
 // ==========================================
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme.dart';
 
 class LogoWidget extends StatelessWidget {
   final String? logoUrl;
@@ -23,13 +26,13 @@ class LogoWidget extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: const Color(0xFFFFD000).withValues(alpha: 0.12),
+          color: AppTheme.gold.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(size * 0.22),
         ),
         child: Icon(
           Icons.content_cut_rounded,
           size: size * 0.45,
-          color: const Color(0xFFFFD000),
+          color: AppTheme.gold,
         ),
       );
 
@@ -43,7 +46,37 @@ class LogoWidget extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => _officialLogo(context);
+  Widget build(BuildContext context) {
+    final raw = logoUrl?.trim();
+    if (raw != null && raw.startsWith('data:image')) {
+      try {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(size * .22),
+          child: Image.memory(
+            base64Decode(raw.split(',').last),
+            width: size,
+            height: size,
+            fit: fit,
+            errorBuilder: (_, __, ___) => _officialLogo(context),
+          ),
+        );
+      } catch (_) {}
+    }
+    if (raw != null &&
+        (raw.startsWith('http://') || raw.startsWith('https://'))) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size * .22),
+        child: Image.network(
+          raw,
+          width: size,
+          height: size,
+          fit: fit,
+          errorBuilder: (_, __, ___) => _officialLogo(context),
+        ),
+      );
+    }
+    return _officialLogo(context);
+  }
 }
 
 class OfficialLogo extends StatelessWidget {

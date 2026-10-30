@@ -34,6 +34,9 @@ class AppConstants {
   static const String keyUsuarioRole = 'usuario_role';
   static const String keyColaboradorId = 'colaborador_id';
   static const String keyBarbeariaId = 'barbearia_id';
+  static const String keyBarbeariaDescobertaId = 'barbearia_descoberta_id';
+  static const String keyServicoDescobertoId = 'servico_descoberto_id';
+  static const String keyColaboradorDescobertoId = 'colaborador_descoberto_id';
 
   // ==========================================
   // Roles

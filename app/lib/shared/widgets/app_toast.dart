@@ -100,8 +100,8 @@ class _ToastEntryState extends State<_ToastEntry>
               color: Colors.transparent,
               child: Container(
                 width: width < 520 ? null : 360,
-                constraints: const BoxConstraints(minHeight: 58),
-                padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+                constraints: BoxConstraints(minHeight: 58),
+                padding: EdgeInsets.fromLTRB(14, 10, 8, 10),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceElev,
                   borderRadius: BorderRadius.circular(12),
@@ -115,7 +115,7 @@ class _ToastEntryState extends State<_ToastEntry>
                 ),
                 child: Row(children: [
                   Icon(icon, color: color, size: 21),
-                  const SizedBox(width: 11),
+                  SizedBox(width: 11),
                   Expanded(
                       child: Text(widget.message,
                           style: TextStyle(
@@ -125,7 +125,7 @@ class _ToastEntryState extends State<_ToastEntry>
                   IconButton(
                     tooltip: 'Fechar aviso',
                     onPressed: _dismiss,
-                    icon: const Icon(Icons.close_rounded, size: 18),
+                    icon: Icon(Icons.close_rounded, size: 18),
                     color: AppTheme.corTextoSecundario,
                   ),
                 ]),

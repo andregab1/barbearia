@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:intl/intl.dart';
@@ -10,9 +10,12 @@ import 'report_download_stub.dart'
     if (dart.library.html) 'report_download_web.dart';
 
 class ServiceReceiptPdf {
+  static const _averageGlyphWidth = 0.6;
+
   static Future<Uint8List> build({
     required Map<String, dynamic> appointment,
     Map<String, dynamic>? barbershop,
+    String? accentHex,
   }) async {
     final template = utf8
         .decode(await loadReportAsset('assets/Nota_de_servicos_GetCutt.svg'));
@@ -30,7 +33,7 @@ class ServiceReceiptPdf {
         width: PdfPageFormat.a4.width,
         height: PdfPageFormat.a4.height,
         child: pw.SvgImage(
-          svg: _fillTemplate(template, receipt),
+          svg: _fillTemplate(template, receipt, accentHex: accentHex),
           width: PdfPageFormat.a4.width,
           height: PdfPageFormat.a4.height,
           fit: pw.BoxFit.fill,
@@ -45,103 +48,221 @@ class ServiceReceiptPdf {
     return document.save();
   }
 
-  static String _fillTemplate(String source, _ReceiptData data) {
-    var svg = source;
-    svg = _replaceText(svg, 'Nº 000128', 'Nº ${data.receiptNumber}');
-    svg = _replaceText(svg, 'Barbearia Exemplo', data.barbershopName);
-    svg = _replaceText(svg, 'Rua Exemplo, 123 · Centro · Araucária / PR',
-        data.barbershopAddress);
-    svg = _replaceRaw(
+  static String _fillTemplate(
+    String source,
+    _ReceiptData data, {
+    String? accentHex,
+  }) {
+    final accent = _normalizeHex(accentHex) ?? 'F4D000';
+    final accentDark = _darkenHex(accent);
+    var svg = source
+        .replaceAll('#f4d000', '#$accent')
+        .replaceAll('#b88a00', '#$accentDark');
+    svg = _replaceField(svg, 'field-receipt-number',
+        _fitText('N\u00ba ${data.receiptNumber}', width: 160, fontSize: 11));
+    svg = _replaceField(svg, 'field-verification', _fitText(
+        'NFS-GETCUTT-${data.receiptNumber}',
+        width: 160,
+        fontSize: 8));
+    svg = _replaceField(svg, 'field-barbershop-name',
+        _fitText(data.barbershopName, width: 296, fontSize: 12));
+    svg = _replaceField(svg, 'field-barbershop-address',
+        _fitText(data.barbershopAddress, width: 296, fontSize: 10));
+    svg = _replaceField(svg, 'field-issued-at', _fitText(data.issuedAt,
+        width: 170, fontSize: 10, x: 786));
+    svg = _replaceField(svg, 'field-client-name',
+        _fitText(data.clientName, width: 360, fontSize: 11));
+    svg = _replaceField(svg, 'field-client-phone',
+        _fitText('Telefone: ${data.clientPhone}', width: 330, fontSize: 10));
+    svg = _replaceField(svg, 'field-appointment-date',
+        _fitText(data.appointmentDate, width: 200, fontSize: 10, x: 778));
+    svg = _replaceField(
         svg,
-        '<text x="792" y="155" text-anchor="end" class="body" style="fill:#fff">28/09/2026 · 10:45</text>',
-        '<text x="792" y="155" text-anchor="end" class="body" style="fill:#fff">${_xml(data.issuedAt)}</text>');
-    svg = _replaceText(svg, 'Modelo demonstrativo · Dados fictícios',
-        'Documento emitido pelo sistema');
-    svg = _replaceText(svg, 'João da Silva', data.clientName);
-    svg = _replaceText(
-        svg, 'Telefone: (00) 00000-0000', 'Telefone: ${data.clientPhone}');
-    svg = _replaceRaw(
+        'field-professional',
+        _fitText(
+          'Profissional: ${data.professional} \u00b7 Agendamento #${data.appointmentId}',
+          width: 540,
+          fontSize: 10,
+        ));
+    svg = _replaceField(
         svg,
-        '<text x="471" y="315" class="body bold">28/09/2026 · 10:00</text>',
-        '<text x="471" y="315" class="body bold">${_xml(data.appointmentDate)}</text>');
-    svg = _replaceText(svg, 'Profissional: Lucas · Agendamento #00482',
-        'Profissional: ${data.professional} · Agendamento #${data.appointmentId}');
-    svg = _replaceText(svg, '3 serviços',
-        data.serviceCount == 1 ? '1 serviço' : '${data.serviceCount} serviços');
+        'field-service-count',
+        _fitText(
+          data.serviceCount == 1
+              ? '1 servico'
+              : '${data.serviceCount} servicos',
+          width: 70,
+          fontSize: 8,
+          x: 784,
+        ));
 
-    final rowY = [506, 578, 650];
-    final rowNames = ['Corte masculino', 'Barba completa', 'Sobrancelha'];
-    final rowDescriptions = [
-      'Degradê + acabamento',
-      'Modelagem + finalização',
-      'Acabamento com navalha',
-    ];
-    for (var index = 0; index < rowY.length; index++) {
+    for (var index = 0; index < 3; index++) {
       final row = index < data.serviceRows.length
           ? data.serviceRows[index]
           : const _ServiceRow.empty();
-      svg = _replaceText(svg, rowNames[index], row.name);
-      svg = _replaceText(svg, rowDescriptions[index], row.description);
-      svg = _replaceRaw(
-          svg,
-          '<text x="493" y="${rowY[index]}" text-anchor="middle" class="body num">1</text>',
-          '<text x="493" y="${rowY[index]}" text-anchor="middle" class="body num">${_xml(row.quantity)}</text>');
-      svg = _replaceRaw(
-          svg,
-          '<text x="638" y="${rowY[index]}" text-anchor="end" class="body num">${_templateUnit(index)}</text>',
-          '<text x="638" y="${rowY[index]}" text-anchor="end" class="body num">${_xml(_money(row.unit))}</text>');
-      svg = _replaceRaw(
-          svg,
-          '<text x="776" y="${rowY[index]}" text-anchor="end" class="body bold num">${_templateTotal(index)}</text>',
-          '<text x="776" y="${rowY[index]}" text-anchor="end" class="body bold num">${_xml(_money(row.total))}</text>');
+      final suffix = index + 1;
+      svg = _replaceField(svg, 'field-service-name-$suffix',
+          _fitText(row.name, width: 410, fontSize: 11));
+      svg = _replaceField(svg, 'field-service-description-$suffix',
+          _fitText(row.description, width: 410, fontSize: 9, minFontSize: 6.5));
+      svg = _replaceField(svg, 'field-service-qty-$suffix',
+          _fitText(row.quantity, width: 60, fontSize: 10));
+      svg = _replaceField(svg, 'field-service-unit-$suffix',
+          _fitText(_money(row.unit), width: 125, fontSize: 10, x: 638));
+      svg = _replaceField(svg, 'field-service-total-$suffix',
+          _fitText(_money(row.total), width: 125, fontSize: 10, x: 776));
     }
 
-    svg = _replaceText(svg, 'Pago', data.statusLabel);
-    svg = _replaceText(svg, r'Pix · R$ 90,00',
-        '${data.paymentMethod} · ${_money(data.paidAmount)}');
-    svg = _replaceText(
+    svg = _replaceField(svg, 'field-attendance',
+        _fitText('Atendimento em ${data.appointmentDate}', width: 360, fontSize: 8));
+    svg = _replaceField(svg, 'field-payment-status',
+        _fitText('Pagamento: ${data.statusLabel}', width: 190, fontSize: 9));
+    svg = _replaceField(
         svg,
-        'Recebido em 28/09/2026 às 10:43',
-        data.paymentDate.isEmpty
-            ? 'Pagamento ainda não registrado'
-            : 'Recebido em ${data.paymentDate}');
-    svg = _replaceText(svg, r'Saldo pendente: R$ 0,00',
-        'Saldo pendente: ${_money(data.outstandingAmount)}');
-    svg = _replaceText(svg, r'R$ 100,00', _money(data.subtotal));
-    svg = _replaceText(svg, 'Desconto (10%)', 'Desconto${data.discountLabel}');
-    svg = _replaceText(svg, r'− R$ 10,00', '− ${_money(data.discount)}');
-    svg = _replaceText(svg, r'R$ 90,00', _money(data.totalAmount));
-    svg = _replaceText(
+        'field-payment-method',
+        _fitText('${data.paymentMethod} \u00b7 ${_money(data.paidAmount)}',
+            width: 225, fontSize: 9));
+    svg = _replaceField(
         svg,
-        'Serviços concluídos. Desconto aplicado sobre o subtotal do atendimento.',
-        data.observation);
-    svg = _replaceText(svg, 'CONTROLE INTERNO · Nº 000128',
-        'CONTROLE INTERNO · Nº ${data.receiptNumber}');
+        'field-payment-date',
+        _fitText(
+          data.paymentDate.isEmpty
+              ? 'Pagamento ainda nao registrado'
+              : 'Recebido em ${data.paymentDate}',
+          width: 280,
+          fontSize: 9,
+        ));
+    svg = _replaceField(svg, 'field-balance',
+        _fitText('Saldo pendente: ${_money(data.outstandingAmount)}',
+            width: 240, fontSize: 9));
+    svg = _replaceField(svg, 'field-subtotal',
+        _fitText(_money(data.subtotal), width: 220, fontSize: 12));
+    svg = _replaceField(svg, 'field-discount-label',
+        _fitText('DESCONTO${data.discountLabel}', width: 220, fontSize: 8));
+    svg = _replaceField(svg, 'field-discount',
+        _fitText(_money(data.discount), width: 220, fontSize: 12));
+    svg = _replaceField(svg, 'field-total',
+        _fitText(_money(data.totalAmount), width: 220, fontSize: 13, x: 784));
+    svg = _replaceField(
+        svg,
+        'field-observation',
+        _fitTextLines(data.observation, x: 52, y: 888, width: 720, fontSize: 9));
+    svg = _replaceField(svg, 'field-control-number',
+        _fitText('CONTROLE INTERNO \u00b7 N\u00ba ${data.receiptNumber}',
+            width: 240, fontSize: 8));
     return svg;
   }
 
-  static String _templateUnit(int index) =>
-      const [r'R$ 50,00', r'R$ 35,00', r'R$ 15,00'][index];
-  static String _templateTotal(int index) =>
-      const [r'R$ 50,00', r'R$ 35,00', r'R$ 15,00'][index];
-
-  static String _replaceText(String source, String from, String to) {
-    final marker = '>$from</text>';
-    return _replaceRaw(source, marker, '>${_xml(to)}</text>');
-  }
-
-  static String _replaceRaw(String source, String from, String to) {
-    if (!source.contains(from)) {
-      throw StateError('Campo do modelo SVG não encontrado: $from');
+  static String _replaceField(String source, String id, String content) {
+    final pattern = RegExp(
+      '(<text id="${RegExp.escape(id)}"[^>]*>).*?(</text>)',
+      dotAll: true,
+    );
+    if (!pattern.hasMatch(source)) {
+      throw StateError('Campo do modelo SVG nao encontrado: $id');
     }
-    return source.replaceFirst(from, to);
+    return source.replaceFirstMapped(
+        pattern, (match) => '${match.group(1)}$content${match.group(2)}');
   }
+
+  static String _fitText(
+    String value, {
+    required double width,
+    required double fontSize,
+    double? x,
+    double minFontSize = 5.5,
+  }) {
+    final normalized = _normalize(value);
+    if (normalized.isEmpty) return '';
+    final estimatedWidth = normalized.length * fontSize * _averageGlyphWidth;
+    final fittedSize = estimatedWidth <= width
+        ? fontSize
+        : (fontSize * width / estimatedWidth).clamp(minFontSize, fontSize);
+    final xAttribute = x == null ? '' : ' x="${_svgNumber(x)}"';
+    return '<tspan$xAttribute font-size="${_svgNumber(fittedSize)}">${_xml(normalized)}</tspan>';
+  }
+
+  static String _fitTextLines(
+    String value, {
+    required double x,
+    required double y,
+    required double width,
+    required double fontSize,
+    double lineHeight = 13,
+    int maxLines = 3,
+  }) {
+    final normalized = _normalize(value);
+    if (normalized.isEmpty) return '';
+    final maxChars = max(1, (width / (fontSize * _averageGlyphWidth)).floor());
+    final words = normalized.split(' ');
+    final lines = <String>[];
+    var current = '';
+    for (final word in words) {
+      final candidate = current.isEmpty ? word : '$current $word';
+      if (current.isNotEmpty && candidate.length > maxChars) {
+        lines.add(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current.isNotEmpty) lines.add(current);
+    if (lines.length > maxLines) {
+      final charsPerLine = (normalized.length / maxLines).ceil();
+      lines
+        ..clear()
+        ..addAll(List.generate(
+          maxLines,
+          (index) {
+            final start = index * charsPerLine;
+            final end = min(start + charsPerLine, normalized.length);
+            return normalized.substring(start, end).trim();
+          },
+        ));
+    }
+    final longestLine = lines.fold<int>(0,
+        (longest, line) => line.length > longest ? line.length : longest);
+    final estimatedWidth = longestLine * fontSize * _averageGlyphWidth;
+    final fittedSize = estimatedWidth <= width
+        ? fontSize
+        : (fontSize * width / estimatedWidth).clamp(5.5, fontSize);
+    final spans = <String>[];
+    for (var index = 0; index < lines.length; index++) {
+      spans.add(
+          '<tspan x="${_svgNumber(x)}" y="${_svgNumber(y + index * lineHeight)}" font-size="${_svgNumber(fittedSize)}">${_xml(lines[index])}</tspan>');
+    }
+    return spans.join();
+  }
+
+  static String _normalize(String value) =>
+      value.replaceAll(RegExp(r'\s+'), ' ').trim();
+
+  static String _svgNumber(num value) => value.toStringAsFixed(2);
 
   static String _xml(String value) =>
       const HtmlEscape(HtmlEscapeMode.element).convert(value);
 
-  static String _money(double value) =>
-      NumberFormat.currency(locale: 'pt_BR', symbol: r'R$').format(value);
+  static String? _normalizeHex(String? value) {
+    if (value == null) return null;
+    final normalized = value.replaceAll('#', '').trim().toUpperCase();
+    return RegExp(r'^[0-9A-F]{6}$').hasMatch(normalized) ? normalized : null;
+  }
+
+  static String _darkenHex(String hex) {
+    final color = int.parse(hex, radix: 16);
+    final red = ((color >> 16) & 0xFF) * .72;
+    final green = ((color >> 8) & 0xFF) * .72;
+    final blue = (color & 0xFF) * .72;
+    final dark = (red.round() << 16) | (green.round() << 8) | blue.round();
+    return dark.toRadixString(16).padLeft(6, '0').toUpperCase();
+  }
+
+  static String _money(double value) {
+    final amount = NumberFormat.currency(locale: 'pt_BR', symbol: '')
+        .format(value)
+        .trim();
+    return 'R\$ $amount';
+  }
 }
 
 class _ReceiptData {

@@ -2,10 +2,12 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/barbearia_theme_service.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/premium_ui.dart';
 import 'bloquear_horario_screen.dart';
@@ -267,7 +269,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
       builder: (context) => _ConfirmationDialog(
         title: 'Aplicar modelo ${template.name}?',
         message:
-            'Isso substituirá os horários que você está editando. A alteração só será salva ao clicar em “Salvar alterações”.',
+            'Isso substituirá os horários que você está editando. A alteração só será salva ao clicar em “Salvar alteraçõesâ€.',
         confirmLabel: 'Aplicar modelo',
       ),
     );
@@ -439,15 +441,18 @@ class _HorariosScreenState extends State<HorariosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<BarbeariaThemeService>();
     return ColoredBox(
       color: PremiumColors.background,
       child: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
           final compact = constraints.maxWidth < 1100;
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-                compact ? 16 : 32, compact ? 20 : 27, compact ? 16 : 32, 32),
-            child: _loading ? _buildLoading(compact) : _buildContent(compact),
+            child: PremiumPageFrame(
+              topPadding: compact ? 20 : 27,
+              bottomPadding: 32,
+              child: _loading ? _buildLoading(compact) : _buildContent(compact),
+            ),
           );
         }),
       ),
@@ -457,17 +462,17 @@ class _HorariosScreenState extends State<HorariosScreen> {
   Widget _buildLoading(bool compact) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _buildHeader(compact, loading: true),
-        const SizedBox(height: 22),
+        SizedBox(height: 22),
         Container(height: 620, decoration: _panelDecoration())
       ]);
 
   Widget _buildContent(bool compact) =>
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _buildHeader(compact),
-        const SizedBox(height: 22),
-        if (_error != null) ...[_buildErrorState(), const SizedBox(height: 16)],
+        SizedBox(height: 22),
+        if (_error != null) ...[_buildErrorState(), SizedBox(height: 16)],
         if (_loadingSchedule)
-          const SizedBox(
+          SizedBox(
               height: 640,
               child: Center(
                   child: CircularProgressIndicator(color: PremiumColors.gold)))
@@ -481,24 +486,24 @@ class _HorariosScreenState extends State<HorariosScreen> {
           onPressed: loading
               ? null
               : () => _applySelectedTemplate(focusIfMissing: true),
-          icon: const Icon(Icons.file_copy_outlined, size: 17),
-          label: const Text('Aplicar modelo'),
+          icon: Icon(Icons.file_copy_outlined, size: 17),
+          label: Text('Aplicar modelo'),
           style: OutlinedButton.styleFrom(
               foregroundColor: const Color(0xFF75A9CF),
-              side: const BorderSide(color: Color(0xFF41677D)),
+              side: BorderSide(color: Color(0xFF41677D)),
               minimumSize: const Size(172, 51),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)))),
-      const SizedBox(width: 12),
+      SizedBox(width: 12),
       FilledButton.icon(
           onPressed: loading || !_dirty ? null : _saveSchedule,
           icon: _saving
-              ? const SizedBox(
+              ? SizedBox(
                   width: 17,
                   height: 17,
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: Colors.black))
-              : const Icon(Icons.save_outlined, size: 17),
+              : Icon(Icons.save_outlined, size: 17),
           label: Text(_saving ? 'Salvando...' : 'Salvar alterações'),
           style: FilledButton.styleFrom(
               backgroundColor: PremiumColors.gold,
@@ -512,27 +517,27 @@ class _HorariosScreenState extends State<HorariosScreen> {
     ]);
     final heading =
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('HORÁRIOS', style: _eyebrowStyle),
-      const SizedBox(height: 5),
+      Text('HORÃRIOS', style: _eyebrowStyle),
+      SizedBox(height: 5),
       Text('Horários de atendimento', style: _headingStyle(compact)),
-      const SizedBox(height: 7),
+      SizedBox(height: 7),
       Text(
           'Defina os horários de cada profissional e mantenha sua agenda organizada.',
           style: _subtitleStyle),
       if (_role == AppConstants.roleAdmin && _colaboradores.isNotEmpty) ...[
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         _professionalSelector()
       ]
     ]);
     if (compact)
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         heading,
-        const SizedBox(height: 18),
+        SizedBox(height: 18),
         SingleChildScrollView(scrollDirection: Axis.horizontal, child: actions)
       ]);
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child: heading),
-      const SizedBox(width: 20),
+      SizedBox(width: 20),
       actions
     ]);
   }
@@ -540,19 +545,19 @@ class _HorariosScreenState extends State<HorariosScreen> {
   Widget _professionalSelector() => Container(
       width: 285,
       height: 42,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 12),
       decoration: _panelDecoration(color: PremiumColors.surfaceSecondary),
       child: Row(children: [
-        const Icon(Icons.person_outline,
+        Icon(Icons.person_outline,
             color: PremiumColors.textMuted, size: 17),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Expanded(
             child: DropdownButtonHideUnderline(
                 child: DropdownButton<Map<String, dynamic>>(
                     value: _colaboradorSelecionado,
                     isExpanded: true,
                     dropdownColor: PremiumColors.surfaceSecondary,
-                    icon: const Icon(Icons.keyboard_arrow_down,
+                    icon: Icon(Icons.keyboard_arrow_down,
                         color: PremiumColors.textSecondary),
                     style: _bodyStyle(PremiumColors.textPrimary, 12),
                     items: _colaboradores
@@ -573,20 +578,20 @@ class _HorariosScreenState extends State<HorariosScreen> {
         if (constraints.maxWidth < 1180)
           return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [planner, const SizedBox(height: 18), sidebar]);
+              children: [planner, SizedBox(height: 18), sidebar]);
         return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child: planner),
-          const SizedBox(width: 20),
+          SizedBox(width: 20),
           SizedBox(width: 374, child: sidebar)
         ]);
       });
 
   Widget _buildPlanner() => Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: _panelDecoration(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _buildPlannerHeader(),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         LayoutBuilder(builder: (context, constraints) {
           final plannerWidth = math.max(1110.0, constraints.maxWidth);
           return SingleChildScrollView(
@@ -606,19 +611,19 @@ class _HorariosScreenState extends State<HorariosScreen> {
             decoration: BoxDecoration(
                 color: const Color(0xFF3B6073).withValues(alpha: .25),
                 borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.calendar_month_outlined,
+            child: Icon(Icons.calendar_month_outlined,
                 color: Color(0xFF79B3D7), size: 22)),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Planejador semanal', style: _sectionTitleStyle),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
               'Clique nos blocos para editar os horários. Arraste para ajustar ou adicione novos períodos.',
               style: _bodyStyle(PremiumColors.textSecondary, 12))
         ])),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Wrap(spacing: 18, runSpacing: 8, children: [
           _legend('Período da manhã', const Color(0xFF61B679)),
           _legend('Período da tarde', const Color(0xFF5D9DD1)),
@@ -631,7 +636,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
             width: 12,
             height: 12,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        const SizedBox(width: 6),
+        SizedBox(width: 6),
         Text(label, style: _bodyStyle(PremiumColors.textSecondary, 11))
       ]);
 
@@ -648,7 +653,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
         children: [
           Row(
             children: [
-              const SizedBox(width: timeRailWidth, height: 95),
+              SizedBox(width: timeRailWidth, height: 95),
               ..._dayOrder.map(
                 (day) => SizedBox(width: dayWidth, child: _buildDayHeader(day)),
               ),
@@ -673,7 +678,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
     final day = _schedule.day(weekday);
     return Container(
         height: 95,
-        padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+        padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
         decoration: BoxDecoration(
             border: Border(
                 left: BorderSide(color: PremiumColors.border),
@@ -682,7 +687,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
           Text(_dayLabels[weekday]!,
               style: _bodyStyle(PremiumColors.textPrimary, 13,
                   weight: FontWeight.w700)),
-          const SizedBox(height: 3),
+          SizedBox(height: 3),
           Text(day.enabled ? 'Ativo' : 'Inativo',
               style: _bodyStyle(
                   day.enabled
@@ -690,7 +695,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                       : PremiumColors.textMuted,
                   11,
                   weight: FontWeight.w600)),
-          const Spacer(),
+          Spacer(),
           OutlinedButton.icon(
               onPressed: day.enabled
                   ? () => _openRangeEditor(weekday)
@@ -707,7 +712,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                           ? const Color(0xFF35566D)
                           : PremiumColors.border),
                   minimumSize: const Size(0, 29),
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
+                  padding: EdgeInsets.symmetric(horizontal: 7),
                   textStyle: _bodyStyle(
                       day.enabled
                           ? const Color(0xFF79B3D7)
@@ -758,20 +763,20 @@ class _HorariosScreenState extends State<HorariosScreen> {
 
   Widget _buildInactiveDay(int weekday) => Center(
       child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.nightlight_outlined,
+            Icon(Icons.nightlight_outlined,
                 color: PremiumColors.textMuted, size: 28),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Text('Dia indisponível',
                 textAlign: TextAlign.center,
                 style: _bodyStyle(PremiumColors.textSecondary, 13,
                     weight: FontWeight.w700)),
-            const SizedBox(height: 5),
+            SizedBox(height: 5),
             Text('Ative para definir\nhorários de\natendimento.',
                 textAlign: TextAlign.center,
                 style: _bodyStyle(PremiumColors.textMuted, 11, height: 1.35)),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             OutlinedButton(
                 onPressed: () => _toggleDay(_schedule.day(weekday)),
                 child: Text('Ativar dia',
@@ -815,7 +820,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                           child: Container(
                               height: 10, color: Colors.transparent))),
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(9, 8, 4, 5),
+                      padding: EdgeInsets.fromLTRB(9, 8, 4, 5),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -826,7 +831,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                       : Icons.nightlight_outlined,
                                   color: color,
                                   size: 16),
-                              const SizedBox(width: 5),
+                              SizedBox(width: 5),
                               Expanded(
                                   child: Text('${range.start} - ${range.end}',
                                       overflow: TextOverflow.ellipsis,
@@ -838,7 +843,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                   height: 20,
                                   child: PopupMenuButton<String>(
                                       padding: EdgeInsets.zero,
-                                      icon: const Icon(Icons.more_horiz,
+                                      icon: Icon(Icons.more_horiz,
                                           color: PremiumColors.textPrimary,
                                           size: 17),
                                       color: PremiumColors.surfaceSecondary,
@@ -859,7 +864,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                                           ]))
                             ]),
                             if (height > 50) ...[
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(isMorning ? 'Manhã' : 'Tarde',
                                   style: _bodyStyle(
                                       PremiumColors.textSecondary, 10))
@@ -886,15 +891,15 @@ class _HorariosScreenState extends State<HorariosScreen> {
         right: 7,
         height: height - 6,
         child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
             decoration: BoxDecoration(
                 color: const Color(0xFF292A2A).withValues(alpha: .9),
                 border: Border.all(color: const Color(0xFF777A7C)),
                 borderRadius: BorderRadius.circular(7)),
             child: Row(children: [
-              const Icon(Icons.coffee_outlined,
+              Icon(Icons.coffee_outlined,
                   color: PremiumColors.textSecondary, size: 15),
-              const SizedBox(width: 5),
+              SizedBox(width: 5),
               Expanded(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -913,15 +918,15 @@ class _HorariosScreenState extends State<HorariosScreen> {
   Widget _buildSidebar() =>
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _buildBreakToggle(),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         _buildSummaryCard(),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         _buildQuickActions(),
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
         _buildTemplates()
       ]);
   Widget _buildBreakToggle() => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: _panelDecoration(),
       child: Row(children: [
         Container(
@@ -931,14 +936,14 @@ class _HorariosScreenState extends State<HorariosScreen> {
             decoration: BoxDecoration(
                 color: const Color(0xFF365D6B).withValues(alpha: .28),
                 borderRadius: BorderRadius.circular(9)),
-            child: const Icon(Icons.water_drop_outlined,
+            child: Icon(Icons.water_drop_outlined,
                 color: Color(0xFF8FC4D8), size: 21)),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Exibir pausas', style: _sectionTitleStyle),
-          const SizedBox(height: 3),
+          SizedBox(height: 3),
           Text('Mostra os intervalos na agenda',
               style: _bodyStyle(PremiumColors.textSecondary, 11))
         ])),
@@ -973,7 +978,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
 
   Widget _statRow(IconData icon, String label, String value) => Row(children: [
         Icon(icon, color: const Color(0xFF73B2D8), size: 19),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
             child: Text(label,
                 style: _bodyStyle(PremiumColors.textSecondary, 12))),
@@ -982,7 +987,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 weight: FontWeight.w700))
       ]);
   Widget _divider() => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: EdgeInsets.symmetric(vertical: 14),
       child: Divider(
           color: PremiumColors.border.withValues(alpha: .8), height: 1));
   Widget _buildQuickActions() => _sidebarCard(
@@ -995,13 +1000,13 @@ class _HorariosScreenState extends State<HorariosScreen> {
             'Aplicar a todos os dias úteis',
             'Replica os horários de segunda a sexta',
             () => _openCopyDialog(weekdaysOnly: true)),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         _quickAction(Icons.calendar_month_outlined, 'Copiar de um dia',
             'Escolha um dia e aplique em outros', () => _openCopyDialog()),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         _quickAction(Icons.event_busy_outlined, 'Inativar dia',
             'Selecione um dia sem atendimento', _openDisableDayDialog),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         _quickAction(Icons.block_outlined, 'Bloquear horário',
             'Reserve um período sem novos agendamentos', _openBlockDialog)
       ]));
@@ -1020,7 +1025,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
       barrierDismissible: true,
       builder: (_) => Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        insetPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: 520,
@@ -1041,7 +1046,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(9),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
           color: PremiumColors.surfaceSecondary.withValues(alpha: .6),
           border: Border.all(color: const Color(0xFF37576C)),
@@ -1050,7 +1055,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
         child: Row(
           children: [
             Icon(icon, color: const Color(0xFF76AFD2), size: 21),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1058,13 +1063,13 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   Text(title,
                       style: _bodyStyle(PremiumColors.textPrimary, 12,
                           weight: FontWeight.w700)),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Text(subtitle,
                       style: _bodyStyle(PremiumColors.textSecondary, 10)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Color(0xFF77A9C7), size: 20),
+            Icon(Icons.chevron_right, color: Color(0xFF77A9C7), size: 20),
           ],
         ),
       ),
@@ -1073,7 +1078,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
 
   Widget _buildTemplates() => Container(
       key: _templatesKey,
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: _panelDecoration(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -1084,20 +1089,20 @@ class _HorariosScreenState extends State<HorariosScreen> {
               decoration: BoxDecoration(
                   color: const Color(0xFF35566A).withValues(alpha: .28),
                   borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.business_center_outlined,
+              child: Icon(Icons.business_center_outlined,
                   color: Color(0xFF75AFD1), size: 18)),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Text('Modelos de agenda', style: _sectionTitleStyle),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text('Aplique um modelo padrão para configurar os horários.',
                     style: _bodyStyle(PremiumColors.textSecondary, 10))
               ]))
         ]),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         ..._templates.map(_templateCard)
       ]));
   Widget _templateCard(ScheduleTemplate template) {
@@ -1106,8 +1111,8 @@ class _HorariosScreenState extends State<HorariosScreen> {
         onTap: () => setState(() => _selectedTemplateId = template.id),
         borderRadius: BorderRadius.circular(9),
         child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            margin: EdgeInsets.only(bottom: 8),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(
                 color: selected
                     ? const Color(0xFF1B2932)
@@ -1134,7 +1139,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                               : Icons.schedule_outlined,
                       color: const Color(0xFF7BB2D2),
                       size: 19)),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1142,7 +1147,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                     Text(template.name,
                         style: _bodyStyle(PremiumColors.textPrimary, 12,
                             weight: FontWeight.w700)),
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(template.description,
                         maxLines: 2,
                         style: _bodyStyle(PremiumColors.textSecondary, 10,
@@ -1165,32 +1170,32 @@ class _HorariosScreenState extends State<HorariosScreen> {
           required String subtitle,
           required Widget child}) =>
       Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           decoration: _panelDecoration(),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Icon(icon, color: PremiumColors.gold, size: 23),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     Text(title, style: _sectionTitleStyle),
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(subtitle,
                         style: _bodyStyle(PremiumColors.textSecondary, 10))
                   ]))
             ]),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             child
           ]));
   Widget _buildErrorState() => Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: _panelDecoration(),
       child: Row(children: [
-        const Icon(Icons.error_outline, color: PremiumColors.error, size: 24),
-        const SizedBox(width: 12),
+        Icon(Icons.error_outline, color: PremiumColors.error, size: 24),
+        SizedBox(width: 12),
         Expanded(
             child: Text(_error ?? 'Não foi possível carregar os horários.',
                 style: _bodyStyle(PremiumColors.textPrimary, 13))),
@@ -1198,7 +1203,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
             onPressed: _colaboradorId == null
                 ? null
                 : () => _carregarHorarios(_colaboradorId!),
-            child: const Text('Tentar novamente'))
+            child: Text('Tentar novamente'))
       ]));
 
   BoxDecoration _panelDecoration({Color? color}) => BoxDecoration(
@@ -1273,18 +1278,18 @@ class _RangeDialogState extends State<_RangeDialog> {
                   Expanded(
                       child: _timeField('Início', _start,
                           (value) => setState(() => _start = value!))),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                       child: _timeField('Fim', _end,
                           (value) => setState(() => _end = value!)))
                 ]),
                 if (_error != null)
                   Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(_error!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   color: PremiumColors.error, fontSize: 12))))
               ])),
           actions: [
@@ -1292,11 +1297,11 @@ class _RangeDialogState extends State<_RangeDialog> {
               TextButton(
                   onPressed: () => Navigator.pop(
                       context, const _RangeDialogResult(deleted: true)),
-                  child: const Text('Excluir',
+                  child: Text('Excluir',
                       style: TextStyle(color: PremiumColors.error))),
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar')),
+                child: Text('Cancelar')),
             FilledButton(
                 onPressed: () {
                   final range =
@@ -1309,7 +1314,7 @@ class _RangeDialogState extends State<_RangeDialog> {
                   Navigator.pop(
                       context, _RangeDialogResult(start: _start, end: _end));
                 },
-                child: const Text('Salvar'))
+                child: Text('Salvar'))
           ]);
 
   Widget _timeField(
@@ -1317,18 +1322,18 @@ class _RangeDialogState extends State<_RangeDialog> {
       DropdownButtonFormField<String>(
           value: value,
           dropdownColor: PremiumColors.surfaceSecondary,
-          style: const TextStyle(color: PremiumColors.textPrimary),
+          style: TextStyle(color: PremiumColors.textPrimary),
           decoration: InputDecoration(
               labelText: label,
-              labelStyle: const TextStyle(color: PremiumColors.textSecondary),
+              labelStyle: TextStyle(color: PremiumColors.textSecondary),
               filled: true,
               fillColor: PremiumColors.surface,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: PremiumColors.border)),
+                  borderSide: BorderSide(color: PremiumColors.border)),
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: PremiumColors.border))),
+                  borderSide: BorderSide(color: PremiumColors.border))),
           items: _options
               .map((option) =>
                   DropdownMenuItem(value: option, child: Text(option)))
@@ -1384,16 +1389,16 @@ class _CopyDialogState extends State<_CopyDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Dia de origem',
+            Text('Dia de origem',
                 style: TextStyle(
                     color: PremiumColors.textSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600)),
-            const SizedBox(height: 5),
+            SizedBox(height: 5),
             DropdownButtonFormField<int>(
               value: _source,
               dropdownColor: PremiumColors.surfaceSecondary,
-              style: const TextStyle(color: PremiumColors.textPrimary),
+              style: TextStyle(color: PremiumColors.textPrimary),
               decoration: _inputDecoration(),
               items: labels.entries
                   .where((entry) =>
@@ -1413,13 +1418,13 @@ class _CopyDialogState extends State<_CopyDialog> {
                 });
               },
             ),
-            const SizedBox(height: 16),
-            const Text('Aplicar em',
+            SizedBox(height: 16),
+            Text('Aplicar em',
                 style: TextStyle(
                     color: PremiumColors.textSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             ...availableTargets.map((day) => CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
                   dense: true,
@@ -1427,7 +1432,7 @@ class _CopyDialogState extends State<_CopyDialog> {
                   activeColor: PremiumColors.gold,
                   checkColor: Colors.black,
                   title: Text(labels[day]!,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PremiumColors.textPrimary, fontSize: 13)),
                   onChanged: (selected) => setState(() {
                     if (selected == true) {
@@ -1443,13 +1448,13 @@ class _CopyDialogState extends State<_CopyDialog> {
       actions: [
         TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar')),
+            child: Text('Cancelar')),
         FilledButton(
             onPressed: _targets.isEmpty
                 ? null
                 : () => Navigator.pop(context,
                     _CopyDialogResult(source: _source, targets: _targets)),
-            child: const Text('Aplicar')),
+            child: Text('Aplicar')),
       ],
     );
   }
@@ -1459,10 +1464,10 @@ class _CopyDialogState extends State<_CopyDialog> {
       fillColor: PremiumColors.surface,
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: PremiumColors.border)),
+          borderSide: BorderSide(color: PremiumColors.border)),
       enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: PremiumColors.border)));
+          borderSide: BorderSide(color: PremiumColors.border)));
 }
 
 class _ConfirmationDialog extends StatelessWidget {
@@ -1490,7 +1495,7 @@ class _ConfirmationDialog extends StatelessWidget {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar')),
+                child: Text('Cancelar')),
             FilledButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(confirmLabel))
@@ -1543,24 +1548,24 @@ class _DaySelectionDialogState extends State<_DaySelectionDialog> {
                     fontSize: 13,
                     height: 1.45),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               DropdownButtonFormField<int>(
                 value: _selectedDay,
                 dropdownColor: PremiumColors.surfaceSecondary,
-                style: const TextStyle(color: PremiumColors.textPrimary),
+                style: TextStyle(color: PremiumColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Dia',
                   labelStyle:
-                      const TextStyle(color: PremiumColors.textSecondary),
+                      TextStyle(color: PremiumColors.textSecondary),
                   filled: true,
                   fillColor: PremiumColors.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: PremiumColors.border),
+                    borderSide: BorderSide(color: PremiumColors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: PremiumColors.border),
+                    borderSide: BorderSide(color: PremiumColors.border),
                   ),
                 ),
                 items: widget.days
@@ -1579,7 +1584,7 @@ class _DaySelectionDialogState extends State<_DaySelectionDialog> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar')),
+              child: Text('Cancelar')),
           FilledButton(
               onPressed: () => Navigator.pop(context, _selectedDay),
               child: Text(widget.confirmLabel)),

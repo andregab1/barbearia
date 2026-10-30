@@ -50,6 +50,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
 // ==========================================
 // ROTAS: Autenticação gerenciada por rota
 // ==========================================
+// * Mapa de entrada da API: cada prefixo aponta para um router especializado.
+// * O dominio financeiro permanece concentrado em /api/finance, enquanto
+// * fiscal/accounting tratam seus subdominios com capabilities proprias.
 app.use('/api/auth',          rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }), authRoutes);
 app.use('/api/usuarios',      usuariosRoutes);
 app.use('/api/barbearias',    barbeariasRoutes);
@@ -73,6 +76,9 @@ const webBuild = path.join(__dirname, 'app', 'build', 'web');
 app.use(express.static(webBuild));
 
 app.get('/', (req, res) => res.sendFile(path.join(webBuild, 'index.html')));
+app.get(/^\/(?!api(?:\/|$)|uploads(?:\/|$)|health$).*/, (req, res) =>
+  res.sendFile(path.join(webBuild, 'index.html'))
+);
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use((req, res) => res.status(404).json({ code: 'NOT_FOUND', erro: 'Rota não encontrada.' }));

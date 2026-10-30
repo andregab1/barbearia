@@ -2,22 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/barbearia_theme_service.dart';
+import '../../../shared/widgets/premium_ui.dart';
+import '../../../shared/widgets/logo_widget.dart';
 import '../controllers/agendamento_controller.dart';
 
 class _BookingColors {
-  static const background = Color(0xFF120C0C);
-  static const surface = Color(0xFF1A1413);
-  static const surfaceSecondary = Color(0xFF211A18);
-  static const card = Color(0xFF211C1A);
-  static const cardHover = Color(0xFF29211E);
-  static const gold = Color(0xFFD39400);
-  static const textPrimary = Color(0xFFF4EFEB);
-  static const textSecondary = Color(0xFFAAA29E);
-  static const textMuted = Color(0xFF77716D);
-  static const border = Color(0x14FFFFFF);
-  static const borderGold = Color(0x73C28200);
+  static Color get background => AppTheme.black;
+  static Color get surface => AppTheme.surface;
+  static Color get surfaceSecondary => AppTheme.surfaceElev;
+  static Color get card => AppTheme.corCard;
+  static Color get cardHover =>
+      AppTheme.modoClaro ? AppTheme.surfaceLight : const Color(0xFF29211E);
+  static Color get gold => AppTheme.gold;
+  static Color get textPrimary => AppTheme.corTexto;
+  static Color get textSecondary => AppTheme.corTextoSecundario;
+  static Color get textMuted => AppTheme.modoClaro
+      ? AppTheme.mutedLight
+      : const Color(0xFF77716D);
+  static Color get border => AppTheme.corBorda;
+  static Color get borderGold => AppTheme.gold.withValues(alpha: .45);
+}
+
+String? publicBarbeariaSlug(Map<String, dynamic> barbearia) {
+  final slug = barbearia['slug']?.toString().trim();
+  if (slug != null && slug.isNotEmpty) return slug;
+
+  final id = int.tryParse(barbearia['id']?.toString() ?? '');
+  return id != null && id > 0 ? 'barbearia-$id' : null;
 }
 
 class AgendarScreen extends StatefulWidget {
@@ -58,19 +73,44 @@ class _AgendarScreenState extends State<AgendarScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.servico != null) {
-      _servicosSel = [widget.servico!];
+    _aplicarIntencao(
+      servico: widget.servico,
+      colaborador: widget.colaborador,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final ctrl = context.read<AgendamentoController>();
+      await ctrl.carregarBarbearias();
+      if (!mounted || widget.servico != null || widget.colaborador != null) {
+        return;
+      }
+      final pendente = await ctrl.consumirIntencaoAgendamento();
+      if (pendente == null) return;
+      final servico = pendente['servico'];
+      final colaborador = pendente['colaborador'];
+      setState(() {
+        _aplicarIntencao(
+          servico: servico is Map ? Map<String, dynamic>.from(servico) : null,
+          colaborador: colaborador is Map
+              ? Map<String, dynamic>.from(colaborador)
+              : null,
+        );
+      });
+    });
+  }
+
+  void _aplicarIntencao({
+    Map<String, dynamic>? servico,
+    Map<String, dynamic>? colaborador,
+  }) {
+    if (servico != null) {
+      _servicosSel = [servico];
       _etapaAtual = 1;
     }
-    if (widget.colaborador != null) {
-      _colaboradorSel = widget.colaborador;
+    if (colaborador != null) {
+      _colaboradorSel = colaborador;
       _etapaAtual = _servicosSel.isEmpty ? 1 : 3;
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctrl = context.read<AgendamentoController>();
-      ctrl.carregarBarbearias();
-    });
   }
 
   String _formatarPreco(dynamic preco) {
@@ -161,12 +201,13 @@ class _AgendarScreenState extends State<AgendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<BarbeariaThemeService>();
     final ctrl = context.watch<AgendamentoController>();
 
     if (ctrl.barbeariaSelecionada == null) {
       return ColoredBox(
         color: _BookingColors.background,
-        child: _BarbershopPicker(
+        child: BarbeariasPicker(
           controller: ctrl,
           onSelected: ctrl.selecionarBarbearia,
         ),
@@ -178,7 +219,6 @@ class _AgendarScreenState extends State<AgendarScreen> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final desktop = constraints.maxWidth >= 768;
-          final horizontalPadding = constraints.maxWidth >= 1200 ? 32.0 : 20.0;
           final summaryWidth = constraints.maxWidth >= 1200 ? 360.0 : 320.0;
 
           Future<void> changeBarbershop() async {
@@ -248,26 +288,19 @@ class _AgendarScreenState extends State<AgendarScreen> {
                 );
 
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              desktop ? horizontalPadding : 16,
-              20,
-              desktop ? horizontalPadding : 16,
-              32,
-            ),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1280),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _SelectedBarbershop(
-                      barbershop: ctrl.barbeariaSelecionada!,
-                      onChange: changeBarbershop,
-                    ),
-                    const SizedBox(height: 14),
-                    panels,
-                  ],
-                ),
+            child: PremiumPageFrame(
+              topPadding: 20,
+              bottomPadding: 32,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _SelectedBarbershop(
+                    barbershop: ctrl.barbeariaSelecionada!,
+                    onChange: changeBarbershop,
+                  ),
+                  const SizedBox(height: 14),
+                  panels,
+                ],
               ),
             ),
           );
@@ -276,16 +309,17 @@ class _AgendarScreenState extends State<AgendarScreen> {
     );
   }
 }
-class _BarbershopPicker extends StatefulWidget {
+
+class BarbeariasPicker extends StatefulWidget {
   final AgendamentoController controller;
   final ValueChanged<Map<String, dynamic>> onSelected;
-  const _BarbershopPicker({required this.controller, required this.onSelected});
+  const BarbeariasPicker({required this.controller, required this.onSelected});
 
   @override
-  State<_BarbershopPicker> createState() => _BarbershopPickerState();
+  State<BarbeariasPicker> createState() => _BarbershopPickerState();
 }
 
-class _BarbershopPickerState extends State<_BarbershopPicker> {
+class _BarbershopPickerState extends State<BarbeariasPicker> {
   final _searchController = TextEditingController();
 
   @override
@@ -294,27 +328,127 @@ class _BarbershopPickerState extends State<_BarbershopPicker> {
     super.dispose();
   }
 
+  Future<void> _abrirPerfil(Map<String, dynamic> barbershop) async {
+    final slug = publicBarbeariaSlug(barbershop);
+    if (slug != null && slug.isNotEmpty) {
+      await context.push('/barbearia/${Uri.encodeComponent(slug)}');
+      return;
+    }
+
+    final name = (barbershop['nome'] ?? 'Barbearia').toString();
+    final phone = barbershop['telefone']?.toString();
+    final email = barbershop['email']?.toString();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(22, 12, 22, 22),
+          decoration: BoxDecoration(
+            color: _BookingColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 42,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: _BookingColors.border,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LogoWidget(
+                    logoUrl: barbershop['logo_url']?.toString(),
+                    size: 72,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name,
+                            style: GoogleFonts.inter(
+                                color: _BookingColors.textPrimary,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 6),
+                        Text('Perfil da barbearia',
+                            style: GoogleFonts.inter(
+                                color: _BookingColors.gold,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '${barbershop['total_servicos'] ?? 0} servicos  -  ${barbershop['total_profissionais'] ?? 0} profissionais',
+                style: GoogleFonts.inter(
+                    color: _BookingColors.textSecondary, fontSize: 13),
+              ),
+              if (phone != null && phone.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(phone,
+                    style: GoogleFonts.inter(
+                        color: _BookingColors.textMuted, fontSize: 12)),
+              ],
+              if (email != null && email.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(email,
+                    style: GoogleFonts.inter(
+                        color: _BookingColors.textMuted, fontSize: 12)),
+              ],
+              const SizedBox(height: 22),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(sheetContext);
+                    widget.onSelected(barbershop);
+                  },
+                  icon: const Icon(Icons.calendar_month_rounded),
+                  label: const Text('Agendar nesta barbearia'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _BookingColors.gold,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 40, 20, 48),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1040),
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: widget.controller,
+        builder: (context, _) => SingleChildScrollView(
+          child: PremiumPageFrame(
+            topPadding: 28,
+            bottomPadding: 48,
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Escolha onde deseja agendar',
-                  style: GoogleFonts.inter(
-                      color: _BookingColors.textPrimary,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -.8)),
-              const SizedBox(height: 9),
-              Text(
-                  'Selecione uma barbearia para ver serviços, profissionais e horários disponíveis.',
-                  style: GoogleFonts.inter(
-                      color: _BookingColors.textSecondary,
-                      fontSize: 14,
-                      height: 1.5)),
+              const PremiumPageHeader(
+                title: 'Escolha onde deseja agendar',
+                subtitle:
+                    'Selecione uma barbearia para ver serviços, profissionais e horários disponíveis.',
+              ),
               const SizedBox(height: 24),
               TextField(
                 controller: _searchController,
@@ -345,7 +479,7 @@ class _BarbershopPickerState extends State<_BarbershopPicker> {
                       color: _BookingColors.surface,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: _BookingColors.border)),
-                  child: const Column(children: [
+                  child: Column(children: [
                     Icon(Icons.storefront_outlined,
                         color: _BookingColors.textMuted, size: 34),
                     SizedBox(height: 10),
@@ -371,7 +505,7 @@ class _BarbershopPickerState extends State<_BarbershopPicker> {
                               width: cardWidth,
                               child: _BarbershopCard(
                                   barbershop: barbershop,
-                                  onTap: () => widget.onSelected(barbershop)),
+                                  onTap: () => _abrirPerfil(barbershop)),
                             ))
                         .toList(),
                   );
@@ -404,18 +538,9 @@ class _BarbershopCard extends StatelessWidget {
               border: Border.all(color: _BookingColors.border)),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              width: 46,
-              height: 46,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: _BookingColors.gold.withValues(alpha: .12),
-                  borderRadius: BorderRadius.circular(12)),
-              child: Text(name.substring(0, 1).toUpperCase(),
-                  style: GoogleFonts.inter(
-                      color: _BookingColors.gold,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w700)),
+            LogoWidget(
+              logoUrl: barbershop['logo_url']?.toString(),
+              size: 46,
             ),
             const SizedBox(height: 17),
             Text(name,
@@ -432,12 +557,12 @@ class _BarbershopCard extends StatelessWidget {
                     color: _BookingColors.textMuted, fontSize: 11)),
             const SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Ver agenda',
+              Text('Ver perfil',
                   style: GoogleFonts.inter(
                       color: _BookingColors.gold,
                       fontSize: 12,
                       fontWeight: FontWeight.w600)),
-              const Icon(Icons.arrow_forward_rounded,
+              Icon(Icons.arrow_forward_rounded,
                   color: _BookingColors.gold, size: 18),
             ]),
           ]),
@@ -458,8 +583,7 @@ class _SelectedBarbershop extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
         color: _BookingColors.surface,
         child: Row(children: [
-          const Icon(Icons.storefront_outlined,
-              size: 17, color: _BookingColors.gold),
+          LogoWidget(logoUrl: barbershop['logo_url']?.toString(), size: 28),
           const SizedBox(width: 9),
           Expanded(
               child: Text(barbershop['nome'] ?? 'Barbearia selecionada',
@@ -636,7 +760,7 @@ class _CompactSteps extends StatelessWidget {
                           ),
                         ),
                         child: complete
-                            ? const Icon(
+                            ? Icon(
                                 Icons.check_rounded,
                                 size: 16,
                                 color: _BookingColors.background,
@@ -844,13 +968,13 @@ class _ServiceTile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.content_cut_rounded,
                     color: _BookingColors.gold,
                     size: 19,
                   ),
                   if (selected)
-                    const Icon(
+                    Icon(
                       Icons.check_circle_rounded,
                       color: _BookingColors.gold,
                       size: 19,
@@ -1026,7 +1150,7 @@ class _ProfessionalTile extends StatelessWidget {
                 ),
               ),
               if (selected)
-                const Icon(
+                Icon(
                   Icons.check_circle_rounded,
                   color: _BookingColors.gold,
                   size: 20,
@@ -1294,7 +1418,7 @@ class _CalendarArrow extends StatelessWidget {
         disabledColor: _BookingColors.textMuted.withValues(alpha: .4),
         hoverColor: _BookingColors.gold.withValues(alpha: .1),
         style: IconButton.styleFrom(
-          backgroundColor: const Color(0x0AFFFFFF),
+          backgroundColor: _BookingColors.surfaceSecondary,
           minimumSize: const Size.square(40),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -1475,7 +1599,7 @@ class _BookingSummary extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.content_cut_rounded,
                         color: _BookingColors.gold,
                         size: 17,
@@ -1660,7 +1784,7 @@ class _BookingSummary extends StatelessWidget {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox.square(
+                          SizedBox.square(
                             dimension: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
@@ -1770,8 +1894,8 @@ class _SummaryDivider extends StatelessWidget {
   const _SummaryDivider();
 
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 18),
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
         child: Divider(height: 1, color: _BookingColors.border),
       );
 }
@@ -1784,7 +1908,7 @@ class _LoadingState extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
         label: label,
         liveRegion: true,
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.all(32),
           child: Center(
             child: CircularProgressIndicator(

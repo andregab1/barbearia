@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const commissionService = require('./commission.service');
 
 async function confirmPastPendingAppointments() {
   const connection = await pool.getConnection();
@@ -29,12 +30,41 @@ async function confirmPastPendingAppointments() {
   } finally { connection.release(); }
 }
 
+async function reconcilePendingCommissions() {
+  const [rows] = await pool.query(
+    `SELECT DISTINCT barbearia_id tenant_id, agendamento_id appointment_id
+       FROM commission_entitlements
+      WHERE status = 'pending_rule'`,
+  );
+  for (const row of rows) {
+    const connection = await pool.getConnection();
+    try {
+      await connection.beginTransaction();
+      await commissionService.reconcileAppointment(connection, {
+        tenantId: row.tenant_id,
+        appointmentId: row.appointment_id,
+        actorId: null,
+      });
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback().catch(() => {});
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+  return rows.length;
+}
+
 function startAppointmentAutomation({ intervalMs = 5 * 60 * 1000 } = {}) {
-  const run = () => confirmPastPendingAppointments().catch((error) => console.error('Falha ao confirmar agendamentos vencidos:', error.message));
+  const run = () => Promise.all([
+    confirmPastPendingAppointments(),
+    reconcilePendingCommissions(),
+  ]).catch((error) => console.error('Falha na automacao de agendamentos/comissoes:', error.message));
   run();
   const timer = setInterval(run, intervalMs);
   timer.unref();
   return timer;
 }
 
-module.exports = { confirmPastPendingAppointments, startAppointmentAutomation };
+module.exports = { confirmPastPendingAppointments, reconcilePendingCommissions, startAppointmentAutomation };

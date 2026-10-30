@@ -12,6 +12,7 @@ import '../../core/services/api_service.dart';
 import '../../core/services/barbearia_theme_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/auth/controllers/auth_controller.dart';
+import 'getcutt_calendar.dart';
 import 'premium_ui.dart';
 import 'app_toast.dart';
 
@@ -146,10 +147,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
             color == AppTheme.erro ? AppToastType.error : AppToastType.success);
   }
 
-  Future<void> _selecionarNascimento() async {
+  Future<void> _selecionarNascimento(BuildContext anchorContext) async {
     final agora = DateTime.now();
-    final data = await showDatePicker(
-      context: context,
+    final data = await showGetCuttDatePickerPopover(
+      context: anchorContext,
       initialDate: _dataNascimento ?? DateTime(1995),
       firstDate: DateTime(1920),
       lastDate: DateTime(agora.year - 13, agora.month, agora.day),
@@ -174,10 +175,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
     context.watch<BarbeariaThemeService>();
     return PremiumPage(
       title: 'Meu perfil',
-      subtitle: 'Gerencie seus dados pessoais e a seguranÃ§a da conta.',
-      headingFontSize: 27,
-      horizontalPadding: 40,
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
+      subtitle: 'Gerencie seus dados pessoais e a segurança da conta.',
+      headingFontSize: 28,
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 32),
       child: _carregando
           ? const PremiumLoadingState(label: 'Carregando perfil')
           : SingleChildScrollView(
@@ -211,13 +211,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 );
                 if (!desktop) {
                   return Column(
-                      children: [identity, const SizedBox(height: 14), form]);
+                      children: [identity, SizedBox(height: 14), form]);
                 }
                 return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(width: 300, child: identity),
-                      const SizedBox(width: 18),
+                      SizedBox(width: 18),
                       Expanded(child: form),
                     ]);
               }),
@@ -284,7 +284,7 @@ class _ProfileIdentity extends StatelessWidget {
                           )
                         : null,
                   ),
-                  const Positioned(
+                  Positioned(
                     right: 0,
                     bottom: 0,
                     child: CircleAvatar(
@@ -300,7 +300,7 @@ class _ProfileIdentity extends StatelessWidget {
                 ]),
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             Text(
               name,
               textAlign: TextAlign.center,
@@ -310,7 +310,7 @@ class _ProfileIdentity extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             PremiumStatusBadge(
               label: role == 'admin'
                   ? 'Administrador'
@@ -319,16 +319,16 @@ class _ProfileIdentity extends StatelessWidget {
                       : 'Cliente',
               color: PremiumColors.gold,
             ),
-            const SizedBox(height: 18),
-            const Divider(),
-            const SizedBox(height: 12),
+            SizedBox(height: 18),
+            Divider(),
+            SizedBox(height: 12),
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Sobre você',
                   style: GoogleFonts.inter(
                       color: PremiumColors.textSecondary, fontSize: 11)),
             ),
-            const SizedBox(height: 7),
+            SizedBox(height: 7),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -342,13 +342,13 @@ class _ProfileIdentity extends StatelessWidget {
               ),
             ),
             if (memberSince != null) ...[
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 12),
+              SizedBox(height: 16),
+              Divider(),
+              SizedBox(height: 12),
               Row(children: [
-                const Icon(Icons.calendar_today_outlined,
+                Icon(Icons.calendar_today_outlined,
                     color: PremiumColors.gold, size: 17),
-                const SizedBox(width: 9),
+                SizedBox(width: 9),
                 Expanded(
                   child: Text(
                     'Membro desde ${memberSince!.month.toString().padLeft(2, '0')}/${memberSince!.year}',
@@ -358,27 +358,27 @@ class _ProfileIdentity extends StatelessWidget {
                 ),
               ]),
             ],
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _AccountInfoRow(
               icon: Icons.circle,
               label: 'Status',
               value: 'Online',
               color: PremiumColors.success,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _AccountInfoRow(
               icon: Icons.verified_outlined,
               label: 'Conta',
               value: 'Ativa',
               color: PremiumColors.gold,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: TextButton.icon(
                 onPressed: onLogout,
-                icon: const Icon(Icons.logout_rounded, size: 17),
-                label: const Text('Sair da conta'),
+                icon: Icon(Icons.logout_rounded, size: 17),
+                label: Text('Sair da conta'),
                 style: TextButton.styleFrom(
                   foregroundColor: PremiumColors.error,
                   minimumSize: const Size.fromHeight(44),
@@ -406,7 +406,7 @@ class _AccountInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: PremiumColors.surfaceSecondary,
           borderRadius: BorderRadius.circular(8),
@@ -414,7 +414,7 @@ class _AccountInfoRow extends StatelessWidget {
         ),
         child: Row(children: [
           Icon(icon, color: color, size: 13),
-          const SizedBox(width: 9),
+          SizedBox(width: 9),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,7 +444,7 @@ class _ProfileForm extends StatelessWidget {
   final bool changePassword;
   final bool saving;
   final ValueChanged<bool> onChangePassword;
-  final VoidCallback onBirthDatePressed;
+  final ValueChanged<BuildContext> onBirthDatePressed;
   final VoidCallback onSave;
   const _ProfileForm({
     required this.nomeController,
@@ -475,47 +475,47 @@ class _ProfileForm extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             TextFormField(
               controller: nomeController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nome completo',
                 prefixIcon: Icon(Icons.person_outline_rounded),
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             TextFormField(
               controller: telefoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Telefone',
                 prefixIcon: Icon(Icons.phone_outlined),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             TextFormField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'E-mail',
                 prefixIcon: Icon(Icons.mail_outline_rounded),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             TextFormField(
               controller: usernameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nome de usuário',
                 prefixText: '@',
                 prefixIcon: Icon(Icons.alternate_email_rounded),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             InkWell(
-              onTap: onBirthDatePressed,
+              onTap: () => onBirthDatePressed(context),
               borderRadius: BorderRadius.circular(10),
               child: InputDecorator(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Data de nascimento',
                   prefixIcon: Icon(Icons.cake_outlined),
                 ),
@@ -532,30 +532,30 @@ class _ProfileForm extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             TextFormField(
               controller: bioController,
               maxLength: 280,
               minLines: 2,
               maxLines: 3,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Sobre você',
                 alignLabelWithHint: true,
                 prefixIcon: Icon(Icons.notes_rounded),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: PremiumColors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: PremiumColors.border),
               ),
               child: Row(children: [
-                const Icon(Icons.lock_outline_rounded,
+                Icon(Icons.lock_outline_rounded,
                     color: PremiumColors.gold),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,39 +576,39 @@ class _ProfileForm extends StatelessWidget {
               ]),
             ),
             if (changePassword) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               TextFormField(
                 controller: senhaAtualController,
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Senha atual',
                   prefixIcon: Icon(Icons.lock_outline_rounded),
                 ),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               TextFormField(
                 controller: novaSenhaController,
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nova senha (mínimo 8 caracteres)',
                   prefixIcon: Icon(Icons.lock_reset_rounded),
                 ),
               ),
             ],
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: saving ? null : onSave,
                 child: saving
-                    ? const SizedBox.square(
+                    ? SizedBox.square(
                         dimension: 19,
                         child: CircularProgressIndicator(
                           color: AppTheme.blackPure,
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text('Salvar alterações'),
+                    : Text('Salvar alterações'),
               ),
             ),
           ],

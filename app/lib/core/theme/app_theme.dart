@@ -3,22 +3,37 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static bool _modoClaro = false;
+  static bool get modoClaro => _modoClaro;
   static void setModo(bool claro) => _modoClaro = claro;
 
   // ==========================================
   // TOKENS — Dark + Gold Premium
   // ==========================================
-  static const Color gold = Color(0xFFFFD000);
-  static const Color goldLight = Color(0xFFFFDE4D);
+  static const Color defaultGold = Color(0xFFFFD000);
+  static Color _corPrimariaAtual = defaultGold;
+  static Color get gold => _corPrimariaAtual;
+  static Color get goldLight {
+    final hsl = HSLColor.fromColor(_corPrimariaAtual);
+    return hsl
+        .withLightness((hsl.lightness + 0.12).clamp(0.35, 0.9).toDouble())
+        .toColor();
+  }
 
-  static const Color black = Color(0xFF100B0B);
-  static const Color blackPure = Color(0xFF0C0808);
-  static const Color surface = Color(0xFF181514);
-  static const Color surfaceElev = Color(0xFF231E1C);
-  static const Color border = Color(0xFF39312E);
+  static void setCorPrimaria(Color cor) => _corPrimariaAtual = cor;
 
-  static const Color text = Color(0xFFF4EFEB);
-  static const Color textMuted = Color(0xFFAAA29E);
+  static Color get black => _modoClaro ? canvasLight : const Color(0xFF100B0B);
+  static Color get blackPure =>
+      _modoClaro ? Colors.white : const Color(0xFF0C0808);
+  static Color get surface =>
+      _modoClaro ? surfaceLight : const Color(0xFF181514);
+  static Color get surfaceElev =>
+      _modoClaro ? corCard : const Color(0xFF231E1C);
+  static Color get border =>
+      _modoClaro ? const Color(0xFFE7E5E4) : const Color(0xFF39312E);
+
+  static Color get text => _modoClaro ? textLight : const Color(0xFFF4EFEB);
+  static Color get textMuted =>
+      _modoClaro ? mutedLight : const Color(0xFFAAA29E);
 
   static const Color canvasLight = Color(0xFFFAFAF9);
   static const Color textLight = Color(0xFF1C1917);
@@ -162,6 +177,75 @@ class AppTheme {
     );
   }
 
+  static DatePickerThemeData _datePickerTheme(
+    Color cor, {
+    required bool modoClaro,
+  }) {
+    final background = modoClaro ? Colors.white : surfaceElev;
+    final headerBackground = modoClaro ? surfaceLight : black;
+    final foreground = modoClaro ? textLight : text;
+    final muted = modoClaro ? mutedLight : textMuted;
+    final disabled = muted.withValues(alpha: 0.45);
+    final selectedForeground = modoClaro ? Colors.white : blackPure;
+
+    return DatePickerThemeData(
+      backgroundColor: background,
+      surfaceTintColor: Colors.transparent,
+      elevation: 18,
+      shadowColor: Colors.black.withValues(alpha: modoClaro ? 0.12 : 0.4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+      ),
+      headerBackgroundColor: headerBackground,
+      headerForegroundColor: foreground,
+      headerHeadlineStyle: GoogleFonts.inter(
+        color: foreground,
+        fontSize: 30,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.6,
+      ),
+      headerHelpStyle: GoogleFonts.inter(
+        color: muted,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
+      weekdayStyle: GoogleFonts.inter(
+        color: muted,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      dayStyle: GoogleFonts.inter(
+        color: foreground,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      yearStyle: GoogleFonts.inter(
+        color: foreground,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) return disabled;
+        if (states.contains(WidgetState.selected)) return selectedForeground;
+        return foreground;
+      }),
+      dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return cor;
+        return null;
+      }),
+      todayForegroundColor: WidgetStatePropertyAll(cor),
+      todayBackgroundColor: WidgetStatePropertyAll(
+        cor.withValues(alpha: 0.12),
+      ),
+      todayBorder: BorderSide(color: cor.withValues(alpha: 0.55)),
+      rangePickerBackgroundColor: background,
+      rangePickerHeaderBackgroundColor: headerBackground,
+      rangePickerHeaderForegroundColor: foreground,
+      rangeSelectionBackgroundColor: cor.withValues(alpha: 0.24),
+      dividerColor: modoClaro ? const Color(0xFFE7E5E4) : border,
+    );
+  }
+
   // ==========================================
   // TEMA ESCURO (padrão)
   // ==========================================
@@ -180,6 +264,7 @@ class AppTheme {
         onSurface: text,
         onSurfaceVariant: textMuted,
       ),
+      datePickerTheme: _datePickerTheme(cor, modoClaro: false),
       appBarTheme: AppBarTheme(
         backgroundColor: black,
         elevation: 0,
@@ -189,7 +274,7 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
-        iconTheme: const IconThemeData(color: text),
+        iconTheme: IconThemeData(color: text),
       ),
       // ==========================================
       // Botão primário — gold, estilo Woovina Pro
@@ -266,7 +351,7 @@ class AppTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: border),
+          borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -364,7 +449,7 @@ class AppTheme {
         fillColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected) ? cor : surface,
         ),
-        side: const BorderSide(color: border),
+        side: BorderSide(color: border),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       iconButtonTheme: IconButtonThemeData(
@@ -382,6 +467,9 @@ class AppTheme {
           border: Border.all(color: border),
         ),
         textStyle: GoogleFonts.inter(color: text, fontSize: 12),
+        waitDuration: const Duration(milliseconds: 220),
+        showDuration: const Duration(seconds: 2),
+        exitDuration: Duration.zero,
       ),
       textTheme: _textTheme(text, textMuted),
     );
@@ -405,6 +493,7 @@ class AppTheme {
         onSurface: textLight,
         onSurfaceVariant: mutedLight,
       ),
+      datePickerTheme: _datePickerTheme(cor, modoClaro: true),
       appBarTheme: AppBarTheme(
         backgroundColor: canvasLight,
         elevation: 0,
@@ -550,6 +639,17 @@ class AppTheme {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: cor,
         linearTrackColor: cor.withValues(alpha: 0.2),
+      ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFE7E5E4)),
+        ),
+        textStyle: GoogleFonts.inter(color: textLight, fontSize: 12),
+        waitDuration: const Duration(milliseconds: 220),
+        showDuration: const Duration(seconds: 2),
+        exitDuration: Duration.zero,
       ),
       textTheme: _textTheme(textLight, mutedLight),
     );
