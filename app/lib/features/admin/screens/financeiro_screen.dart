@@ -308,6 +308,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _commissions(FinancialController state) =>
       const CommissionDashboardScreen();
 
+ // ignore: unused_element
+
   Widget _commissionHeader(FinancialController state) => LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxWidth < 820;
@@ -379,6 +381,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         ],
       );
 
+ // ignore: unused_element
+
   Widget _commissionKpis(FinancialController state) => LayoutBuilder(
         builder: (context, constraints) {
           final width =
@@ -435,6 +439,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
         },
       );
 
+ // ignore: unused_element
+
   Widget _commissionTabs() => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
@@ -485,6 +491,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
       ),
     );
   }
+
+ // ignore: unused_element
 
   List<Widget> _commissionSections(FinancialController state) {
     return switch (_commissionTab) {
@@ -1470,6 +1478,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     received.dispose();
     quantity.dispose();
   }
+
+ // ignore: unused_element
 
   Future<void> _commissionRuleDialog(FinancialController state) async {
     final valueController = TextEditingController(text: '40');
@@ -2830,6 +2840,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     AppToast.show(context, 'Pagamento registrado com sucesso.');
   }
 
+ // ignore: unused_element
+
   Future<void> _expenseDialog(FinancialController state) async {
     final form = GlobalKey<FormState>(),
         description = TextEditingController(),
@@ -2984,6 +2996,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     }
     reason.dispose();
   }
+
+ // ignore: unused_element
 
   Future<void> _paymentDialog(
       FinancialController state, Map<String, dynamic> e) async {
