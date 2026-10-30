@@ -139,8 +139,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cor,
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
@@ -245,8 +244,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cor,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 36, vertical: 18),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 36, vertical: 18),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
@@ -269,8 +268,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: cor,
                         side: BorderSide(color: cor.withValues(alpha: .65)),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),

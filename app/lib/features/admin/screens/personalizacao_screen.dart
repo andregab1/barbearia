@@ -417,9 +417,9 @@ class _PersonalizacaoScreenState extends State<PersonalizacaoScreen> {
 
       if (response.statusCode == 200 && mounted) {
         await context.read<BarbeariaThemeService>().atualizarDireto(
-            corPrimariaHex: hex,
-            logoUrlServidor: data['logo_url'],
-          );
+              corPrimariaHex: hex,
+              logoUrlServidor: data['logo_url'],
+            );
         messenger.showSnackBar(const SnackBar(
             content: Text('Personalização salva!'),
             backgroundColor: AppTheme.corSucesso,

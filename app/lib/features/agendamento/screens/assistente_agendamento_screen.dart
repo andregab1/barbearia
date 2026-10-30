@@ -8,7 +8,8 @@ import '../../../shared/widgets/premium_ui.dart';
 import '../controllers/agendamento_controller.dart';
 
 class AssistenteAgendamentoScreen extends StatefulWidget {
-  final Future<Map<String, dynamic>> Function(String, Map<String, dynamic>)? request;
+  final Future<Map<String, dynamic>> Function(String, Map<String, dynamic>)?
+      request;
   const AssistenteAgendamentoScreen({super.key, this.request});
 
   @override
@@ -35,8 +36,9 @@ class _AssistenteAgendamentoScreenState
   String? _proposalToken;
   List<Map<String, dynamic>> _alternatives = [];
   Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body) =>
-      widget.request?.call(path, body) ?? ApiService.post(path, body,
-        timeout: Duration(seconds: path.endsWith('conversar') ? 35 : 15));
+      widget.request?.call(path, body) ??
+      ApiService.post(path, body,
+          timeout: Duration(seconds: path.endsWith('conversar') ? 35 : 15));
 
   @override
   void initState() {
@@ -67,7 +69,11 @@ class _AssistenteAgendamentoScreenState
     final text = (suggestedText ?? _input.text).trim();
     final controller = context.read<AgendamentoController>();
     final shop = controller.barbeariaSelecionada;
-    if (text.isEmpty || _sending || _confirming || _requestInFlight || shop == null) return;
+    if (text.isEmpty ||
+        _sending ||
+        _confirming ||
+        _requestInFlight ||
+        shop == null) return;
     _requestInFlight = true;
     final history = _messages
         .map((item) => {'role': item.role, 'content': item.content})
@@ -83,13 +89,11 @@ class _AssistenteAgendamentoScreenState
     });
     _scrollToEnd();
     try {
-      final result = await _post(
-          '/assistente/conversar',
-          {
-            'message': text,
-            'barbearia_id': shop['id'],
-            'history': history,
-          });
+      final result = await _post('/assistente/conversar', {
+        'message': text,
+        'barbearia_id': shop['id'],
+        'history': history,
+      });
       if (!mounted) return;
       setState(() {
         _sending = false;
@@ -138,11 +142,19 @@ class _AssistenteAgendamentoScreenState
     if (!mounted) return;
     setState(() {
       _confirming = false;
-      if (result['status'] == 'proposal' || result['status'] == 'alternatives') {
-        _proposal = result['proposal'] is Map ? Map<String, dynamic>.from(result['proposal']) : null;
+      if (result['status'] == 'proposal' ||
+          result['status'] == 'alternatives') {
+        _proposal = result['proposal'] is Map
+            ? Map<String, dynamic>.from(result['proposal'])
+            : null;
         _proposalToken = result['proposal_token'] as String?;
-        _alternatives = (result['alternatives'] as List? ?? []).map((e) => Map<String, dynamic>.from(e)).toList();
-        _messages.add(_ChatMessage(role: 'assistant', content: 'A disponibilidade ou os valores mudaram. ${result['message']}'));
+        _alternatives = (result['alternatives'] as List? ?? [])
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+        _messages.add(_ChatMessage(
+            role: 'assistant',
+            content:
+                'A disponibilidade ou os valores mudaram. ${result['message']}'));
         return;
       }
       if (result.containsKey('erro')) {
@@ -207,8 +219,7 @@ class _AssistenteAgendamentoScreenState
                           Expanded(
                             child: ListView(
                               controller: _scroll,
-                              padding:
-                                  EdgeInsets.fromLTRB(16, 20, 16, 12),
+                              padding: EdgeInsets.fromLTRB(16, 20, 16, 12),
                               children: [
                                 for (final message in _messages)
                                   _MessageBubble(message: message),
@@ -257,8 +268,8 @@ class _AssistenteAgendamentoScreenState
                                           .push(MaterialPageRoute(
                                               builder: (_) =>
                                                   const AgendarScreen())),
-                                      child: Text(
-                                          'Usar agendamento tradicional')),
+                                      child:
+                                          Text('Usar agendamento tradicional')),
                                 ],
                               ],
                             ),
@@ -505,14 +516,13 @@ class _AlternativeTimes extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: alternatives.map((item) {
-            final date = DateTime.parse(item['date'].toString());
-            final formattedDate = DateFormat('dd/MM/yyyy').format(date);
-            return OutlinedButton(
-              onPressed: () => onTap(item),
-              child: Text('$formattedDate · ${item['time']}'),
-            );
-          })
-          .toList());
+        final date = DateTime.parse(item['date'].toString());
+        final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+        return OutlinedButton(
+          onPressed: () => onTap(item),
+          child: Text('$formattedDate · ${item['time']}'),
+        );
+      }).toList());
 }
 
 class _InlineError extends StatelessWidget {

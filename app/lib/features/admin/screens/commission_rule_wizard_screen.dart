@@ -610,8 +610,7 @@ class _CommissionRuleWizardScreenState
           TextField(
               controller: _name,
               onChanged: (_) => _scheduleDraftSave(),
-              decoration:
-                  InputDecoration(hintText: 'Ex.: Equipe padrão')),
+              decoration: InputDecoration(hintText: 'Ex.: Equipe padrão')),
           SizedBox(height: 18),
           _label('Profissionais'),
           _choiceRow(
@@ -705,8 +704,7 @@ class _CommissionRuleWizardScreenState
               Expanded(
                   child: DropdownButtonFormField<String>(
                       value: _afterDiscounts ? 'AFTER_DISCOUNTS' : 'GROSS',
-                      decoration:
-                          InputDecoration(labelText: 'Base de cálculo'),
+                      decoration: InputDecoration(labelText: 'Base de cálculo'),
                       items: const [
                         DropdownMenuItem(
                             value: 'AFTER_DISCOUNTS',
@@ -736,8 +734,7 @@ class _CommissionRuleWizardScreenState
               activeColor: PremiumColors.gold,
               onChanged: null,
               title: Text('Comissão sobre produtos'),
-              subtitle:
-                  Text('Aguardando integração do catálogo de vendas.')),
+              subtitle: Text('Aguardando integração do catálogo de vendas.')),
           if (_productsEnabled)
             SizedBox(
                 width: 260,
@@ -966,8 +963,8 @@ class _CommissionRuleWizardScreenState
                 alignment: Alignment.centerLeft,
                 child: Text(
                     'Backend: regra ${_simulation?['rule']?['version'] ?? '-'} · liberado ${backendMemory['released_amount'] ?? '0.00'}',
-                    style: TextStyle(
-                        color: PremiumColors.success, fontSize: 12))),
+                    style:
+                        TextStyle(color: PremiumColors.success, fontSize: 12))),
         ]));
   }
 
@@ -1065,8 +1062,7 @@ class _CommissionRuleWizardScreenState
               SizedBox(
                   width: 170,
                   child: Text(row[0],
-                      style:
-                          TextStyle(color: PremiumColors.textSecondary))),
+                      style: TextStyle(color: PremiumColors.textSecondary))),
               Expanded(child: Text(row[1]))
             ]))),
       ]));
@@ -1166,8 +1162,7 @@ class _CommissionRuleWizardScreenState
                           style: TextStyle(
                               color: PremiumColors.textSecondary, fontSize: 12))
                     ])),
-                Icon(Icons.chevron_right,
-                    color: PremiumColors.textSecondary)
+                Icon(Icons.chevron_right, color: PremiumColors.textSecondary)
               ])));
 
   Future<void> _exceptionDialog() async {
@@ -1182,8 +1177,7 @@ class _CommissionRuleWizardScreenState
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     TextField(
                         controller: service,
-                        decoration:
-                            InputDecoration(labelText: 'Serviço')),
+                        decoration: InputDecoration(labelText: 'Serviço')),
                     SizedBox(height: 12),
                     TextField(
                         controller: rate,
@@ -1242,8 +1236,8 @@ class _CommissionRuleWizardScreenState
                         ],
                         onChanged: (value) =>
                             setDialogState(() => method = value ?? method),
-                        decoration: InputDecoration(
-                            labelText: 'Método de aplicação'))
+                        decoration:
+                            InputDecoration(labelText: 'Método de aplicação'))
                   ]),
                   actions: [
                     TextButton(
@@ -1270,8 +1264,7 @@ class _CommissionRuleWizardScreenState
         Text(title,
             style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800)),
         SizedBox(height: 4),
-        Text(subtitle,
-            style: TextStyle(color: PremiumColors.textSecondary))
+        Text(subtitle, style: TextStyle(color: PremiumColors.textSecondary))
       ]));
   Widget _label(String text) => Padding(
       padding: EdgeInsets.only(bottom: 7),
@@ -1283,8 +1276,7 @@ class _CommissionRuleWizardScreenState
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: PremiumColors.border)),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(Icons.info_outline,
-            size: 18, color: PremiumColors.textSecondary),
+        Icon(Icons.info_outline, size: 18, color: PremiumColors.textSecondary),
         SizedBox(width: 9),
         Expanded(
             child: Text(text,
@@ -1312,8 +1304,8 @@ class _CommissionRuleWizardScreenState
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
-              style: TextStyle(
-                  color: PremiumColors.textSecondary, fontSize: 12)),
+              style:
+                  TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
           SizedBox(height: 3),
           Text(value, style: TextStyle(fontWeight: FontWeight.w700))
         ]))

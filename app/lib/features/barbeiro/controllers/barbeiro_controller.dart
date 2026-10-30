@@ -77,7 +77,8 @@ class BarbeiroController extends ChangeNotifier {
   Future<bool> _statusOperacional(int agendamentoId, String acao) async {
     _erro = '';
     notifyListeners();
-    final result = await ApiService.patch('/agendamentos/$agendamentoId/status-operacional', {'acao': acao});
+    final result = await ApiService.patch(
+        '/agendamentos/$agendamentoId/status-operacional', {'acao': acao});
     if (result.containsKey('erro')) {
       _erro = result['erro'].toString();
       notifyListeners();
@@ -86,9 +87,12 @@ class BarbeiroController extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> marcarChegou(int agendamentoId) => _statusOperacional(agendamentoId, 'chegou');
-  Future<bool> iniciarAtendimento(int agendamentoId) => _statusOperacional(agendamentoId, 'iniciar');
-  Future<bool> marcarNaoCompareceu(int agendamentoId) => _statusOperacional(agendamentoId, 'nao-compareceu');
+  Future<bool> marcarChegou(int agendamentoId) =>
+      _statusOperacional(agendamentoId, 'chegou');
+  Future<bool> iniciarAtendimento(int agendamentoId) =>
+      _statusOperacional(agendamentoId, 'iniciar');
+  Future<bool> marcarNaoCompareceu(int agendamentoId) =>
+      _statusOperacional(agendamentoId, 'nao-compareceu');
 
   // ==========================================
   // RF07: Cancelar agendamento

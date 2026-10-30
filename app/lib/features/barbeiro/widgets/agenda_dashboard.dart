@@ -13,14 +13,12 @@ class AgendaErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.cloud_off_outlined,
-              color: PremiumColors.error, size: 40),
+          Icon(Icons.cloud_off_outlined, color: PremiumColors.error, size: 40),
           SizedBox(height: 12),
           Text(message,
               style: GoogleFonts.inter(color: PremiumColors.textSecondary)),
           SizedBox(height: 12),
-          OutlinedButton(
-              onPressed: onRetry, child: Text('Tentar novamente')),
+          OutlinedButton(onPressed: onRetry, child: Text('Tentar novamente')),
         ]),
       );
 }
@@ -179,10 +177,30 @@ class _AppointmentCard extends StatelessWidget {
   final VoidCallback onStart;
   final VoidCallback onNoShow;
 
-  const _AppointmentCard({required this.item, required this.onComplete, required this.onCancel, required this.onArrive, required this.onStart, required this.onNoShow});
+  const _AppointmentCard(
+      {required this.item,
+      required this.onComplete,
+      required this.onCancel,
+      required this.onArrive,
+      required this.onStart,
+      required this.onNoShow});
 
   Future<void> _confirmNoShow(BuildContext context) async {
-    final confirmed = await showDialog<bool>(context: context, builder: (dialogContext) => AlertDialog(backgroundColor: PremiumColors.surfaceSecondary, title: Text('Marcar como não compareceu?'), content: Text('O atendimento será mantido no histórico com esse status.'), actions: [TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text('Cancelar')), FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text('Confirmar'))]));
+    final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+                backgroundColor: PremiumColors.surfaceSecondary,
+                title: Text('Marcar como não compareceu?'),
+                content: Text(
+                    'O atendimento será mantido no histórico com esse status.'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      child: Text('Cancelar')),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      child: Text('Confirmar'))
+                ]));
     if (confirmed == true) onNoShow();
   }
 
@@ -191,21 +209,156 @@ class _AppointmentCard extends StatelessWidget {
     final date = DateTime.parse(item['data_hora'].toString());
     final status = item['status']?.toString() ?? 'confirmado';
     final compact = MediaQuery.sizeOf(context).width < 620;
-    final statusLabel = {'pendente': 'PENDENTE', 'confirmado': 'CONFIRMADO', 'cliente_chegou': 'CLIENTE CHEGOU', 'em_atendimento': 'EM ATENDIMENTO', 'concluido': 'CONCLUÃDO', 'cancelado': 'CANCELADO', 'nao_compareceu': 'NÃO COMPARECEU'}[status] ?? status.toUpperCase();
-    final statusColor = status == 'cancelado' || status == 'nao_compareceu' ? PremiumColors.error : status == 'concluido' ? PremiumColors.success : PremiumColors.gold;
-    final details = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['servico'] ?? '', style: GoogleFonts.inter(color: PremiumColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600)), SizedBox(height: 5), Text(item['cliente'] ?? '', style: GoogleFonts.inter(color: PremiumColors.textSecondary, fontSize: 13)), if ((item['cliente_telefone'] ?? '').toString().isNotEmpty) Text(item['cliente_telefone'], style: GoogleFonts.inter(color: PremiumColors.textMuted, fontSize: 12)), SizedBox(height: 8), Text(premiumCurrency(item['valor_cobrado']), style: GoogleFonts.inter(color: PremiumColors.gold, fontSize: 13, fontWeight: FontWeight.w600)), if ((item['observacao'] ?? '').toString().trim().isNotEmpty) ...[SizedBox(height: 7), Text(item['observacao'], maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(color: PremiumColors.textMuted, fontSize: 12))]]);
+    final statusLabel = {
+          'pendente': 'PENDENTE',
+          'confirmado': 'CONFIRMADO',
+          'cliente_chegou': 'CLIENTE CHEGOU',
+          'em_atendimento': 'EM ATENDIMENTO',
+          'concluido': 'CONCLUÃDO',
+          'cancelado': 'CANCELADO',
+          'nao_compareceu': 'NÃO COMPARECEU'
+        }[status] ??
+        status.toUpperCase();
+    final statusColor = status == 'cancelado' || status == 'nao_compareceu'
+        ? PremiumColors.error
+        : status == 'concluido'
+            ? PremiumColors.success
+            : PremiumColors.gold;
+    final details =
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(item['servico'] ?? '',
+          style: GoogleFonts.inter(
+              color: PremiumColors.textPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w600)),
+      SizedBox(height: 5),
+      Text(item['cliente'] ?? '',
+          style: GoogleFonts.inter(
+              color: PremiumColors.textSecondary, fontSize: 13)),
+      if ((item['cliente_telefone'] ?? '').toString().isNotEmpty)
+        Text(item['cliente_telefone'],
+            style: GoogleFonts.inter(
+                color: PremiumColors.textMuted, fontSize: 12)),
+      SizedBox(height: 8),
+      Text(premiumCurrency(item['valor_cobrado']),
+          style: GoogleFonts.inter(
+              color: PremiumColors.gold,
+              fontSize: 13,
+              fontWeight: FontWeight.w600)),
+      if ((item['observacao'] ?? '').toString().trim().isNotEmpty) ...[
+        SizedBox(height: 7),
+        Text(item['observacao'],
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style:
+                GoogleFonts.inter(color: PremiumColors.textMuted, fontSize: 12))
+      ]
+    ]);
     Widget actions() {
-      if (status == 'confirmado' || status == 'pendente') return Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.end, children: [OutlinedButton.icon(onPressed: onCancel, icon: Icon(Icons.close_rounded, size: 16), label: Text('Cancelar'), style: OutlinedButton.styleFrom(foregroundColor: PremiumColors.error, minimumSize: const Size(108, 42))), OutlinedButton.icon(onPressed: () => _confirmNoShow(context), icon: Icon(Icons.person_off_outlined, size: 16), label: Text('Mais'), style: OutlinedButton.styleFrom(foregroundColor: PremiumColors.textSecondary, minimumSize: const Size(92, 42))), FilledButton.icon(onPressed: onArrive, icon: Icon(Icons.how_to_reg_outlined, size: 16), label: Text('Chegou'), style: FilledButton.styleFrom(backgroundColor: PremiumColors.gold, foregroundColor: PremiumColors.background, minimumSize: const Size(108, 42))) ]);
-      if (status == 'cliente_chegou') return FilledButton.icon(onPressed: onStart, icon: Icon(Icons.play_arrow_rounded, size: 16), label: Text('Iniciar atendimento'), style: FilledButton.styleFrom(backgroundColor: PremiumColors.gold, foregroundColor: PremiumColors.background, minimumSize: const Size(190, 42)));
-      if (status == 'em_atendimento') return FilledButton.icon(onPressed: onComplete, icon: Icon(Icons.check_rounded, size: 16), label: Text('Concluir'), style: FilledButton.styleFrom(backgroundColor: PremiumColors.gold, foregroundColor: PremiumColors.background, minimumSize: const Size(124, 42)));
+      if (status == 'confirmado' || status == 'pendente')
+        return Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.end,
+            children: [
+              OutlinedButton.icon(
+                  onPressed: onCancel,
+                  icon: Icon(Icons.close_rounded, size: 16),
+                  label: Text('Cancelar'),
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: PremiumColors.error,
+                      minimumSize: const Size(108, 42))),
+              OutlinedButton.icon(
+                  onPressed: () => _confirmNoShow(context),
+                  icon: Icon(Icons.person_off_outlined, size: 16),
+                  label: Text('Mais'),
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: PremiumColors.textSecondary,
+                      minimumSize: const Size(92, 42))),
+              FilledButton.icon(
+                  onPressed: onArrive,
+                  icon: Icon(Icons.how_to_reg_outlined, size: 16),
+                  label: Text('Chegou'),
+                  style: FilledButton.styleFrom(
+                      backgroundColor: PremiumColors.gold,
+                      foregroundColor: PremiumColors.background,
+                      minimumSize: const Size(108, 42)))
+            ]);
+      if (status == 'cliente_chegou')
+        return FilledButton.icon(
+            onPressed: onStart,
+            icon: Icon(Icons.play_arrow_rounded, size: 16),
+            label: Text('Iniciar atendimento'),
+            style: FilledButton.styleFrom(
+                backgroundColor: PremiumColors.gold,
+                foregroundColor: PremiumColors.background,
+                minimumSize: const Size(190, 42)));
+      if (status == 'em_atendimento')
+        return FilledButton.icon(
+            onPressed: onComplete,
+            icon: Icon(Icons.check_rounded, size: 16),
+            label: Text('Concluir'),
+            style: FilledButton.styleFrom(
+                backgroundColor: PremiumColors.gold,
+                foregroundColor: PremiumColors.background,
+                minimumSize: const Size(124, 42)));
       return SizedBox.shrink();
     }
-    return Container(padding: EdgeInsets.all(16), decoration: BoxDecoration(color: PremiumColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: PremiumColors.border)), child: LayoutBuilder(builder: (context, constraints) {
-      final time = SizedBox(width: compact ? double.infinity : 112, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(DateFormat('HH:mm').format(date), style: GoogleFonts.inter(color: PremiumColors.textPrimary, fontSize: 24, fontWeight: FontWeight.w600)), Text(item['duracao_min'].toString() + ' min', style: GoogleFonts.inter(color: PremiumColors.textMuted, fontSize: 12)), Text(DateFormat('dd/MM').format(date), style: GoogleFonts.inter(color: PremiumColors.gold, fontSize: 12, fontWeight: FontWeight.w600))]));
-      final actionArea = Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [PremiumStatusBadge(label: statusLabel, color: statusColor), actions()]);
-      if (compact) return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [time, Divider(height: 24), details, SizedBox(height: 14), Align(alignment: Alignment.centerRight, child: actionArea)]);
-      return SizedBox(height: 138, child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [time, const VerticalDivider(width: 28), Expanded(child: details), actionArea]));
-    }));
+
+    return Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: PremiumColors.card,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: PremiumColors.border)),
+        child: LayoutBuilder(builder: (context, constraints) {
+          final time = SizedBox(
+              width: compact ? double.infinity : 112,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(DateFormat('HH:mm').format(date),
+                        style: GoogleFonts.inter(
+                            color: PremiumColors.textPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600)),
+                    Text(item['duracao_min'].toString() + ' min',
+                        style: GoogleFonts.inter(
+                            color: PremiumColors.textMuted, fontSize: 12)),
+                    Text(DateFormat('dd/MM').format(date),
+                        style: GoogleFonts.inter(
+                            color: PremiumColors.gold,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600))
+                  ]));
+          final actionArea = Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                PremiumStatusBadge(label: statusLabel, color: statusColor),
+                actions()
+              ]);
+          if (compact)
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  time,
+                  Divider(height: 24),
+                  details,
+                  SizedBox(height: 14),
+                  Align(alignment: Alignment.centerRight, child: actionArea)
+                ]);
+          return SizedBox(
+              height: 138,
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    time,
+                    const VerticalDivider(width: 28),
+                    Expanded(child: details),
+                    actionArea
+                  ]));
+        }));
   }
 }
 

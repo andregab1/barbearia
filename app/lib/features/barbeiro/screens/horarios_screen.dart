@@ -371,8 +371,8 @@ class _HorariosScreenState extends State<HorariosScreen> {
                     onTap: () => _selecionarHora(day, range == ranges.first),
                     child: Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 6),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 7, vertical: 6),
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: primary.withValues(alpha: .55)),
@@ -456,8 +456,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                   children: cards
                       .map((e) => Expanded(
                           child: Padding(
-                              padding: EdgeInsets.only(right: 8),
-                              child: e)))
+                              padding: EdgeInsets.only(right: 8), child: e)))
                       .toList());
         }),
       ]));

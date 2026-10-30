@@ -105,8 +105,7 @@ class _ContabilidadeScreenState extends State<ContabilidadeScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text('Remover lancamento?'),
-        content:
-            Text('O valor deixara de compor o resultado do periodo.'),
+        content: Text('O valor deixara de compor o resultado do periodo.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -447,8 +446,7 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                 children: [
                   DropdownButtonFormField<String>(
                     initialValue: _type,
-                    decoration:
-                        InputDecoration(labelText: 'Tipo de tributo *'),
+                    decoration: InputDecoration(labelText: 'Tipo de tributo *'),
                     items: widget.taxLabels.entries
                         .map((entry) => DropdownMenuItem(
                             value: entry.key, child: Text(entry.value)))
@@ -460,8 +458,8 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                   SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _regime,
-                    decoration: InputDecoration(
-                        labelText: 'Enquadramento, se souber'),
+                    decoration:
+                        InputDecoration(labelText: 'Enquadramento, se souber'),
                     items: widget.regimeLabels.entries
                         .map((entry) => DropdownMenuItem(
                             value: entry.key, child: Text(entry.value)))
@@ -527,8 +525,8 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                         : _selectedServiceIds.isEmpty
                             ? 'Sem vinculo, o valor sera lancado uma vez no periodo.'
                             : 'Com vinculo, o valor sera aplicado a cada atendimento desses servicos.',
-                    style: TextStyle(
-                        color: PremiumColors.textMuted, fontSize: 12),
+                    style:
+                        TextStyle(color: PremiumColors.textMuted, fontSize: 12),
                   ),
                   SizedBox(height: 6),
                   if (widget.services.isEmpty)
@@ -598,8 +596,8 @@ class _TaxFormDialogState extends State<_TaxFormDialog> {
                     enabled: !_saving,
                     maxLength: 240,
                     maxLines: 2,
-                    decoration: InputDecoration(
-                        labelText: 'Observacao (opcional)'),
+                    decoration:
+                        InputDecoration(labelText: 'Observacao (opcional)'),
                   ),
                   SizedBox(height: 4),
                   Text(

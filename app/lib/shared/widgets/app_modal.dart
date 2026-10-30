@@ -148,7 +148,7 @@ class AppModal extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-                child: SingleChildScrollView(
+              child: SingleChildScrollView(
                 padding: EdgeInsets.all(size == AppModalSize.large ? 48 : 32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -271,22 +271,39 @@ class AppSidePanel extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(title, style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+                          Text(title,
+                              style: GoogleFonts.inter(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                  color: scheme.onSurface)),
                           if (subtitle != null) ...[
                             const SizedBox(height: 8),
-                            Text(subtitle!, style: GoogleFonts.inter(fontSize: 14, color: scheme.onSurfaceVariant)),
+                            Text(subtitle!,
+                                style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: scheme.onSurfaceVariant)),
                           ],
                         ],
                       ),
                     ),
-                    IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
+                    IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close)),
                   ]),
                 ),
-                Divider(height: 1, color: scheme.outline.withValues(alpha: 0.16)),
-                Expanded(child: SingleChildScrollView(padding: const EdgeInsets.all(28), child: child)),
+                Divider(
+                    height: 1, color: scheme.outline.withValues(alpha: 0.16)),
+                Expanded(
+                    child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(28), child: child)),
                 if (actions != null && actions!.isNotEmpty) ...[
-                  Divider(height: 1, color: scheme.outline.withValues(alpha: 0.16)),
-                  Padding(padding: const EdgeInsets.all(24), child: Row(mainAxisAlignment: MainAxisAlignment.end, children: actions!)),
+                  Divider(
+                      height: 1, color: scheme.outline.withValues(alpha: 0.16)),
+                  Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: actions!)),
                 ],
               ],
             ),

@@ -425,7 +425,8 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 30,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        titleTextStyle: GoogleFonts.inter(color: text, fontSize: 24, fontWeight: FontWeight.w700),
+        titleTextStyle: GoogleFonts.inter(
+            color: text, fontSize: 24, fontWeight: FontWeight.w700),
         contentTextStyle: GoogleFonts.inter(color: textMuted, fontSize: 14),
         actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
         shape: RoundedRectangleBorder(
@@ -436,7 +437,8 @@ class AppTheme {
         backgroundColor: surfaceElev,
         modalBackgroundColor: surfaceElev,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
       // ==========================================
       // Progress indicator
@@ -623,7 +625,8 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 30,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        titleTextStyle: GoogleFonts.inter(color: textLight, fontSize: 24, fontWeight: FontWeight.w700),
+        titleTextStyle: GoogleFonts.inter(
+            color: textLight, fontSize: 24, fontWeight: FontWeight.w700),
         contentTextStyle: GoogleFonts.inter(color: mutedLight, fontSize: 14),
         actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
         shape: RoundedRectangleBorder(
@@ -634,7 +637,8 @@ class AppTheme {
         backgroundColor: Colors.white,
         modalBackgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: cor,

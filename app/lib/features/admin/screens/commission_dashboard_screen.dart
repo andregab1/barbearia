@@ -191,8 +191,8 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                           color: PremiumColors.textSecondary, fontSize: 12)),
                   SizedBox(height: 4),
                   Text(value,
-                      style: TextStyle(
-                          fontSize: 19, fontWeight: FontWeight.w700)),
+                      style:
+                          TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
                   SizedBox(height: 2),
                   Text(hint,
                       maxLines: 2,
@@ -345,9 +345,9 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                             });
                           }),
                 SizedBox(width: 4),
-                 Expanded(
-                     child: Text('Profissional · selecionar para pagamento',
-                         style: TextStyle(fontWeight: FontWeight.w700))),
+                Expanded(
+                    child: Text('Profissional · selecionar para pagamento',
+                        style: TextStyle(fontWeight: FontWeight.w700))),
                 if (!compact) ...const [
                   SizedBox(width: 85, child: Text('A liberar')),
                   SizedBox(width: 85, child: Text('Disponível')),
@@ -423,8 +423,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
                     width: 95,
                     child: Text(_money(row['advance_balance']),
                         textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: PremiumColors.textSecondary))),
+                        style: TextStyle(color: PremiumColors.textSecondary))),
                 SizedBox(
                     width: 90,
                     child: Text(_money(row['payable']),
@@ -461,7 +460,8 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
               spacing: 12,
               runSpacing: 10,
               children: [
-                 Text('${_selected.length} profissional(is) selecionado(s) para pagamento',
+                Text(
+                    '${_selected.length} profissional(is) selecionado(s) para pagamento',
                     style: TextStyle(fontWeight: FontWeight.w700)),
                 TextButton(
                     onPressed: () => setState(_selected.clear),
@@ -483,9 +483,7 @@ class _CommissionDashboardScreenState extends State<CommissionDashboardScreen> {
     if (!mounted || details == null) return;
     await showDialog<void>(
         context: context,
-        builder: (context) => _DetailsDialog(
-            data: details,
-            money: _money));
+        builder: (context) => _DetailsDialog(data: details, money: _money));
   }
 
   Future<void> _reviewPayment(FinancialController state) async {
@@ -612,8 +610,7 @@ class _DetailsDialog extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
-                                            color:
-                                                PremiumColors.textSecondary,
+                                            color: PremiumColors.textSecondary,
                                             fontSize: 12)))
                               ]),
                               SizedBox(height: 5),
@@ -657,8 +654,7 @@ class _DetailsDialog extends StatelessWidget {
                   })),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Fechar')),
+            onPressed: () => Navigator.pop(context), child: Text('Fechar')),
       ],
     );
   }
@@ -739,15 +735,13 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
                 alignment: Alignment.centerRight,
                 child: Text(
                   'Total líquido: ${widget.money(total / 100)}',
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
               SizedBox(height: 14),
               if (total > 0)
                 DropdownButtonFormField<int>(
-                  decoration:
-                      InputDecoration(labelText: 'Conta de saída *'),
+                  decoration: InputDecoration(labelText: 'Conta de saída *'),
                   items: widget.accounts
                       .map(
                         (account) => DropdownMenuItem(
@@ -761,8 +755,7 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
               if (total > 0) SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: method,
-                decoration:
-                    InputDecoration(labelText: 'Forma de pagamento'),
+                decoration: InputDecoration(labelText: 'Forma de pagamento'),
                 items: const [
                   DropdownMenuItem(value: 'pix', child: Text('PIX')),
                   DropdownMenuItem(value: 'cash', child: Text('Dinheiro')),
@@ -776,8 +769,7 @@ class _PaymentReviewDialogState extends State<_PaymentReviewDialog> {
               TextField(
                 controller: note,
                 maxLines: 2,
-                decoration:
-                    InputDecoration(labelText: 'Observação (opcional)'),
+                decoration: InputDecoration(labelText: 'Observação (opcional)'),
               ),
             ],
           ),

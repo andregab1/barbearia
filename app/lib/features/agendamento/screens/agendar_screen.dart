@@ -20,9 +20,8 @@ class _BookingColors {
   static Color get gold => AppTheme.gold;
   static Color get textPrimary => AppTheme.corTexto;
   static Color get textSecondary => AppTheme.corTextoSecundario;
-  static Color get textMuted => AppTheme.modoClaro
-      ? AppTheme.mutedLight
-      : const Color(0xFF77716D);
+  static Color get textMuted =>
+      AppTheme.modoClaro ? AppTheme.mutedLight : const Color(0xFF77716D);
   static Color get border => AppTheme.corBorda;
   static Color get borderGold => AppTheme.gold.withValues(alpha: .45);
 }

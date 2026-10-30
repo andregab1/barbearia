@@ -252,10 +252,10 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                 ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
-                  topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -305,8 +305,8 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                         toY: value,
                         width: 24,
                         color: color,
-                        borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(6)),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(6)),
                       ),
                     ],
                   );
@@ -818,10 +818,8 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                 builder: (buttonContext) => OutlinedButton.icon(
                     onPressed: () => _pickRange(buttonContext),
                     icon: Icon(Icons.date_range_outlined),
-                    label: Text('Período: ' +
-                        _label(_inicio) +
-                        ' a ' +
-                        _label(_fim)))),
+                    label: Text(
+                        'Período: ' + _label(_inicio) + ' a ' + _label(_fim)))),
             DropdownButton<String?>(
                 value: _status,
                 hint: Text('Todos os status'),
@@ -955,8 +953,7 @@ class _RelatorioTabState extends State<_RelatorioTab> {
                       0;
               return Container(
                   margin: EdgeInsets.only(bottom: 10),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   decoration: BoxDecoration(
                       color: AppTheme.surfaceElev,
                       borderRadius: BorderRadius.circular(14)),
@@ -1143,8 +1140,7 @@ class _ServicosTabState extends State<_ServicosTab> {
                     borderSide: BorderSide(color: AppTheme.border)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        BorderSide(color: AppTheme.gold, width: 1.2)))),
+                    borderSide: BorderSide(color: AppTheme.gold, width: 1.2)))),
       ]);
 
   Future<Map<String, dynamic>?> _newCategory(BuildContext context) {
@@ -1206,88 +1202,92 @@ class _ServicosTabState extends State<_ServicosTab> {
       subtitle: 'Defina o serviço disponível para agendamento.',
       size: AppModalSize.large,
       child: StatefulBuilder(
-          builder: (modalContext, setModalState) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _modalInput(
-                        controller: name,
-                        label: 'Nome do serviço',
-                        hint: 'Ex.: Corte masculino'),
-                    SizedBox(height: 28),
-                    Text('Categoria',
-                        style: GoogleFonts.inter(
-                            color: AppTheme.corTexto,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600)),
-                    SizedBox(height: 8),
-                    Row(children: [
-                      Expanded(
-                          child: DropdownButtonFormField<int>(
-                              value: selectedCategoryId,
-                              isExpanded: true,
-                              dropdownColor: AppTheme.surfaceElev,
-                              style: GoogleFonts.inter(
-                                  color: AppTheme.corTexto, fontSize: 15),
-                              decoration: InputDecoration(
-                                  hintText: 'Selecione uma categoria',
-                                  hintStyle: GoogleFonts.inter(
-                                      color: AppTheme.corTextoSecundario,
-                                      fontSize: 15),
-                                  filled: true,
-                                  fillColor: AppTheme.surface,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 17),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.border)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.border)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.gold, width: 1.2))),
-                              items: controller.categorias
-                                  .map((category) => DropdownMenuItem<int>(value: int.tryParse(category['id'].toString()), child: Text(category['nome']?.toString() ?? '')))
-                                  .toList(),
-                              onChanged: (value) => setModalState(() => selectedCategoryId = value))),
-                      SizedBox(width: 16),
-                      TextButton(
-                          onPressed: () async {
-                            final created = await _newCategory(modalContext);
-                            if (created != null)
-                              setModalState(() {
-                                selectedCategoryId =
-                                    int.tryParse(created['id'].toString());
-                              });
-                          },
-                          child: Text('+ Nova categoria')),
-                    ]),
-                    SizedBox(height: 28),
-                    Row(children: [
-                      Expanded(
-                          child: _modalInput(
-                              controller: price,
-                              label: 'Preço',
-                              hint: 'R\$ 0,00',
-                              keyboardType: TextInputType.number)),
-                      SizedBox(width: 16),
-                      Expanded(
-                          child: _modalInput(
-                              controller: duration,
-                              label: 'Duração',
-                              hint: 'Em minutos',
-                              keyboardType: TextInputType.number))
-                    ]),
-                    SizedBox(height: 28),
-                    _modalInput(
-                        controller: description,
-                        label: 'Descrição',
-                        hint: 'Descreva o que está incluído no serviço',
-                        maxLines: 4),
-                  ])),
+          builder:
+              (modalContext, setModalState) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _modalInput(
+                            controller: name,
+                            label: 'Nome do serviço',
+                            hint: 'Ex.: Corte masculino'),
+                        SizedBox(height: 28),
+                        Text('Categoria',
+                            style: GoogleFonts.inter(
+                                color: AppTheme.corTexto,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600)),
+                        SizedBox(height: 8),
+                        Row(children: [
+                          Expanded(
+                              child: DropdownButtonFormField<int>(
+                                  value: selectedCategoryId,
+                                  isExpanded: true,
+                                  dropdownColor: AppTheme.surfaceElev,
+                                  style: GoogleFonts.inter(
+                                      color: AppTheme.corTexto, fontSize: 15),
+                                  decoration: InputDecoration(
+                                      hintText: 'Selecione uma categoria',
+                                      hintStyle: GoogleFonts.inter(
+                                          color: AppTheme.corTextoSecundario,
+                                          fontSize: 15),
+                                      filled: true,
+                                      fillColor: AppTheme.surface,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 17),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: AppTheme.border)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: AppTheme.border)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: AppTheme.gold,
+                                              width: 1.2))),
+                                  items: controller.categorias.map((category) => DropdownMenuItem<int>(value: int.tryParse(category['id'].toString()), child: Text(category['nome']?.toString() ?? ''))).toList(),
+                                  onChanged: (value) => setModalState(() => selectedCategoryId = value))),
+                          SizedBox(width: 16),
+                          TextButton(
+                              onPressed: () async {
+                                final created =
+                                    await _newCategory(modalContext);
+                                if (created != null)
+                                  setModalState(() {
+                                    selectedCategoryId =
+                                        int.tryParse(created['id'].toString());
+                                  });
+                              },
+                              child: Text('+ Nova categoria')),
+                        ]),
+                        SizedBox(height: 28),
+                        Row(children: [
+                          Expanded(
+                              child: _modalInput(
+                                  controller: price,
+                                  label: 'Preço',
+                                  hint: 'R\$ 0,00',
+                                  keyboardType: TextInputType.number)),
+                          SizedBox(width: 16),
+                          Expanded(
+                              child: _modalInput(
+                                  controller: duration,
+                                  label: 'Duração',
+                                  hint: 'Em minutos',
+                                  keyboardType: TextInputType.number))
+                        ]),
+                        SizedBox(height: 28),
+                        _modalInput(
+                            controller: description,
+                            label: 'Descrição',
+                            hint: 'Descreva o que está incluído no serviço',
+                            maxLines: 4),
+                      ])),
       actions: [
         Consumer<AdminController>(
             builder: (modalContext, ctrl, _) =>
@@ -1594,8 +1594,8 @@ class _ServicosTabState extends State<_ServicosTab> {
                   decoration: BoxDecoration(
                       color: AppTheme.gold.withValues(alpha: .12),
                       borderRadius: BorderRadius.circular(8)),
-                  child: Icon(Icons.content_cut,
-                      color: AppTheme.gold, size: 20)),
+                  child:
+                      Icon(Icons.content_cut, color: AppTheme.gold, size: 20)),
               SizedBox(width: 14),
               Expanded(
                   child: Column(
@@ -1790,8 +1790,7 @@ class _ServicosTabState extends State<_ServicosTab> {
       SizedBox(height: 20),
       Expanded(
           child: ctrl.carregandoServicos
-              ? Center(
-                  child: CircularProgressIndicator(color: AppTheme.gold))
+              ? Center(child: CircularProgressIndicator(color: AppTheme.gold))
               : narrow
                   ? SingleChildScrollView(
                       child: Column(children: [
@@ -1870,8 +1869,7 @@ class _ColaboradoresTab extends StatelessWidget {
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   TextFormField(
                       controller: nomeCtrl,
-                      decoration:
-                          InputDecoration(labelText: 'Nome completo'),
+                      decoration: InputDecoration(labelText: 'Nome completo'),
                       validator: (value) => (value ?? '').trim().length < 2
                           ? 'Informe o nome.'
                           : null),
@@ -1887,8 +1885,7 @@ class _ColaboradoresTab extends StatelessWidget {
                   TextFormField(
                       controller: cpfCtrl,
                       keyboardType: TextInputType.number,
-                      decoration:
-                          InputDecoration(labelText: 'CPF (opcional)'),
+                      decoration: InputDecoration(labelText: 'CPF (opcional)'),
                       validator: (value) {
                         final cpf = (value ?? '').replaceAll(RegExp(r'\D'), '');
                         return cpf.isNotEmpty && cpf.length != 11
@@ -1899,8 +1896,8 @@ class _ColaboradoresTab extends StatelessWidget {
                   TextFormField(
                       controller: emailCtrl,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                          labelText: 'E-mail (opcional)')),
+                      decoration:
+                          InputDecoration(labelText: 'E-mail (opcional)')),
                   SizedBox(height: 8),
                   SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
@@ -1991,8 +1988,7 @@ class _ColaboradoresTab extends StatelessWidget {
                     controller: nomeCtrl,
                     style: GoogleFonts.inter(color: AppTheme.corTexto),
                     textCapitalization: TextCapitalization.words,
-                    decoration:
-                        InputDecoration(labelText: 'Nome completo')),
+                    decoration: InputDecoration(labelText: 'Nome completo')),
                 SizedBox(height: 12),
                 TextField(
                     controller: telefoneCtrl,
@@ -2004,16 +2000,14 @@ class _ColaboradoresTab extends StatelessWidget {
                   controller: cpfCtrl,
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.inter(color: AppTheme.corTexto),
-                  decoration:
-                      InputDecoration(labelText: 'CPF (opcional)'),
+                  decoration: InputDecoration(labelText: 'CPF (opcional)'),
                 ),
                 SizedBox(height: 12),
                 TextField(
                     controller: senhaCtrl,
                     obscureText: true,
                     style: GoogleFonts.inter(color: AppTheme.corTexto),
-                    decoration:
-                        InputDecoration(labelText: 'Senha inicial')),
+                    decoration: InputDecoration(labelText: 'Senha inicial')),
                 SizedBox(height: 20),
                 ValueListenableBuilder<String>(
                   valueListenable: erroMsg,

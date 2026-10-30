@@ -553,8 +553,7 @@ class _ProfileForm extends StatelessWidget {
                 border: Border.all(color: PremiumColors.border),
               ),
               child: Row(children: [
-                Icon(Icons.lock_outline_rounded,
-                    color: PremiumColors.gold),
+                Icon(Icons.lock_outline_rounded, color: PremiumColors.gold),
                 SizedBox(width: 12),
                 Expanded(
                     child: Column(

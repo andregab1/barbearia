@@ -60,16 +60,14 @@ class ServiceReceiptPdf {
         .replaceAll('#b88a00', '#$accentDark');
     svg = _replaceField(svg, 'field-receipt-number',
         _fitText('N\u00ba ${data.receiptNumber}', width: 160, fontSize: 11));
-    svg = _replaceField(svg, 'field-verification', _fitText(
-        'NFS-GETCUTT-${data.receiptNumber}',
-        width: 160,
-        fontSize: 8));
+    svg = _replaceField(svg, 'field-verification',
+        _fitText('NFS-GETCUTT-${data.receiptNumber}', width: 160, fontSize: 8));
     svg = _replaceField(svg, 'field-barbershop-name',
         _fitText(data.barbershopName, width: 296, fontSize: 12));
     svg = _replaceField(svg, 'field-barbershop-address',
         _fitText(data.barbershopAddress, width: 296, fontSize: 10));
-    svg = _replaceField(svg, 'field-issued-at', _fitText(data.issuedAt,
-        width: 170, fontSize: 10, x: 786));
+    svg = _replaceField(svg, 'field-issued-at',
+        _fitText(data.issuedAt, width: 170, fontSize: 10, x: 786));
     svg = _replaceField(svg, 'field-client-name',
         _fitText(data.clientName, width: 360, fontSize: 11));
     svg = _replaceField(svg, 'field-client-phone',
@@ -113,8 +111,11 @@ class ServiceReceiptPdf {
           _fitText(_money(row.total), width: 125, fontSize: 10, x: 776));
     }
 
-    svg = _replaceField(svg, 'field-attendance',
-        _fitText('Atendimento em ${data.appointmentDate}', width: 360, fontSize: 8));
+    svg = _replaceField(
+        svg,
+        'field-attendance',
+        _fitText('Atendimento em ${data.appointmentDate}',
+            width: 360, fontSize: 8));
     svg = _replaceField(svg, 'field-payment-status',
         _fitText('Pagamento: ${data.statusLabel}', width: 190, fontSize: 9));
     svg = _replaceField(
@@ -132,7 +133,9 @@ class ServiceReceiptPdf {
           width: 280,
           fontSize: 9,
         ));
-    svg = _replaceField(svg, 'field-balance',
+    svg = _replaceField(
+        svg,
+        'field-balance',
         _fitText('Saldo pendente: ${_money(data.outstandingAmount)}',
             width: 240, fontSize: 9));
     svg = _replaceField(svg, 'field-subtotal',
@@ -146,8 +149,11 @@ class ServiceReceiptPdf {
     svg = _replaceField(
         svg,
         'field-observation',
-        _fitTextLines(data.observation, x: 52, y: 888, width: 720, fontSize: 9));
-    svg = _replaceField(svg, 'field-control-number',
+        _fitTextLines(data.observation,
+            x: 52, y: 888, width: 720, fontSize: 9));
+    svg = _replaceField(
+        svg,
+        'field-control-number',
         _fitText('CONTROLE INTERNO \u00b7 N\u00ba ${data.receiptNumber}',
             width: 240, fontSize: 8));
     return svg;
@@ -220,8 +226,8 @@ class ServiceReceiptPdf {
           },
         ));
     }
-    final longestLine = lines.fold<int>(0,
-        (longest, line) => line.length > longest ? line.length : longest);
+    final longestLine = lines.fold<int>(
+        0, (longest, line) => line.length > longest ? line.length : longest);
     final estimatedWidth = longestLine * fontSize * _averageGlyphWidth;
     final fittedSize = estimatedWidth <= width
         ? fontSize
@@ -258,9 +264,8 @@ class ServiceReceiptPdf {
   }
 
   static String _money(double value) {
-    final amount = NumberFormat.currency(locale: 'pt_BR', symbol: '')
-        .format(value)
-        .trim();
+    final amount =
+        NumberFormat.currency(locale: 'pt_BR', symbol: '').format(value).trim();
     return 'R\$ $amount';
   }
 }

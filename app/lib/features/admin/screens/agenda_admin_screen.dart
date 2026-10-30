@@ -65,8 +65,8 @@ class _AgendaAdminScreenState extends State<AgendaAdminScreen> {
       }
       final from = DateFormat('yyyy-MM-dd').format(_dataInicioFiltro);
       final to = DateFormat('yyyy-MM-dd').format(_dataFimFiltro);
-      final resultado = await ApiService.get(
-          '/agenda/dashboard/$id?from=$from&to=$to');
+      final resultado =
+          await ApiService.get('/agenda/dashboard/$id?from=$from&to=$to');
       final agendamentos = resultado['upcomingAppointments'] is List
           ? (resultado['upcomingAppointments'] as List)
               .map((item) => Map<String, dynamic>.from(item))

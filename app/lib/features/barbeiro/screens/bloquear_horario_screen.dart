@@ -320,38 +320,38 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                             SizedBox(height: 8),
                             Builder(
                               builder: (buttonContext) => GestureDetector(
-                              onTap: () => _selecionarData(buttonContext),
-                              child: Container(
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: _dataIni != null
-                                      ? cor.withValues(alpha: 0.1)
-                                      : AppTheme.surfaceElev,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: _dataIni != null
-                                          ? cor.withValues(alpha: 0.5)
-                                          : Colors.transparent),
-                                ),
-                                child: Row(children: [
-                                  Icon(Icons.calendar_today, color: cor),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    _dataIni != null
-                                        ? DateFormat('dd/MM/yyyy')
-                                            .format(_dataIni!)
-                                        : 'Toque para selecionar',
-                                    style: GoogleFonts.inter(
-                                      color: _dataIni != null
-                                          ? AppTheme.corTexto
-                                          : AppTheme.corTextoSecundario,
-                                      fontWeight: _dataIni != null
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
-                                    ),
+                                onTap: () => _selecionarData(buttonContext),
+                                child: Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: _dataIni != null
+                                        ? cor.withValues(alpha: 0.1)
+                                        : AppTheme.surfaceElev,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: _dataIni != null
+                                            ? cor.withValues(alpha: 0.5)
+                                            : Colors.transparent),
                                   ),
-                                ]),
-                              ),
+                                  child: Row(children: [
+                                    Icon(Icons.calendar_today, color: cor),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      _dataIni != null
+                                          ? DateFormat('dd/MM/yyyy')
+                                              .format(_dataIni!)
+                                          : 'Toque para selecionar',
+                                      style: GoogleFonts.inter(
+                                        color: _dataIni != null
+                                            ? AppTheme.corTexto
+                                            : AppTheme.corTextoSecundario,
+                                        fontWeight: _dataIni != null
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                      ),
+                                    ),
+                                  ]),
+                                ),
                               ),
                             ),
                             SizedBox(height: 16),
@@ -366,8 +366,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                   child: _timeChip(_horaIni, 'Início', cor,
                                       () => _selecionarHora(true))),
                               Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
                                   child: Text('até',
                                       style: GoogleFonts.inter(
                                           color: cor,
@@ -440,8 +439,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 ),
                                 if (_repetirTodosDias)
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        16, 0, 16, 14),
+                                    padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
                                     child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -552,8 +550,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(flex: 2, child: editor),
-                        VerticalDivider(
-                            width: 1, color: PremiumColors.border),
+                        VerticalDivider(width: 1, color: PremiumColors.border),
                         SizedBox(
                           width: 330,
                           child: Padding(
@@ -583,8 +580,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                 ]))
                           : Column(children: [
                               Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(16, 12, 16, 4),
+                                padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
                                 child: Center(
                                   child: OutlinedButton.icon(
                                     onPressed: _excluirTodos,
@@ -623,8 +619,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                       final fim =
                                           DateTime.parse(b['data_hora_fim']);
                                       return Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: 10),
+                                        margin: EdgeInsets.only(bottom: 10),
                                         decoration: BoxDecoration(
                                           color: AppTheme.surfaceElev,
                                           borderRadius:
@@ -651,8 +646,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                                                       fontSize: 12))
                                               : null,
                                           trailing: IconButton(
-                                            icon: Icon(
-                                                Icons.delete_outline,
+                                            icon: Icon(Icons.delete_outline,
                                                 color: AppTheme.erro),
                                             onPressed: () async {
                                               final ok = await showDialog<bool>(
@@ -779,8 +773,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   width: double.infinity,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
                     color: PremiumColors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(10),
@@ -829,8 +822,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
               ),
               SizedBox(height: 10),
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 11, vertical: 3),
+                padding: EdgeInsets.symmetric(horizontal: 11, vertical: 3),
                 decoration: BoxDecoration(
                   color: PremiumColors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(10),
@@ -867,8 +859,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                 DropdownButtonFormField<int>(
                   value: _diasRepeticao,
                   dropdownColor: AppTheme.surfaceElev,
-                  decoration:
-                      InputDecoration(labelText: 'Quantidade de dias'),
+                  decoration: InputDecoration(labelText: 'Quantidade de dias'),
                   items: [7, 14, 30, 60]
                       .map((days) => DropdownMenuItem(
                           value: days, child: Text('$days dias')))
@@ -909,8 +900,7 @@ class _BloquearHorarioScreenState extends State<BloquearHorarioScreen>
                   controller: _motivoCtrl,
                   style: GoogleFonts.inter(
                       color: PremiumColors.textPrimary, fontSize: 12),
-                  decoration:
-                      InputDecoration(labelText: 'Descreva o motivo'),
+                  decoration: InputDecoration(labelText: 'Descreva o motivo'),
                 ),
               ],
               SizedBox(height: 14),

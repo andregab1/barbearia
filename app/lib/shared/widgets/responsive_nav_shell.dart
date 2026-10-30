@@ -9,7 +9,8 @@ class NavShellItem {
   final IconData icon;
   final IconData activeIcon;
   final String label;
-  const NavShellItem({required this.icon, required this.activeIcon, required this.label});
+  const NavShellItem(
+      {required this.icon, required this.activeIcon, required this.label});
 }
 
 class ResponsiveNavShell extends StatefulWidget {
@@ -23,7 +24,17 @@ class ResponsiveNavShell extends StatefulWidget {
   final VoidCallback? onLogout;
   final VoidCallback? onProfile;
 
-  const ResponsiveNavShell({super.key, required this.currentIndex, required this.onTap, required this.items, required this.body, this.tituloMarca, this.userName, this.userRole, this.onLogout, this.onProfile});
+  const ResponsiveNavShell(
+      {super.key,
+      required this.currentIndex,
+      required this.onTap,
+      required this.items,
+      required this.body,
+      this.tituloMarca,
+      this.userName,
+      this.userRole,
+      this.onLogout,
+      this.onProfile});
 
   @override
   State<ResponsiveNavShell> createState() => _ResponsiveNavShellState();
@@ -54,7 +65,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           selectedIndex: currentIndex,
           onDestinationSelected: onTap,
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          destinations: items.map((item) => NavigationDestination(icon: Icon(item.icon), selectedIcon: Icon(item.activeIcon), label: item.label, tooltip: item.label)).toList(),
+          destinations: items
+              .map((item) => NavigationDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(item.activeIcon),
+                  label: item.label,
+                  tooltip: item.label))
+              .toList(),
         ),
       );
     }
@@ -75,7 +92,9 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
         bottom: false,
         child: LayoutBuilder(builder: (context, constraints) {
           final width = constraints.maxWidth;
-          final visibleItems = items.asMap().entries
+          final visibleItems = items
+              .asMap()
+              .entries
               .where((entry) => entry.value.label != 'Perfil')
               .toList();
           final compactBrand = width < 1120;
@@ -83,13 +102,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           return Container(
             height: 70,
             padding: EdgeInsets.symmetric(horizontal: width < 1120 ? 18 : 32),
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: PremiumColors.border))),
+            decoration: BoxDecoration(
+                border:
+                    Border(bottom: BorderSide(color: PremiumColors.border))),
             child: Row(children: [
               if (tituloMarca != null) ...[
                 OfficialLogo(width: compactBrand ? 142 : 182, height: 58),
                 SizedBox(width: compactBrand ? 18 : 46),
               ],
-              Expanded(child: Row(children: [for (final entry in visibleItems) _buildTopItem(context, entry.key)])),
+              Expanded(
+                  child: Row(children: [
+                for (final entry in visibleItems)
+                  _buildTopItem(context, entry.key)
+              ])),
               if (userName != null) _buildUserMenu(context),
             ]),
           );
@@ -110,11 +135,27 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           duration: const Duration(milliseconds: 180),
           constraints: BoxConstraints(minWidth: 86, minHeight: 48),
           padding: EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(color: selected ? Colors.white.withValues(alpha: .045) : Colors.transparent, borderRadius: BorderRadius.circular(10), border: Border(bottom: BorderSide(color: selected ? PremiumColors.gold : Colors.transparent, width: 2))),
+          decoration: BoxDecoration(
+              color: selected
+                  ? Colors.white.withValues(alpha: .045)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: Border(
+                  bottom: BorderSide(
+                      color: selected ? PremiumColors.gold : Colors.transparent,
+                      width: 2))),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(selected ? item.activeIcon : item.icon, size: 19, color: selected ? PremiumColors.gold : PremiumColors.textMuted),
+            Icon(selected ? item.activeIcon : item.icon,
+                size: 19,
+                color: selected ? PremiumColors.gold : PremiumColors.textMuted),
             SizedBox(width: 8),
-            Text(item.label, style: TextStyle(color: selected ? PremiumColors.textPrimary : PremiumColors.textSecondary, fontWeight: selected ? FontWeight.w600 : FontWeight.w400, fontSize: 13)),
+            Text(item.label,
+                style: TextStyle(
+                    color: selected
+                        ? PremiumColors.textPrimary
+                        : PremiumColors.textSecondary,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    fontSize: 13)),
           ]),
         ),
       ),
@@ -134,20 +175,68 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
       },
       color: PremiumColors.surfaceSecondary,
       itemBuilder: (_) => [
-        PopupMenuItem<String>(enabled: false, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(userName!, style: TextStyle(color: PremiumColors.textPrimary, fontWeight: FontWeight.w600)), Text(userRole ?? '', style: TextStyle(color: PremiumColors.textMuted, fontSize: 12))])),
+        PopupMenuItem<String>(
+            enabled: false,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(userName!,
+                  style: TextStyle(
+                      color: PremiumColors.textPrimary,
+                      fontWeight: FontWeight.w600)),
+              Text(userRole ?? '',
+                  style:
+                      TextStyle(color: PremiumColors.textMuted, fontSize: 12))
+            ])),
         PopupMenuDivider(),
-        PopupMenuItem<String>(value: 'profile', child: ListTile(contentPadding: EdgeInsets.zero, leading: Icon(Icons.person_outline_rounded, color: PremiumColors.gold), title: Text('Meu perfil'))),
-        PopupMenuItem<String>(value: 'logout', child: ListTile(contentPadding: EdgeInsets.zero, leading: Icon(Icons.logout_rounded, color: PremiumColors.error), title: Text('Sair da conta'))),
+        PopupMenuItem<String>(
+            value: 'profile',
+            child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.person_outline_rounded,
+                    color: PremiumColors.gold),
+                title: Text('Meu perfil'))),
+        PopupMenuItem<String>(
+            value: 'logout',
+            child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.logout_rounded, color: PremiumColors.error),
+                title: Text('Sair da conta'))),
       ],
       child: Row(children: [
-        CircleAvatar(radius: 18, backgroundColor: PremiumColors.gold.withValues(alpha: .14), child: Text(name, style: TextStyle(color: PremiumColors.gold, fontWeight: FontWeight.w700))),
+        CircleAvatar(
+            radius: 18,
+            backgroundColor: PremiumColors.gold.withValues(alpha: .14),
+            child: Text(name,
+                style: TextStyle(
+                    color: PremiumColors.gold, fontWeight: FontWeight.w700))),
         SizedBox(width: 10),
         ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 142),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [Text(userName!, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: PremiumColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)), Text(userRole ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: PremiumColors.textMuted, fontSize: 11))]),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(userName!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: PremiumColors.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600)),
+                Text(userRole ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        TextStyle(color: PremiumColors.textMuted, fontSize: 11))
+              ]),
         ),
         SizedBox(width: 8),
-        Icon(_userMenuOpen ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded, color: PremiumColors.textMuted, size: 18),
+        Icon(
+            _userMenuOpen
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
+            color: PremiumColors.textMuted,
+            size: 18),
       ]),
     );
   }

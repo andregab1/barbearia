@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 import '../../../features/auth/controllers/auth_controller.dart';
 import 'agendar_screen.dart';
 import 'meus_agendamentos_screen.dart';

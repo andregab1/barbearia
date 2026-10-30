@@ -84,7 +84,8 @@ class OfficialLogo extends StatelessWidget {
   final double height;
   final bool showMark;
 
-  const OfficialLogo({super.key, this.width = 132, this.height = 54, this.showMark = true});
+  const OfficialLogo(
+      {super.key, this.width = 132, this.height = 54, this.showMark = true});
 
   @override
   Widget build(BuildContext context) {

@@ -535,11 +535,9 @@ class _HorariosScreenState extends State<HorariosScreen> {
         SizedBox(height: 18),
         SingleChildScrollView(scrollDirection: Axis.horizontal, child: actions)
       ]);
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Expanded(child: heading),
-      SizedBox(width: 20),
-      actions
-    ]);
+    return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Expanded(child: heading), SizedBox(width: 20), actions]);
   }
 
   Widget _professionalSelector() => Container(
@@ -548,8 +546,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
       padding: EdgeInsets.symmetric(horizontal: 12),
       decoration: _panelDecoration(color: PremiumColors.surfaceSecondary),
       child: Row(children: [
-        Icon(Icons.person_outline,
-            color: PremiumColors.textMuted, size: 17),
+        Icon(Icons.person_outline, color: PremiumColors.textMuted, size: 17),
         SizedBox(width: 8),
         Expanded(
             child: DropdownButtonHideUnderline(
@@ -1447,8 +1444,7 @@ class _CopyDialogState extends State<_CopyDialog> {
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar')),
+            onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
         FilledButton(
             onPressed: _targets.isEmpty
                 ? null
@@ -1555,8 +1551,7 @@ class _DaySelectionDialogState extends State<_DaySelectionDialog> {
                 style: TextStyle(color: PremiumColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Dia',
-                  labelStyle:
-                      TextStyle(color: PremiumColors.textSecondary),
+                  labelStyle: TextStyle(color: PremiumColors.textSecondary),
                   filled: true,
                   fillColor: PremiumColors.surface,
                   border: OutlineInputBorder(
@@ -1583,8 +1578,7 @@ class _DaySelectionDialogState extends State<_DaySelectionDialog> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancelar')),
+              onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
           FilledButton(
               onPressed: () => Navigator.pop(context, _selectedDay),
               child: Text(widget.confirmLabel)),

@@ -233,8 +233,8 @@ class _ComissoesPropriasTabState extends State<_ComissoesPropriasTab> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(_money(item['total_commission']),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w700)),
                               Text('Pendente ${_money(item['pending_amount'])}',
                                   style: TextStyle(fontSize: 11))
                             ]),
@@ -529,8 +529,7 @@ class _AgendaTab extends StatelessWidget {
                                                           FontWeight.w400)),
                                                 ]),
                                                 Container(
-                                                  padding: EdgeInsets
-                                                      .symmetric(
+                                                  padding: EdgeInsets.symmetric(
                                                       horizontal: 10,
                                                       vertical: 4),
                                                   decoration: BoxDecoration(
@@ -680,9 +679,8 @@ class _AgendaTab extends StatelessWidget {
                                                                     BorderRadius
                                                                         .circular(
                                                                             8)),
-                                                        padding:
-                                                            EdgeInsets
-                                                                .symmetric(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
                                                                 horizontal: 8),
                                                         minimumSize: Size.zero,
                                                       ),
@@ -1430,10 +1428,10 @@ class _GestaoTabState extends State<_GestaoTab> {
                     ),
                     borderData: FlBorderData(show: false),
                     titlesData: FlTitlesData(
-                      topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles:
+                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles:
+                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                         showTitles: true,
@@ -1808,8 +1806,8 @@ class _BadgeAtivo extends StatelessWidget {
         Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-                color: AppTheme.sucesso, shape: BoxShape.circle)),
+            decoration:
+                BoxDecoration(color: AppTheme.sucesso, shape: BoxShape.circle)),
         SizedBox(width: 6),
         Text('Ativo',
             style: GoogleFonts.inter(

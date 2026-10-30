@@ -262,8 +262,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     },
               child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: BoxDecoration(
                     color: selected
                         ? PremiumColors.gold.withValues(alpha: .10)
@@ -510,8 +509,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           Text('Por profissional',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
           SizedBox(height: 5),
-          Text(
-              'Saldo disponível agora e pendências do período selecionado.',
+          Text('Saldo disponível agora e pendências do período selecionado.',
               style:
                   TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
           SizedBox(height: 12),
@@ -519,30 +517,29 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             Text('Nenhum profissional com comissão calculada no período.')
           else
             ...state.commissionProfessionals.map((professional) => ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.person_outline,
-                          color: PremiumColors.gold),
-                      title: Text(
-                          professional['professional_name']?.toString() ??
-                              'Profissional'),
-                      subtitle: Text('A liberar ' +
-                          money.format(_num(professional['pending_release'])) +
-                          ' · Pago ' +
-                          money.format(_num(professional['settled']))),
-                      trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(money.format(_num(professional['available'])),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    color: PremiumColors.success)),
-                            Text('Disponível agora',
-                                style: TextStyle(
-                                    color: PremiumColors.textSecondary,
-                                    fontSize: 11)),
-                          ]),
-                    )),
+                  contentPadding: EdgeInsets.zero,
+                  leading:
+                      Icon(Icons.person_outline, color: PremiumColors.gold),
+                  title: Text(professional['professional_name']?.toString() ??
+                      'Profissional'),
+                  subtitle: Text('A liberar ' +
+                      money.format(_num(professional['pending_release'])) +
+                      ' · Pago ' +
+                      money.format(_num(professional['settled']))),
+                  trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(money.format(_num(professional['available'])),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: PremiumColors.success)),
+                        Text('Disponível agora',
+                            style: TextStyle(
+                                color: PremiumColors.textSecondary,
+                                fontSize: 11)),
+                      ]),
+                )),
         ]),
       );
 
@@ -565,8 +562,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       _num(state.commissionOverview['opening_balance'])) +
                   ' · saldo disponível agora ' +
                   money.format(_num(state.commissionOverview['available'])),
-              style: TextStyle(
-                  color: PremiumColors.textSecondary, fontSize: 12)),
+              style:
+                  TextStyle(color: PremiumColors.textSecondary, fontSize: 12)),
           SizedBox(height: 4),
           Text('Clique em um item para ver a conta completa.',
               style:
@@ -591,8 +588,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(money.format(_num(item['total_commission'])),
-                            style:
-                                TextStyle(fontWeight: FontWeight.w700)),
+                            style: TextStyle(fontWeight: FontWeight.w700)),
                         Text(
                             'Pendente ${money.format(_num(item['pending_amount']))}',
                             style: TextStyle(
@@ -793,8 +789,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           else
             ...state.commissionAdvances.map((advance) => ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.payments_outlined,
-                      color: PremiumColors.error),
+                  leading:
+                      Icon(Icons.payments_outlined, color: PremiumColors.error),
                   title: Text(
                       '${advance['professional_id'] ?? 'Profissional'} · ${money.format(_num(advance['amount']))}'),
                   subtitle: Text(
@@ -846,8 +842,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                             : 'Regra: ${_num(rule['value']).toStringAsFixed(2)}% sobre ${rule['base'] == 'gross' ? 'o bruto' : 'o líquido após desconto'}'),
                         SizedBox(height: 8),
                         Text('Comissão total: ${money.format(total)}',
-                            style:
-                                TextStyle(fontWeight: FontWeight.w800)),
+                            style: TextStyle(fontWeight: FontWeight.w800)),
                         Text(
                             'Liberado: ${money.format(_num(item['released_amount']))}'),
                         Text(
@@ -971,8 +966,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                         controller: reason,
                         maxLength: 240,
                         maxLines: 3,
-                        decoration: InputDecoration(
-                            labelText: 'Motivo obrigatório'))
+                        decoration:
+                            InputDecoration(labelText: 'Motivo obrigatório'))
                   ])),
               actions: [
                 TextButton(
@@ -1018,8 +1013,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                         controller: reason,
                         maxLength: 240,
                         maxLines: 3,
-                        decoration: InputDecoration(
-                            labelText: 'Motivo obrigatório'))
+                        decoration:
+                            InputDecoration(labelText: 'Motivo obrigatório'))
                   ])),
               actions: [
                 TextButton(
@@ -1075,8 +1070,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               labelText: 'Valor a pagar', prefixText: 'R\$ ')),
                       SizedBox(height: 12),
                       DropdownButtonFormField<int>(
-                          decoration: InputDecoration(
-                              labelText: 'Conta de saída *'),
+                          decoration:
+                              InputDecoration(labelText: 'Conta de saída *'),
                           items: _items(state.metadata['accounts'])
                               .map((e) => DropdownMenuItem(
                                   value: _int(e['id']),
@@ -1087,8 +1082,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                           initialValue: method,
-                          decoration: InputDecoration(
-                              labelText: 'Forma de pagamento'),
+                          decoration:
+                              InputDecoration(labelText: 'Forma de pagamento'),
                           items: const [
                             DropdownMenuItem(
                                 value: 'cash', child: Text('Dinheiro')),
@@ -1105,8 +1100,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                         Padding(
                             padding: EdgeInsets.only(top: 10),
                             child: Text(error!,
-                                style: TextStyle(
-                                    color: PremiumColors.error))),
+                                style: TextStyle(color: PremiumColors.error))),
                     ])),
                 actions: [
                   TextButton(
@@ -1156,8 +1150,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int?>(
                             initialValue: professionalId,
-                            decoration: InputDecoration(
-                                labelText: 'Profissional *'),
+                            decoration:
+                                InputDecoration(labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem<int?>(
                                     value: _int(e['id']),
@@ -1174,8 +1168,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           Padding(
                               padding: EdgeInsets.only(top: 12),
                               child: Text(error!,
-                                  style: TextStyle(
-                                      color: PremiumColors.error))),
+                                  style:
+                                      TextStyle(color: PremiumColors.error))),
                       ])),
                   actions: [
                     TextButton(
@@ -1229,8 +1223,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int?>(
                             initialValue: professionalId,
-                            decoration: InputDecoration(
-                                labelText: 'Profissional *'),
+                            decoration:
+                                InputDecoration(labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem<int?>(
                                     value: _int(e['id']),
@@ -1279,8 +1273,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           Padding(
                               padding: EdgeInsets.only(top: 12),
                               child: Text(error!,
-                                  style: TextStyle(
-                                      color: PremiumColors.error))),
+                                  style:
+                                      TextStyle(color: PremiumColors.error))),
                       ])),
                   actions: [
                     TextButton(
@@ -1342,8 +1336,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           child:
                               Column(mainAxisSize: MainAxisSize.min, children: [
                         DropdownButtonFormField<int>(
-                            decoration: InputDecoration(
-                                labelText: 'Profissional *'),
+                            decoration:
+                                InputDecoration(labelText: 'Profissional *'),
                             items: professionals
                                 .map((e) => DropdownMenuItem(
                                     value: _int(e['id']),
@@ -1353,8 +1347,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 setDialogState(() => professionalId = value)),
                         SizedBox(height: 12),
                         DropdownButtonFormField<int>(
-                            decoration:
-                                InputDecoration(labelText: 'Serviço *'),
+                            decoration: InputDecoration(labelText: 'Serviço *'),
                             items: services
                                 .map((e) => DropdownMenuItem(
                                     value: _int(e['id']),
@@ -1379,8 +1372,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: InputDecoration(
-                                      labelText: 'Desconto')))
+                                  decoration:
+                                      InputDecoration(labelText: 'Desconto')))
                         ]),
                         SizedBox(height: 12),
                         Row(children: [
@@ -1390,8 +1383,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
                                           decimal: true),
-                                  decoration: InputDecoration(
-                                      labelText: 'Recebido'))),
+                                  decoration:
+                                      InputDecoration(labelText: 'Recebido'))),
                           SizedBox(width: 10),
                           SizedBox(
                               width: 100,
@@ -1405,8 +1398,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           Padding(
                               padding: EdgeInsets.only(top: 12),
                               child: Text(failure!,
-                                  style: TextStyle(
-                                      color: PremiumColors.error))),
+                                  style:
+                                      TextStyle(color: PremiumColors.error))),
                         if (result != null) ...[
                           Divider(height: 24),
                           Align(
@@ -1415,8 +1408,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   result!['status_code'] == 'NO_APPLICABLE_RULE'
                                       ? 'Nenhuma regra aplicável.'
                                       : 'Memória de cálculo',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w800))),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w800))),
                           if (result!['rule'] is Map)
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -1525,8 +1518,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                 SizedBox(height: 12),
                                 DropdownButtonFormField<String>(
                                     initialValue: base,
-                                    decoration: InputDecoration(
-                                        labelText: 'Base'),
+                                    decoration:
+                                        InputDecoration(labelText: 'Base'),
                                     items: const [
                                       DropdownMenuItem(
                                           value: 'net_after_discount',
@@ -1681,13 +1674,11 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                           TextField(
                               controller: name,
                               autofocus: true,
-                              decoration:
-                                  InputDecoration(labelText: 'Nome')),
+                              decoration: InputDecoration(labelText: 'Nome')),
                           SizedBox(height: 12),
                           DropdownButtonFormField<String>(
                               initialValue: type,
-                              decoration:
-                                  InputDecoration(labelText: 'Tipo'),
+                              decoration: InputDecoration(labelText: 'Tipo'),
                               items: const [
                                 DropdownMenuItem(
                                     value: 'income', child: Text('Receita')),
@@ -1780,8 +1771,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           width: 220,
           child: DropdownButtonFormField<int?>(
               initialValue: state.professionalId,
-              decoration: InputDecoration(
-                  labelText: 'Profissional', isDense: true),
+              decoration:
+                  InputDecoration(labelText: 'Profissional', isDense: true),
               items: [
                 DropdownMenuItem(
                     value: null, child: Text('Todos os profissionais')),
@@ -1796,11 +1787,9 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
           width: 205,
           child: DropdownButtonFormField<int?>(
               initialValue: state.serviceId,
-              decoration:
-                  InputDecoration(labelText: 'Servico', isDense: true),
+              decoration: InputDecoration(labelText: 'Servico', isDense: true),
               items: [
-                DropdownMenuItem(
-                    value: null, child: Text('Todos os servicos')),
+                DropdownMenuItem(value: null, child: Text('Todos os servicos')),
                 ...services.map((e) => DropdownMenuItem(
                     value: _int(e['id']), child: Text('${e['name']}')))
               ],
@@ -1922,8 +1911,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
   Widget _appointments(Map<String, dynamic> a) => PremiumSurface(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Atendimentos',
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        Text('Atendimentos', style: TextStyle(fontWeight: FontWeight.w700)),
         SizedBox(height: 12),
         _metric('Confirmados', a['confirmed'], Icons.event_available_outlined,
             PremiumColors.success),
@@ -1953,8 +1941,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     style: TextStyle(
                         color: PremiumColors.textSecondary, fontSize: 12))),
             Text('${_int(value)}',
-                style:
-                    TextStyle(fontWeight: FontWeight.w800, fontSize: 18))
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18))
           ]));
   Widget _latest(List<Map<String, dynamic>> rows) => PremiumSurface(
           child:
@@ -2161,8 +2148,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                   'Cadastre uma despesa ou ajuste o periodo selecionado.')
                           : compact
                               ? ListView.separated(
-                                  padding:
-                                      EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                  padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                                   itemCount: rows.length,
                                   separatorBuilder: (_, __) =>
                                       SizedBox(height: 8),
@@ -2170,8 +2156,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                                       state, rows[index], eligibleIds),
                                 )
                               : ListView.builder(
-                                  padding:
-                                      EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                  padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                                   itemCount: rows.length + 1,
                                   itemBuilder: (_, index) {
                                     if (index == 0) {
@@ -2261,8 +2246,7 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             color: selected
                 ? PremiumColors.gold.withValues(alpha: .08)
                 : Colors.transparent,
-            border:
-                Border(bottom: BorderSide(color: PremiumColors.border))),
+            border: Border(bottom: BorderSide(color: PremiumColors.border))),
         child: Row(children: [
           if (_expenseSelectionMode)
             SizedBox(
@@ -2551,8 +2535,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                     final id = _int(item['appointment_id']);
                     final canIssue = _canIssueReceipt(item);
                     return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         child: Wrap(
                             alignment: WrapAlignment.spaceBetween,
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -2717,12 +2701,15 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
     }
     setState(() => _issuingReceipts.add(appointmentId));
     try {
-      final bytes =
-          await ServiceReceiptPdf.build(appointment: item, barbershop: {
-        'name': item['barbearia_name'],
-        'address': item['barbearia_address'],
-        'phone': item['barbearia_phone'],
-      }, accentHex: _hexFromColor(context.read<BarbeariaThemeService>().corPrimaria));
+      final bytes = await ServiceReceiptPdf.build(
+          appointment: item,
+          barbershop: {
+            'name': item['barbearia_name'],
+            'address': item['barbearia_address'],
+            'phone': item['barbearia_phone'],
+          },
+          accentHex:
+              _hexFromColor(context.read<BarbeariaThemeService>().corPrimaria));
       await downloadReportPdf(bytes, 'comprovante-servico-$appointmentId.pdf');
       if (mounted) {
         AppToast.show(context, 'Comprovante gerado com sucesso.',
@@ -3035,8 +3022,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               SizedBox(height: 10),
                               DropdownButtonFormField<String>(
                                   initialValue: method,
-                                  decoration: InputDecoration(
-                                      labelText: 'Forma *'),
+                                  decoration:
+                                      InputDecoration(labelText: 'Forma *'),
                                   items: const [
                                     DropdownMenuItem(
                                         value: 'cash', child: Text('Dinheiro')),
@@ -3056,8 +3043,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
                               SizedBox(height: 10),
                               TextField(
                                   controller: notes,
-                                  decoration: InputDecoration(
-                                      labelText: 'Observacao'))
+                                  decoration:
+                                      InputDecoration(labelText: 'Observacao'))
                             ])),
                     actions: [
                       TextButton(
@@ -3092,8 +3079,8 @@ class _FinanceiroScreenState extends State<FinanceiroScreen> {
             builder: (ctx, setLocal) => AlertDialog(
                     title: Text(title),
                     content: DropdownButtonFormField<int>(
-                        decoration: InputDecoration(
-                            labelText: 'Conta financeira'),
+                        decoration:
+                            InputDecoration(labelText: 'Conta financeira'),
                         items: _items(state.metadata['accounts'])
                             .map((e) => DropdownMenuItem(
                                 value: _int(e['id']),
@@ -3263,8 +3250,7 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                 SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                     value: responsibleId,
-                    decoration:
-                        InputDecoration(labelText: 'Responsavel *'),
+                    decoration: InputDecoration(labelText: 'Responsavel *'),
                     items: items(metadata['responsibles'])
                         .map((e) => DropdownMenuItem(
                             value: id(e['id']), child: Text('${e['name']}')))
@@ -3420,8 +3406,8 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                     SizedBox(height: 14),
                     DropdownButtonFormField<int>(
                         value: accountId,
-                        decoration: InputDecoration(
-                            labelText: 'Conta financeira *'),
+                        decoration:
+                            InputDecoration(labelText: 'Conta financeira *'),
                         items: items(widget.controller.metadata['accounts'])
                             .map((e) => DropdownMenuItem(
                                 value: id(e['id']),
@@ -3433,8 +3419,8 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                     SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                         value: method,
-                        decoration: InputDecoration(
-                            labelText: 'Forma de pagamento *'),
+                        decoration:
+                            InputDecoration(labelText: 'Forma de pagamento *'),
                         items: const [
                           DropdownMenuItem(
                               value: 'cash', child: Text('Dinheiro')),
@@ -3473,11 +3459,9 @@ class _PaymentFormDialogState extends State<_PaymentFormDialog> {
                         enabled: !saving,
                         maxLength: 500,
                         maxLines: 2,
-                        decoration:
-                            InputDecoration(labelText: 'Observacao')),
+                        decoration: InputDecoration(labelText: 'Observacao')),
                     if (error != null)
-                      Text(error!,
-                          style: TextStyle(color: PremiumColors.error))
+                      Text(error!, style: TextStyle(color: PremiumColors.error))
                   ]))),
           actions: [
             TextButton(
@@ -3570,13 +3554,13 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                       '${widget.receivables.length} atendimento(s) selecionado(s).'),
                   SizedBox(height: 6),
                   Text('Total: ${widget.money.format(total)}',
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w800)),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                   SizedBox(height: 14),
                   DropdownButtonFormField<int>(
                       value: accountId,
-                      decoration: InputDecoration(
-                          labelText: 'Conta financeira *'),
+                      decoration:
+                          InputDecoration(labelText: 'Conta financeira *'),
                       items: items(widget.controller.metadata['accounts'])
                           .map((e) => DropdownMenuItem(
                               value: id(e['id']), child: Text('${e['name']}')))
@@ -3586,8 +3570,8 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                   SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                       value: method,
-                      decoration: InputDecoration(
-                          labelText: 'Forma de pagamento *'),
+                      decoration:
+                          InputDecoration(labelText: 'Forma de pagamento *'),
                       items: const [
                         DropdownMenuItem(
                             value: 'cash', child: Text('Dinheiro')),
@@ -3622,8 +3606,7 @@ class _BulkPaymentFormDialogState extends State<_BulkPaymentFormDialog> {
                               'Recebido em ${DateFormat('dd/MM/yyyy').format(paidAt)}'))),
                   if (error != null) ...[
                     SizedBox(height: 12),
-                    Text(error!,
-                        style: TextStyle(color: PremiumColors.error))
+                    Text(error!, style: TextStyle(color: PremiumColors.error))
                   ],
                 ]))),
         actions: [
@@ -3844,8 +3827,7 @@ class _Legend extends StatelessWidget {
         Container(width: 14, height: 2, color: color),
         SizedBox(width: 5),
         Text(label,
-            style: TextStyle(
-                fontSize: 10, color: PremiumColors.textSecondary))
+            style: TextStyle(fontSize: 10, color: PremiumColors.textSecondary))
       ]);
 }
 

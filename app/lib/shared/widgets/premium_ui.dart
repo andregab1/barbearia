@@ -19,12 +19,10 @@ class PremiumColors {
   static Color get goldBright => AppTheme.goldLight;
   static Color get textPrimary => AppTheme.corTexto;
   static Color get textSecondary => AppTheme.corTextoSecundario;
-  static Color get textMuted => AppTheme.modoClaro
-      ? const Color(0xFFA8A29E)
-      : const Color(0xFF77706C);
-  static Color get border => AppTheme.modoClaro
-      ? const Color(0xFFE7E5E4)
-      : const Color(0x2639312E);
+  static Color get textMuted =>
+      AppTheme.modoClaro ? const Color(0xFFA8A29E) : const Color(0xFF77706C);
+  static Color get border =>
+      AppTheme.modoClaro ? const Color(0xFFE7E5E4) : const Color(0x2639312E);
   static const success = Color(0xFF70B77E);
   static const error = Color(0xFFD76565);
 }
@@ -325,7 +323,7 @@ class PremiumLoadingState extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
         label: label,
         liveRegion: true,
-          child: Center(
+        child: Center(
           child: CircularProgressIndicator(
             color: PremiumColors.gold,
             strokeWidth: 2,
